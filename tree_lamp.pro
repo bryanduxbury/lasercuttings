@@ -2,24 +2,24 @@ EAGLE AutoRouter Statistics:
 
 Job           : /Users/bryanduxbury/projects/lasercuttings/tree_lamp.brd
 
-Start at      : 07:55:52 (9/20/11)
-End at        : 07:55:56 (9/20/11)
-Elapsed time  : 00:00:04
+Start at      : 11:07:55 (9/21/11)
+End at        : 11:07:55 (9/21/11)
+Elapsed time  : 00:00:00
 
-Signals       :    20   RoutingGrid: 50 mil  Layers: 1
-Connections   :    56   predefined:  0 ( 0 Vias )
+Signals       :    20   RoutingGrid: 50 mil  Layers: 2
+Connections   :    56   predefined:  54 ( 0 Vias )
 
-Router memory :   12354
+Router memory :   24708
 
 Passname          :     Route Optimize1 Optimize2 Optimize3 Optimize4
 
-Time per pass     :  00:00:04  00:00:00  00:00:00  00:00:00  00:00:00
-Number of Ripups  :       210         0         0         0         0
-max. Level        :         6         0         0         0         0
-max. Total        :        31         0         0         0         0
+Time per pass     :  00:00:00  00:00:00  00:00:00  00:00:00  00:00:00
+Number of Ripups  :         0         0         0         0         0
+max. Level        :         0         0         0         0         0
+max. Total        :         0         0         0         0         0
 
-Routed            :        54        54        54        54        54
-Vias              :         0         0         0         0         0
-Resolution        :    96.4 %    96.4 %    96.4 %    96.4 %    96.4 %
+Routed            :         2         2         2         2         2
+Vias              :         2         0         0         0         0
+Resolution        :   100.0 %   100.0 %   100.0 %   100.0 %   100.0 %
 
-Final             : 96.4% finished
+Final             : 100.0% finished
