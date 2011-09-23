@@ -17,10 +17,10 @@ rects = []
 for i in (0..num_rects)
   # if rects.empty?
     # just make any rect to start with
-    x = rand(canvas_w)
-    y = rand(canvas_h)
-    w = rand(canvas_w-x)
-    h = rand(canvas_h-y)
+    x = rand(canvas_w - 10)
+    y = rand(canvas_h - 10)
+    w = rand(canvas_w - x - 10) + 10
+    h = rand(canvas_h - y - 10) + 10
     rects << {:x => x, :y => y, :w => w, :h => h}
   # else
   #   # pick a rect at random to intersect
@@ -51,7 +51,7 @@ for i in (0..num_rects)
   #   rects << {:x => x, :y => y, :w => w, :h => h}
   # end
   puts "<rect x='#{x}mm' y='#{y}mm' width='#{w}mm' height='#{h}mm' stroke-width='.1mm' stroke='black' fill='none'/>"
-  puts "<rect x='#{x+2.5}mm' y='#{y+2.5}mm' width='#{w-5}mm' height='#{h-5}mm' stroke-width='.1mm' stroke='black' fill='none'/>"
+  puts "<rect x='#{x+5}mm' y='#{y+5}mm' width='#{w-10}mm' height='#{h-10}mm' stroke-width='.1mm' stroke='black' fill='none'/>"
 end
 
 puts "</svg>"

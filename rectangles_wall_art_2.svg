@@ -1,44 +1,70 @@
-<svg>
-<rect x='9mm' y='155mm' width='8mm' height='34mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='11.5mm' y='157.5mm' width='3mm' height='29mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='44mm' y='84mm' width='112mm' height='6mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='46.5mm' y='86.5mm' width='107mm' height='1mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='103mm' y='34mm' width='2mm' height='33mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='105.5mm' y='36.5mm' width='-3mm' height='28mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='99mm' y='57mm' width='42mm' height='51mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='101.5mm' y='59.5mm' width='37mm' height='46mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='101mm' y='189mm' width='18mm' height='9mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='103.5mm' y='191.5mm' width='13mm' height='4mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='62mm' y='161mm' width='34mm' height='18mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='64.5mm' y='163.5mm' width='29mm' height='13mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='14mm' y='101mm' width='66mm' height='40mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='16.5mm' y='103.5mm' width='61mm' height='35mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='94mm' y='144mm' width='31mm' height='50mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='96.5mm' y='146.5mm' width='26mm' height='45mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='145mm' y='169mm' width='52mm' height='21mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='147.5mm' y='171.5mm' width='47mm' height='16mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='93mm' y='71mm' width='103mm' height='121mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='95.5mm' y='73.5mm' width='98mm' height='116mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='51mm' y='156mm' width='122mm' height='26mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='53.5mm' y='158.5mm' width='117mm' height='21mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='52mm' y='111mm' width='122mm' height='72mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='54.5mm' y='113.5mm' width='117mm' height='67mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='34mm' y='30mm' width='25mm' height='104mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='36.5mm' y='32.5mm' width='20mm' height='99mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='77mm' y='79mm' width='34mm' height='100mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='79.5mm' y='81.5mm' width='29mm' height='95mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='16mm' y='137mm' width='99mm' height='8mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='18.5mm' y='139.5mm' width='94mm' height='3mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='28mm' y='57mm' width='144mm' height='73mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='30.5mm' y='59.5mm' width='139mm' height='68mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='180mm' y='158mm' width='14mm' height='16mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='182.5mm' y='160.5mm' width='9mm' height='11mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='176mm' y='75mm' width='10mm' height='115mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='178.5mm' y='77.5mm' width='5mm' height='110mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='137mm' y='99mm' width='4mm' height='30mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='139.5mm' y='101.5mm' width='-1mm' height='25mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='169mm' y='126mm' width='20mm' height='15mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='171.5mm' y='128.5mm' width='15mm' height='10mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='127mm' y='2mm' width='23mm' height='154mm' stroke-width='.1mm' stroke='black' fill='none'/>
-<rect x='129.5mm' y='4.5mm' width='18mm' height='149mm' stroke-width='.1mm' stroke='black' fill='none'/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg7023"
+   version="1.1"
+   inkscape:version="0.48.1 r9760"
+   width="990"
+   height="765"
+   sodipodi:docname="rectangles_wall_art_2.svg">
+  <metadata
+     id="metadata7113">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs7111" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1680"
+     inkscape:window-height="1006"
+     id="namedview7109"
+     showgrid="false"
+     inkscape:document-units="mm"
+     units="mm"
+     inkscape:zoom="0.55494202"
+     inkscape:cx="147.25892"
+     inkscape:cy="411.38814"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg7023" />
+  <path
+     style="fill:#000000;stroke:#000000;stroke-width:0.1mm"
+     d="m 400.55217,72.510335 0,194.875005 -99.21875,0 -141.71875,0 0,-95.65625 -88.593755,0 0,95.65625 -21.25,0 0,155.90625 -49.59374964,0 0,141.71875 102.62500464,0 0,154.84375 177.28125,0 0,25.875 37.5625,0 0,19.09375 109.8125,0 0,-19.09375 58.875,0 0,16.90625 184.25,0 0,-74.40625 -25.53125,0 0,-371.25 -33.9375,0 0,-89.4375 -35.4375,0 0,89.4375 -15.65625,0 0,-49.59375 -77.96875,0 0,-194.875005 -81.5,0 z m 8.875,8.84375 63.78125,0 0,186.031255 -23.03125,0 -40.75,0 0,-186.031255 z m -329.531255,99.218755 70.875005,0 0,86.8125 -70.875005,0 0,-86.8125 z m 504.656255,55.8125 17.71875,0 0,80.59375 -17.71875,0 0,-80.59375 z m -525.906255,39.84375 12.375,0 0,147.0625 -12.375,0 0,-147.0625 z m 21.25,0 70.875005,0 0,86.8125 -44.3125,0 0,21.28125 44.3125,0 0,38.96875 -70.875005,0 0,-147.0625 z m 79.718755,0 141.71875,0 0,40.75 -21.25,0 0,28.34375 -32.6875,0 0,17.71875 -87.78125,0 0,-86.8125 z m 150.59375,0 90.34375,0 0,40.75 -90.34375,0 0,-40.75 z m 99.21875,0 31.875,0 0,40.75 -31.875,0 0,-40.75 z m 40.75,0 23.03125,0 0,40.75 -23.03125,0 0,-40.75 z m 31.875,0 69.09375,0 0,40.75 -69.09375,0 0,-40.75 z m -193.09375,49.625 12.375,0 0,19.46875 -12.375,0 0,-19.46875 z m 21.25,0 90.34375,0 0,37.1875 -32.6875,0 0,-17.71875 -57.65625,0 0,-19.46875 z m 99.21875,0 31.875,0 0,37.1875 -31.875,0 0,-37.1875 z m 40.75,0 23.03125,0 0,37.1875 -23.03125,0 0,-37.1875 z m 31.875,0 69.09375,0 0,82.40625 -0.28125,0 0,53.125 0.28125,0 0,55.8125 -16.0625,0 0,-52.46875 -53.03125,0 0,-80.40625 21.25,0 0,-21.28125 -21.25,0 0,-37.1875 z m 77.96875,0 15.65625,0 0,82.40625 -15.65625,0 0,-82.40625 z m 24.53125,0 17.71875,0 0,82.40625 -17.71875,0 0,-82.40625 z m 26.5625,0 25.0625,0 0,195.78125 -25.0625,0 0,-60.25 10.625,0 0,-53.125 -10.625,0 0,-82.40625 z m -354.875,28.34375 23.84375,0 0,8.84375 -23.84375,0 0,-8.84375 z m 32.71875,0 12.375,0 0,8.84375 -12.375,0 0,-8.84375 z m 21.25,0 48.8125,0 0,8.84375 -48.8125,0 0,-8.84375 z m -194.875,17.71875 35.4375,0 0,3.53125 -35.4375,0 0,-3.53125 z m 44.28125,0 87.78125,0 0,3.53125 -87.78125,0 0,-3.53125 z m 96.625,0 23.84375,0 0,3.53125 -23.84375,0 0,-3.53125 z m 32.71875,0 12.375,0 0,3.53125 -12.375,0 0,-3.53125 z m 21.25,0 48.8125,0 0,3.53125 -48.8125,0 0,-3.53125 z m 57.65625,0 32.6875,0 0,3.53125 -32.6875,0 0,-3.53125 z m 41.5625,0 31.875,0 0,3.53125 -31.875,0 0,-3.53125 z m 40.75,0 23.03125,0 0,3.53125 -23.03125,0 0,-3.53125 z m 31.875,0 12.40625,0 0,3.53125 -12.40625,0 0,-3.53125 z m -322.4375,12.40625 87.78125,0 0,80.40625 -13.375,0 0,-41.4375 -74.40625,0 0,-38.96875 z m 96.625,0 23.84375,0 0,80.40625 -23.84375,0 0,-80.40625 z m 32.71875,0 12.375,0 0,63.78125 57.6875,0 0,16.625 -70.0625,0 0,-80.40625 z m 21.25,0 48.8125,0 0,54.90625 -48.8125,0 0,-54.90625 z m 57.65625,0 32.6875,0 0,54.90625 -32.6875,0 0,-54.90625 z m 41.5625,0 31.875,0 0,54.90625 -31.875,0 0,-54.90625 z m 40.75,0 23.03125,0 0,80.40625 -63.78125,0 0,-16.625 40.75,0 0,-63.78125 z m 109.84375,32.78125 15.65625,0 0,35.4375 -15.65625,0 0,-35.4375 z m 24.53125,0 17.71875,0 0,35.4375 -17.71875,0 0,-35.4375 z m 26.5625,0 1.78125,0 0,35.4375 -1.78125,0 0,-35.4375 z m -602.0937546,15.03125 40.7499996,0 0,93.90625 21.25,0 0,14.1875 31.781255,0 0,15.9375 -93.7812546,0 0,-124.03125 z m 49.6249996,0 12.375,0 0,85.0625 -12.375,0 0,-85.0625 z m 21.25,0 70.875005,0 0,32.59375 -47.96875,0 0,52.46875 -22.906255,0 0,-85.0625 z m 79.718755,0 65.5625,0 0,32.59375 -65.5625,0 0,-32.59375 z m 208.25,15.96875 32.6875,0 0,16.625 -32.6875,0 0,-16.625 z m 192.15625,13.28125 15.65625,0 0,173.625 35.4375,0 0,-56.6875 25.0625,0 0,109.90625 -101.09375,0 0,-162.1875 24.9375,0 0,-64.65625 z m 24.53125,0 17.71875,0 0,60.25 -12.40625,0 0,56.6875 12.40625,0 0,47.84375 -17.71875,0 0,-164.78125 z m -472.875,12.1875 39.09375,0 0,43.625 -39.09375,0 0,-43.625 z m 47.9375,0 65.5625,0 0,43.625 -65.5625,0 0,-43.625 z m 74.40625,0 13.375,0 0,43.625 -13.375,0 0,-43.625 z m 22.21875,0 23.84375,0 0,43.625 -23.84375,0 0,-43.625 z m 32.71875,0 70.0625,0 0,43.625 -70.0625,0 0,-43.625 z m 78.90625,0 32.6875,0 0,43.625 -32.6875,0 0,-43.625 z m 41.5625,0 63.78125,0 0,43.625 -63.78125,0 0,-43.625 z m 72.625,0 44.1875,0 0,43.625 -44.1875,0 0,-43.625 z m -402.156255,52.46875 22.906255,0 0,5.3125 -22.906255,0 0,-5.3125 z m 31.781255,0 39.09375,0 0,5.3125 -39.09375,0 0,-5.3125 z m 47.9375,0 65.5625,0 0,30.125 -113.5,0 0,-15.9375 47.9375,0 0,-14.1875 z m 74.40625,0 13.375,0 0,77.84375 -59.15625,0 0,63.78125 59.15625,0 0,32 32.6875,0 0,11.3125 -168.40625,0 0,-145.96875 122.34375,0 0,-38.96875 z m 22.21875,0 23.84375,0 0,77.84375 -23.84375,0 0,-77.84375 z m 32.71875,0 70.0625,0 0,61.625 -41.375,0 0,103.15625 -28.6875,0 0,-23.15625 19.75,0 0,-63.78125 -19.75,0 0,-77.84375 z m 78.90625,0 32.6875,0 0,61.625 -32.6875,0 0,-61.625 z m 41.5625,0 63.78125,0 0,83.28125 -45.75,0 0,-21.65625 -18.03125,0 0,-61.625 z m 72.625,0 44.1875,0 0,162.1875 -39.90625,0 0,22.75 -58.875,0 0,-92.8125 54.59375,0 0,-92.125 z m 116.65625,4.4375 3.5625,0 0,39 -3.5625,0 0,-39 z m 12.40625,0 19.5,0 0,39 -19.5,0 0,-39 z m -284.625,66.03125 32.53125,0 0,94.3125 -32.53125,0 0,-94.3125 z m 41.375,0 32.6875,0 0,21.65625 18.0625,0 0,92.8125 -92.125,0 0,-11.3125 41.375,0 0,-103.15625 z m 41.5625,0 9.1875,0 0,12.8125 -9.1875,0 0,-12.8125 z m -212.3125,16.25 50.28125,0 0,46.0625 -50.28125,0 0,-46.0625 z m 59.125,0 23.84375,0 0,46.0625 -23.84375,0 0,-46.0625 z m 32.71875,0 10.90625,0 0,46.0625 -10.90625,0 0,-46.0625 z m -32.71875,54.90625 23.84375,0 0,23.15625 -23.84375,0 0,-23.15625 z m 238.96875,29.4375 31.03125,0 0,13.875 -31.03125,0 0,-13.875 z m 39.875,0 101.09375,0 0,39.78125 -140.96875,0 0,-17.03125 39.875,0 0,-22.75 z m 109.96875,0 16.6875,0 0,56.6875 -166.53125,0 0,-8.0625 149.84375,0 0,-48.625 z m -356.09375,2.5625 28.6875,0 0,11.3125 -28.6875,0 0,-11.3125 z m 0,20.1875 28.6875,0 0,17.03125 -28.6875,0 0,-17.03125 z m 37.53125,0 92.125,0 0,17.03125 -92.125,0 0,-17.03125 z m 100.96875,0 58.875,0 0,17.03125 -58.875,0 0,-17.03125 z m -100.96875,25.875 92.125,0 0,10.21875 -92.125,0 0,-10.21875 z"
+     id="rect7029"
+     inkscape:connector-curvature="0" />
+  <rect
+     x="295.55792"
+     y="-14.650303"
+     width="0"
+     height="99.212601"
+     id="rect7035"
+     style="fill:none;stroke:#000000;stroke-width:0.1mm" />
+  <rect
+     x="416.03036"
+     y="215.66464"
+     width="0"
+     height="88.58268"
+     id="rect7099"
+     style="fill:none;stroke:#000000;stroke-width:0.1mm" />
 </svg>
