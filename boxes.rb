@@ -7,6 +7,19 @@ def rand_sign
   end
 end
 
+def rand_range(min, max)
+  rng = max - min
+  min + rand(rng)
+end
+
+def bi_between?(t1, h1, t2, h2)
+  between?(t1, t2, h2) || between?(t2, t1, h1)
+end
+
+def between?(x, top, height)
+  x >= top && x <= top + height
+end
+
 canvas_w, canvas_h = ARGV.shift.to_i, ARGV.shift.to_i
 num_rects = ARGV.shift.to_i
 
@@ -14,13 +27,21 @@ puts "<svg>"
 
 rects = []
 
-for i in (0..num_rects)
+until rects.size == num_rects
   # if rects.empty?
     # just make any rect to start with
-    x = rand(canvas_w - 10)
-    y = rand(canvas_h - 10)
-    w = rand(canvas_w - x - 10) + 10
-    h = rand(canvas_h - y - 10) + 10
+    x = rand_range(0, (canvas_w - 10) / 10) * 10
+    y = rand_range(0, (canvas_h - 10) / 10) * 10
+    w = rand_range(3, (canvas_w - x - 10) / 10) * 10
+    h = rand_range(3, (canvas_h - y - 10) / 10) * 10
+    
+    next if rects.select{|other_rect| bi_between?(y, h, other_rect[:y], other_rect[:h]) && other_rect[:x] == x}.any?
+    next if rects.select{|other_rect| bi_between?(y, h, other_rect[:y], other_rect[:h]) && other_rect[:x] + other_rect[:w] == x + w}.any?
+
+    next if rects.select{|other_rect| bi_between?(x, w, other_rect[:x], other_rect[:w]) && other_rect[:y] == y}.any?
+    next if rects.select{|other_rect| bi_between?(x, w, other_rect[:x], other_rect[:w]) && other_rect[:y] + other_rect[:h] == y + h}.any?
+    
+    
     rects << {:x => x, :y => y, :w => w, :h => h}
   # else
   #   # pick a rect at random to intersect
