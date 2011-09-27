@@ -30,10 +30,10 @@ rects = []
 until rects.size == num_rects
   # if rects.empty?
     # just make any rect to start with
-    x = rand_range(0, (canvas_w - 10) / 10) * 10
-    y = rand_range(0, (canvas_h - 10) / 10) * 10
-    w = rand_range(3, (canvas_w - x - 10) / 10) * 10
-    h = rand_range(3, (canvas_h - y - 10) / 10) * 10
+    x = rand_range(0, (canvas_w - 20) / 10) * 10
+    y = rand_range(0, (canvas_h - 20) / 10) * 10
+    w = rand_range(3, (canvas_w - x - 20) / 5) * 5
+    h = rand_range(3, (canvas_h - y - 20) / 5) * 5
     
     next if rects.select{|other_rect| bi_between?(y, h, other_rect[:y], other_rect[:h]) && other_rect[:x] == x}.any?
     next if rects.select{|other_rect| bi_between?(y, h, other_rect[:y], other_rect[:h]) && other_rect[:x] + other_rect[:w] == x + w}.any?
@@ -71,8 +71,12 @@ until rects.size == num_rects
   #   
   #   rects << {:x => x, :y => y, :w => w, :h => h}
   # end
-  puts "<rect x='#{x}mm' y='#{y}mm' width='#{w}mm' height='#{h}mm' stroke-width='.1mm' stroke='black' fill='none'/>"
-  puts "<rect x='#{x+5}mm' y='#{y+5}mm' width='#{w-10}mm' height='#{h-10}mm' stroke-width='.1mm' stroke='black' fill='none'/>"
+  
+  puts "<rect x='#{x - 0.1}mm' y='#{y - 0.1}mm' width='#{w + 0.2}mm' height='#{h + 0.2}mm' stroke-width='.1mm' stroke='black' fill='none'/>"
+  puts "<rect x='#{x+5.1}mm' y='#{y+5.1}mm' width='#{w-10.2}mm' height='#{h-10.2}mm' stroke-width='.1mm' stroke='black' fill='none'/>"
+  
+  # puts "<rect x='#{x - 0.1}mm' y='#{y - 0.1}mm' width='#{w + 0.2}mm' height='#{h + 0.2}mm' stroke-width='.1mm' stroke='black' fill='none'/>"
+  #   puts "<rect x='#{x+5.1}mm' y='#{y+5.1}mm' width='#{w-10.2}mm' height='#{h-10.2}mm' stroke-width='.1mm' stroke='black' fill='none'/>"
 end
 
 puts "</svg>"
