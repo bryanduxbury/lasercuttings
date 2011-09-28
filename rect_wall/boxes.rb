@@ -74,9 +74,6 @@ until rects.size == num_rects
   
   puts "<rect x='#{x - 0.1}mm' y='#{y - 0.1}mm' width='#{w + 0.2}mm' height='#{h + 0.2}mm' stroke-width='.1mm' stroke='black' fill='none'/>"
   puts "<rect x='#{x+5.1}mm' y='#{y+5.1}mm' width='#{w-10.2}mm' height='#{h-10.2}mm' stroke-width='.1mm' stroke='black' fill='none'/>"
-  
-  # puts "<rect x='#{x - 0.1}mm' y='#{y - 0.1}mm' width='#{w + 0.2}mm' height='#{h + 0.2}mm' stroke-width='.1mm' stroke='black' fill='none'/>"
-  #   puts "<rect x='#{x+5.1}mm' y='#{y+5.1}mm' width='#{w-10.2}mm' height='#{h-10.2}mm' stroke-width='.1mm' stroke='black' fill='none'/>"
 end
 
 puts "</svg>"
