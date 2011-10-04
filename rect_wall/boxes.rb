@@ -23,7 +23,7 @@ end
 canvas_w, canvas_h = ARGV.shift.to_i, ARGV.shift.to_i
 num_rects = ARGV.shift.to_i
 
-puts "<svg>"
+puts "<svg width='#{canvas_w}mm' height='#{canvas_h}mm' viewBox='0 0 #{canvas_w} #{canvas_h}'>"
 
 rects = []
 
@@ -40,8 +40,8 @@ until rects.size == num_rects
 
     next if rects.select{|other_rect| bi_between?(x, w, other_rect[:x], other_rect[:w]) && other_rect[:y] == y}.any?
     next if rects.select{|other_rect| bi_between?(x, w, other_rect[:x], other_rect[:w]) && other_rect[:y] + other_rect[:h] == y + h}.any?
-    
-    
+
+
     rects << {:x => x, :y => y, :w => w, :h => h}
   # else
   #   # pick a rect at random to intersect
@@ -71,9 +71,11 @@ until rects.size == num_rects
   #   
   #   rects << {:x => x, :y => y, :w => w, :h => h}
   # end
+
+  puts "<path style='fill:none; stroke:black; stroke-width:.1' d='M#{x - 0.1} #{y - 0.1} h#{w + 0.2} v#{h+0.2} h-#{w + 0.2} v-#{h+0.2} M#{x+5.1} #{y+5.1} v#{h-10.2} h#{w-10.2} v-#{h-10.2} h-#{w-10.2} Z' />"
   
-  puts "<rect x='#{x - 0.1}mm' y='#{y - 0.1}mm' width='#{w + 0.2}mm' height='#{h + 0.2}mm' stroke-width='.1mm' stroke='black' fill='none'/>"
-  puts "<rect x='#{x+5.1}mm' y='#{y+5.1}mm' width='#{w-10.2}mm' height='#{h-10.2}mm' stroke-width='.1mm' stroke='black' fill='none'/>"
+  # puts "<rect x='#{x - 0.1}' y='#{y - 0.1}' width='#{w + 0.2}' height='#{h + 0.2}' stroke-width='.1' stroke='black' fill='none'/>"
+  # puts "<rect x='#{x+5.1}' y='#{y+5.1}' width='#{w-10.2}' height='#{h-10.2}' stroke-width='.1' stroke='black' fill='none'/>"
 end
 
 puts "</svg>"
