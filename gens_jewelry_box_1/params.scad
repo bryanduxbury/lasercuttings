@@ -1,10 +1,10 @@
 // arguments
 material_thickness=3;
-h = 25 * 6;
-w = 25 * 16;
-d = 25 * 12;
+h = 200;
+w = 400;
+d = 300;
 
-lid_h = 25 * 2;
+lid_h = 60;
 
 // calculated
 bottom_h = h-lid_h;

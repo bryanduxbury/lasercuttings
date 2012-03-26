@@ -7,10 +7,10 @@ module sawtooth(tab_size, tab_spacing, num_tabs) {
   }
 }
 
-module front() {
+module lid_front() {
   color([255/255, 0/255, 0/255]) {
     difference() {
-      cube(size=[w, bottom_h, material_thickness], center=true);
+      cube(size=[w, lid_h, material_thickness], center=true);
       for (a = [0, 180]) {
         rotate([0, a, 0]) {
           translate([w/2 - material_thickness/2, 0, 0]) {
@@ -18,7 +18,7 @@ module front() {
           }
         }
       }
-      translate([0, -bottom_h/2 + material_thickness/2, 0]) sawtooth(w/11, 0, 6);
+      translate([0, -lid_h/2 + material_thickness/2, 0]) sawtooth(w/11, 0, 6);
 
       for (a = [0, 180]) {
         rotate([0, a, 0]) {
@@ -31,9 +31,9 @@ module front() {
   }
 }
 
-module back() {
+module lid_back() {
   color([255/255, 0/255, 0/255]) difference() {
-    cube(size=[w, bottom_h, material_thickness], center=true);
+    cube(size=[w, lid_h, material_thickness], center=true);
     for (a = [0, 180]) {
       rotate([0, a, 0]) {
         translate([w/2 - material_thickness/2, 0, 0]) {
@@ -42,7 +42,7 @@ module back() {
       }
     }
 
-    translate([0, -bottom_h/2+material_thickness/2, 0]) sawtooth(w/11, 0, 6);
+    translate([0, -lid_h/2+material_thickness/2, 0]) sawtooth(w/11, 0, 6);
     
     for (a = [0, 180]) {
       rotate([0, a, 0]) {
@@ -55,10 +55,10 @@ module back() {
   }
 }
 
-module side() {
+module lid_side() {
   color([0/255, 255/255, 0/255]) {
     difference() {
-      cube(size=[d, bottom_h, material_thickness], center=true);
+      cube(size=[d, lid_h, material_thickness], center=true);
       for (a = [0, 180]) {
         rotate([0, a, 0]) {
           translate([d/2 - material_thickness/2, 0, 0]) {
@@ -67,12 +67,12 @@ module side() {
         }
       }
 
-      translate([0, -bottom_h/2 + material_thickness/2, 0]) sawtooth(d/7, 0, 4);
+      translate([0, -lid_h/2 + material_thickness/2, 0]) sawtooth(d/7, 0, 4);
     }
   }
 }
 
-module bottom() {
+module lid_bottom() {
   color([0/255, 0/255, 255/255]) {
     difference() {
       cube(size=[w, d, material_thickness], center=true);
@@ -89,10 +89,10 @@ module bottom() {
   }
 }
 
-module retainer() {
+module lid_retainer() {
   color([125/255, 125/255, 0/255]) {
     difference () {
-      cube(size=[d, bottom_h, material_thickness], center=true);
+      cube(size=[d, lid_h, material_thickness], center=true);
 
       for (a = [0, 180]) {
         rotate([0, a, 0]) {
@@ -102,21 +102,21 @@ module retainer() {
         }
       }
 
-      translate([0, -bottom_h/2 + material_thickness/2, 0]) sawtooth(d/9, 0, 6);
+      translate([0, -lid_h/2 + material_thickness/2, 0]) sawtooth(d/9, 0, 6);
 
-      translate([40, 30, 0]) cylinder(r=5.25, h=material_thickness*2, center=true);
-      translate([110, 30, 0]) cylinder(r=5.25, h=material_thickness*2, center=true);
+      translate([40, 0, 0]) cylinder(r=5.25, h=material_thickness*2, center=true);
+      translate([-120, 0, 0]) cylinder(r=5.25, h=material_thickness*2, center=true);
     }
   }
 }
 
-module complete_box() {
-  translate([0, -d/2 + material_thickness/2 - 0.001, 0]) rotate([90, 0, 0]) front();
-  translate([0, d/2 - material_thickness/2, 0]) rotate([0, 0, 180]) rotate([90, 0, 0]) back();
-  translate([-w/2 + material_thickness/2, 0, 0]) rotate([0, 0, -90]) rotate([90, 0, 0]) side();
-  translate([w/2 - material_thickness/2, 0, 0]) rotate([0, 0, 90]) rotate([90, 0, 0]) side();
-  translate([0, 0, -bottom_h/2 + material_thickness/2]) bottom();
+module complete_lid() {
+  translate([0, -d/2 + material_thickness/2 - 0.001, 0]) rotate([90, 0, 0]) lid_front();
+  translate([0, d/2 - material_thickness/2, 0]) rotate([0, 0, 180]) rotate([90, 0, 0]) lid_back();
+  translate([-w/2 + material_thickness/2, 0, 0]) rotate([0, 0, -90]) rotate([90, 0, 0]) lid_side();
+  translate([w/2 - material_thickness/2, 0, 0]) rotate([0, 0, 90]) rotate([90, 0, 0]) lid_side();
+  translate([0, 0, -lid_h/2 + material_thickness/2]) lid_bottom();
 
-  translate([-w/2 + material_thickness/2 + 2*material_thickness, 0, 0]) rotate([0, 0, 90]) rotate([90, 0, 0]) retainer();
-  translate([w/2 - material_thickness/2 - 2*material_thickness, 0, 0]) rotate([0, 0, -90]) rotate([90, 0, 180]) retainer();
+  translate([-w/2 + material_thickness/2 + 2*material_thickness, 0, 0]) rotate([0, 0, 90]) rotate([90, 0, 0]) lid_retainer();
+  translate([w/2 - material_thickness/2 - 2*material_thickness, 0, 0]) rotate([0, 0, -90]) rotate([90, 0, 180]) lid_retainer();
 }
