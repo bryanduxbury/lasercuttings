@@ -11,10 +11,11 @@ bottom_h = h-lid_h;
 
 rear_strut_sagitta_ratio=3.5;
 rear_strut_bottom_dx = 120;
-rear_strut_bottom_dy = 30;
-rear_strut_top_dx = 40;
+rear_strut_bottom_dy = 50;
+rear_strut_top_dx = 50;
 rear_strut_top_dy = 0;
-rear_strut_max_angle = 152.5;
+rear_strut_max_angle = 175;
+// rear_strut_max_angle = 152.5;
 
 
 rear_strut_delta_x = abs(rear_strut_bottom_dx - rear_strut_top_dx);
@@ -24,9 +25,9 @@ rear_strut_init_angle = asin(rear_strut_delta_y / rear_strut_length);
 // rear_strut_max_angle = rear_strut_init_angle;
 
 
-front_strut_bottom_dx = 55;
-front_strut_bottom_dy = 30;
-front_strut_top_dx = -120;
+front_strut_bottom_dx = 50;
+front_strut_bottom_dy = 50;
+front_strut_top_dx = -130;
 front_strut_top_dy = 0;
 
 front_strut_delta_x = abs(front_strut_bottom_dx - front_strut_top_dx);
@@ -53,3 +54,8 @@ echo("theta_lower:", theta_lower);
 
 front_strut_max_angle = theta_lower + theta_upper;
 echo ("front_strut_max_angle", front_strut_max_angle);
+
+lid_angle_top = acos((pow(top_bar, 2) + pow(diagonal_len, 2) - pow(front_strut_length, 2))/(2*top_bar*diagonal_len));
+lid_angle_bottom = (180 - rear_strut_max_angle - theta_lower);
+lid_angle = lid_angle_top + lid_angle_bottom;
+echo("lid_angle:", lid_angle);
