@@ -9,7 +9,7 @@ module sawtooth(tab_size, tab_spacing, num_tabs) {
 
 module lid_front() {
   color([255/255, 0/255, 0/255]) {
-    difference() {
+    render() difference() {
       cube(size=[w, lid_h, material_thickness], center=true);
       for (a = [0, 180]) {
         rotate([0, a, 0]) {
@@ -32,7 +32,7 @@ module lid_front() {
 }
 
 module lid_back() {
-  color([255/255, 0/255, 0/255]) difference() {
+  color([255/255, 0/255, 0/255]) render() difference() {
     cube(size=[w, lid_h, material_thickness], center=true);
     for (a = [0, 180]) {
       rotate([0, a, 0]) {
@@ -57,7 +57,7 @@ module lid_back() {
 
 module lid_side() {
   color([0/255, 255/255, 0/255]) {
-    difference() {
+    render() difference() {
       cube(size=[d, lid_h, material_thickness], center=true);
       for (a = [0, 180]) {
         rotate([0, a, 0]) {
@@ -74,7 +74,7 @@ module lid_side() {
 
 module lid_bottom() {
   color([0/255, 0/255, 255/255]) {
-    difference() {
+    render() difference() {
       cube(size=[w, d, material_thickness], center=true);
       translate([0, -d/2 + material_thickness/2, 0]) sawtooth(w/11, 0, 7);
       translate([0, d/2 - material_thickness/2, 0]) sawtooth(w/11, 0, 7);
@@ -91,13 +91,13 @@ module lid_bottom() {
 
 module lid_retainer() {
   color([125/255, 125/255, 0/255]) {
-    difference () {
+    render() difference () {
       cube(size=[d, lid_h, material_thickness], center=true);
 
       for (a = [0, 180]) {
         rotate([0, a, 0]) {
           translate([d/2 - material_thickness/2, 0, 0]) {
-            rotate([0, 0, 90]) sawtooth(bottom_h/9, 0, 5);
+            rotate([0, 0, 90]) sawtooth(bottom_h/9, 0, 6);
           }
         }
       }

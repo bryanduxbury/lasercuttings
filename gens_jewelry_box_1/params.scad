@@ -1,4 +1,5 @@
 // arguments
+laser_beam_width=.005*25.4;
 material_thickness=3;
 h = 200;
 w = 400;
@@ -8,6 +9,10 @@ lid_h = 60;
 
 // calculated
 bottom_h = h-lid_h;
+
+strut_width=10;
+strut_pivot_r=5;
+strut_pivot_hole_r=5.5;
 
 rear_strut_sagitta_ratio=3.5;
 rear_strut_bottom_dx = 120;

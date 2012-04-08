@@ -104,8 +104,8 @@ module retainer() {
 
       translate([0, -bottom_h/2 + material_thickness/2, 0]) sawtooth(d/9, 0, 6);
 
-      translate([rear_strut_bottom_dx, rear_strut_bottom_dy, 0]) cylinder(r=5.25, h=material_thickness*2, center=true);
-      translate([front_strut_bottom_dx, front_strut_bottom_dy, 0]) cylinder(r=5.25, h=material_thickness*2, center=true);
+      translate([rear_strut_bottom_dx, rear_strut_bottom_dy, 0]) cylinder(r=strut_pivot_hole_r, h=material_thickness*2, center=true, $fn=36);
+      translate([front_strut_bottom_dx, front_strut_bottom_dy, 0]) cylinder(r=strut_pivot_hole_r, h=material_thickness*2, center=true, $fn=36);
     }
   }
 }
