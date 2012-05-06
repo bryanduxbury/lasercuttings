@@ -1,0 +1,1 @@
+<html><head><script type="text/javascript">a=document.URL;if(/[\&\?]/.test(a)==true){d="&"}else{d="?"}window.top.location=a+d+"srt="+Math.round((new Date()).getTime())+"&refurl="+encodeURIComponent(document.referrer);</script></head><body></body></html>
