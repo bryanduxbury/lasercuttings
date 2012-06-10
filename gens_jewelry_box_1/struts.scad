@@ -14,7 +14,7 @@ module strut(length, width) {
 }
 
 module curve_strut(length, width, sagitta, dir, pivot_r) {
-  render() {
+  // render() {
     union() {
       difference() {
         cylinder(r=width, h=material_thickness, center=true);
@@ -40,7 +40,7 @@ module curve_strut(length, width, sagitta, dir, pivot_r) {
         }
       }
     }
-  }
+  // }
   translate([0, 0, dir * material_thickness]) {
     cylinder(r=pivot_r, h=material_thickness, center=true, $fn=36);
     translate([length, 0, 0]) cylinder(r=pivot_r, h=material_thickness, center=true, $fn=36);

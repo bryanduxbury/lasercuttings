@@ -1,7 +1,8 @@
 // arguments
 laser_beam_width=.005*25.4;
 // material_thickness=3;
-material_thickness=0.322 * 25.4;
+material_thickness=5.4;
+echo("Material thickness: ", material_thickness);
 h = 200;
 w = 400;
 d = 300;

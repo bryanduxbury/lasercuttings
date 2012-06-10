@@ -9,7 +9,8 @@ module sawtooth(tab_size, tab_spacing, num_tabs) {
 
 module front() {
   color([255/255, 0/255, 0/255]) {
-    render() difference() {
+    // render() 
+    difference() {
       cube(size=[w, bottom_h, material_thickness], center=true);
       for (a = [0, 180]) {
         rotate([0, a, 0]) {
@@ -32,7 +33,9 @@ module front() {
 }
 
 module back() {
-  color([255/255, 0/255, 0/255]) render() difference() {
+  color([255/255, 0/255, 0/255]) 
+    // render() 
+    difference() {
     cube(size=[w, bottom_h, material_thickness], center=true);
     for (a = [0, 180]) {
       rotate([0, a, 0]) {
@@ -57,7 +60,8 @@ module back() {
 
 module side() {
   color([0/255, 255/255, 0/255]) {
-    render() difference() {
+    // render() 
+    difference() {
       cube(size=[d, bottom_h, material_thickness], center=true);
       for (a = [0, 180]) {
         rotate([0, a, 0]) {
@@ -74,7 +78,8 @@ module side() {
 
 module bottom() {
   color([0/255, 0/255, 255/255]) {
-    render() difference() {
+    // render() 
+    difference() {
       cube(size=[w, d, material_thickness], center=true);
       translate([0, -d/2 + material_thickness/2, 0]) sawtooth(w/11, 0, 7);
       translate([0, d/2 - material_thickness/2, 0]) sawtooth(w/11, 0, 7);
@@ -91,7 +96,8 @@ module bottom() {
 
 module retainer() {
   color([125/255, 125/255, 0/255]) {
-    render() difference () {
+    // render() 
+    difference() {
       cube(size=[d, bottom_h, material_thickness], center=true);
 
       for (a = [0, 180]) {

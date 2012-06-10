@@ -3,6 +3,8 @@ use <box_bottom.scad>
 use <lid.scad>
 use <struts.scad>
 
+echo("blah");
+
 projection(cut=true) {
   translate([0, -d/2 - bottom_h/2 - material_thickness/2, 0]) front();
   translate([0, d/2 + bottom_h/2 + material_thickness/2, 0]) back();
