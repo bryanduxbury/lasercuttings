@@ -51,8 +51,8 @@ module tray_bottom() {
       translate([13/16*tray_w, 0, 0]) rotate([90, 0, 90]) cutout_array(d_teeth, d_tooth_width);
 
       translate([1/4 * tray_w, 0, 0]) {
-        translate([0, tray_d / 2 - tray_d / 3, 0]) rotate([90, 0, 0]) cutout_array(5, v2_width / 11);
-        translate([0, tray_d / 2 - tray_d * 2 / 3, 0]) rotate([90, 0, 0]) cutout_array(5, v2_width / 11);
+        translate([0, tray_d / 2 - tray_d / 3, 0]) rotate([90, 0, 0]) cutout_array(5, v1_width / 11);
+        translate([0, tray_d / 2 - tray_d * 2 / 3, 0]) rotate([90, 0, 0]) cutout_array(5, v1_width / 11);
       }
       
       translate([(1/2 + 13/16) / 2 * tray_w, v2_v, 0]) rotate([90, 0, 0]) cutout_array(3, v2_width / 7);
@@ -73,8 +73,8 @@ module h_div_base() {
 module tray_l() {
   color([1, 0, 0]) render() difference() {
     h_div_base();
-    translate([-tray_d / 2 + tray_d / 3, 0, 0]) rotate([90, 0, 90]) cutout_array(h_teeth, h_tooth_width);
-    translate([tray_d / 2 - tray_d / 3, 0, 0]) rotate([90, 0, 90]) cutout_array(h_teeth, h_tooth_width);
+    translate([-tray_d / 2 + tray_d / 3, material_thickness, 0]) rotate([90, 0, 90]) inverse_cutout_array(h_teeth, h_tooth_width);
+    translate([tray_d / 2 - tray_d / 3, material_thickness, 0]) rotate([90, 0, 90]) inverse_cutout_array(h_teeth, h_tooth_width);
   }
 }
 
@@ -115,16 +115,16 @@ module h_div_1() {
 module h_div_2() {
   color([255/255, 0/255, 0/255]) render() difference() {
     h_div_base();
-    translate([-tray_d / 2 + tray_d / 3, 0, 0]) rotate([90, 0, 90]) cutout_array(h_teeth, h_tooth_width);
-    translate([tray_d / 2 - tray_d / 3, 0, 0]) rotate([90, 0, 90]) cutout_array(h_teeth, h_tooth_width);
-    translate([v2_v, 0, 0]) rotate([90, 0, 90]) cutout_array(h_teeth, h_tooth_width);
+    translate([-tray_d / 2 + tray_d / 3, material_thickness, 0]) rotate([90, 0, 90]) inverse_cutout_array(h_teeth, h_tooth_width);
+    translate([tray_d / 2 - tray_d / 3, material_thickness, 0]) rotate([90, 0, 90]) inverse_cutout_array(h_teeth, h_tooth_width);
+    translate([v2_v, material_thickness, 0]) rotate([90, 0, 90]) inverse_cutout_array(h_teeth, h_tooth_width);
   }
 }
 
 module h_div_3() {
   color([255/255, 0/255, 0/255]) render() difference() {
     h_div_base();
-    translate([v2_v, 0, 0]) rotate([90, 0, 90]) cutout_array(h_teeth, h_tooth_width);
+    translate([v2_v, material_thickness, 0]) rotate([90, 0, 90]) inverse_cutout_array(h_teeth, h_tooth_width);
   }
 }
 
@@ -135,6 +135,9 @@ module v_div_1() {
     translate([0, -tray_h / 2, 0]) inverse_cutout_array(5, v1_width/11);
     translate([-(v1_width) / 2, material_thickness, 0]) rotate([0, 0, 90]) cutout_array(h_teeth, h_tooth_width);
     translate([(v1_width) / 2, material_thickness, 0]) rotate([0, 0, 90]) cutout_array(h_teeth, h_tooth_width);
+    
+    translate([-v1_width/2 + v1_width / 3, tray_h/2, 0]) cube(size=[material_thickness, tray_h, material_thickness*2], center=true);
+    translate([-v1_width/2 + v1_width * 2 / 3, tray_h/2, 0]) cube(size=[material_thickness, tray_h, material_thickness*2], center=true);
   }
 }
 
