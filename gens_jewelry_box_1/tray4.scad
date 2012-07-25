@@ -116,10 +116,20 @@ module h_div_2() {
   color([255/255, 0/255, 0/255]) render() difference() {
     h_div_base();
     translate([-tray_d / 2 + tray_d / 3, material_thickness, 0]) rotate([90, 0, 90]) inverse_cutout_array(h_teeth, h_tooth_width);
-    translate([tray_d / 2 - tray_d / 3, material_thickness, 0]) rotate([90, 0, 90]) inverse_cutout_array(h_teeth, h_tooth_width);
-    translate([v2_v, material_thickness, 0]) rotate([90, 0, 90]) inverse_cutout_array(h_teeth, h_tooth_width);
+    // translate([tray_d / 2 - tray_d / 3, material_thickness, 0]) rotate([90, 0, 90]) inverse_cutout_array(h_teeth, h_tooth_width);
+    #translate([v2_v, material_thickness, 0]) rotate([90, 0, 90]) inverse_cutout_array(h_teeth, h_tooth_width);
   }
 }
+
+module h_div_2_prime() {
+  color([255/255, 0/255, 0/255]) render() difference() {
+    h_div_base();
+    // translate([-tray_d / 2 + tray_d / 3, material_thickness, 0]) rotate([90, 0, 90]) inverse_cutout_array(h_teeth, h_tooth_width);
+    translate([tray_d / 2 - tray_d / 3, material_thickness, 0]) rotate([90, 0, 90]) inverse_cutout_array(h_teeth, h_tooth_width);
+    #translate([v2_v, material_thickness, 0]) rotate([90, 0, 90]) inverse_cutout_array(h_teeth, h_tooth_width);
+  }
+}
+
 
 module h_div_3() {
   color([255/255, 0/255, 0/255]) render() difference() {
@@ -183,7 +193,7 @@ module array(sep) {
 
 module tray_panelized() {
   projection(cut=true) array(tray_w/2) {
-    tray_bottom();
+    // tray_bottom();
     rotate([0, 0, 90]) tray_l();
     rotate([0, 0, 90]) tray_r();
     rotate([0, 0, 90]) tray_front();
@@ -191,14 +201,15 @@ module tray_panelized() {
     rotate([0, 0, 90]) h_div_1();
     rotate([0, 0, 90]) h_div_1();
     rotate([0, 0, 90]) h_div_2();
+    rotate([0, 0, 90]) h_div_2_prime();
     rotate([0, 0, 90]) h_div_3();
-
+    
     rotate([0, 0, 90]) v_div_1();
     rotate([0, 0, 90]) v_div_1();
     rotate([0, 0, 90]) v_div_2();
   }
 }
 
-tray_assembled();
+// tray_assembled();
 
-// tray_panelized();
+tray_panelized();
