@@ -154,7 +154,7 @@ module side() {
 module bottom() {
   color([0/255, 0/255, 255/255]) {
     render()
-    !difference() {
+    difference() {
       cube(size=[w+laser_beam_width, d+laser_beam_width, material_thickness], center=true);
       for (a =[0,180]) rotate([0, 0, a]) {
         translate([0, -d/2, 0]) cube(size=[w / 3 - laser_beam_width, material_thickness*2-laser_beam_width, material_thickness*2], center=true);
@@ -369,7 +369,7 @@ module curve_strut_assembly(length, width, sagitta, dir, pivot_r) {
 module face_support(h) {
   render() intersection() {
     difference() {
-      cube(size=[30, h, material_thickness], center=true);
+      cube(size=[30+laser_beam_width, h+laser_beam_width, material_thickness], center=true);
 
       translate([30/2 - 10 + laser_beam_width, h/2 + laser_beam_width , 0]) cube(size=[20, 13.5, material_thickness+0.1], center=true);
 
@@ -386,13 +386,13 @@ module blade_support(h) {
   render() {
     intersection() {
       difference() {
-        cube(size=[30, h, material_thickness], center=true);
+        cube(size=[30+laser_beam_width, h+laser_beam_width, material_thickness], center=true);
 
         for (a=[0,180]) {
-          rotate([0, a, 0]) translate([30/2, -h/2, 0]) cube(size=[20, material_thickness*2, material_thickness+0.1], center=true);
+          rotate([0, a, 0]) translate([30/2, -h/2, 0]) cube(size=[20-laser_beam_width, material_thickness*2-laser_beam_width, material_thickness+0.1], center=true);
         }
 
-        translate([15, h/2, 0]) cube(size=[30, 6.25, material_thickness+0.1], center=true);
+        translate([15+laser_beam_width/2, h/2, 0]) cube(size=[30-laser_beam_width, 6.25-laser_beam_width, material_thickness+0.1], center=true);
       }
       translate([20, -h/2 + material_thickness, 0]) cylinder(r=35, h=material_thickness, center=true, $fn=1000);
       translate([-20, -h/2 + material_thickness, 0]) cylinder(r=35, h=material_thickness, center=true, $fn=1000);
@@ -518,8 +518,71 @@ module paddle() {
   }
 }
 
+module array(sep) {
+  for (i = [0:$children-1]) {
+    translate([0, sep * 2 * i, 0]) child(i);
+  }
+}
+
+module panelized() {
+  translate([0, d/2+1, 0]) bottom();
+  translate([0, -d/2-1, 0]) bottom();
+  
+  translate([0, d+2 + bottom_h/2, 0]) array(bottom_h+1) {
+    front();
+    back();
+    side();
+    side();
+    right_bottom_retainer();
+    left_bottom_retainer();
+    face_support(bottom_h);
+    blade_support(bottom_h);
+    blade_support(bottom_h);
+  }
+  
+  translate([w/2 + w/2 + 5, d+2 + bottom_h/2, 0]) array(bottom_h+1) {
+    lid_front();
+    lid_back();
+    lid_side();
+    lid_side();
+    right_lid_retainer();
+    left_lid_retainer();
+    face_support(lid_h);
+    blade_support(lid_h);
+    blade_support(lid_h);
+  }
+  
+  translate([w/2 + 10, 0, 0]) rotate([0, 0, -90]) array(12) {
+    strut(front_strut_length, strut_width, front_strut_length/front_strut_sagitta_ratio, 1, strut_pivot_r);
+    strut(front_strut_length, strut_width, front_strut_length/front_strut_sagitta_ratio, -1, strut_pivot_r);
+
+    strut(rear_strut_length, strut_width, rear_strut_length/rear_strut_sagitta_ratio, 1, strut_pivot_r);
 
 
-assembled();
+    strut(rear_strut_length, strut_width, rear_strut_length/rear_strut_sagitta_ratio, -1, strut_pivot_r);
+  }
 
-translate([0, 0, h/2 - bottom_h/2]) paddle();
+  translate([w/2 + 10, d/4, 0]) {
+    for (i=[0:15]) {
+      translate([(strut_pivot_r *2 + 2) * (i % 8), floor(i / 8) * -(strut_pivot_r*2 + 1), 0]) strut_pivot(strut_pivot_r);
+    }
+  }
+  
+  translate([w/2 + 10, d / 2, 0]) rotate([0, 0, -90]) array(10) {
+    latch_pivot_endplate();
+    latch_pivot_inside();
+    latch_pivot_inside();
+    latch_pivot_inside();
+    latch_pivot_inside();
+    latch_catch();
+    latch_plate();
+  }
+}
+
+// assembled();
+// 
+// translate([0, 0, h/2 - bottom_h/2]) paddle();
+
+projection(cut=true) {
+  panelized();
+}
