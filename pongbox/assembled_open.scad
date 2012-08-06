@@ -2,7 +2,7 @@ use <oshw.scad>
 
 // arguments
 laser_beam_width=.005*25.4;
-material_thickness=5.7;
+material_thickness=3;
 // material_thickness=5.4;
 echo("Material thickness: ", material_thickness);
 h = 50;
@@ -21,7 +21,7 @@ strut_pivot_hole_r=5.1;
 rear_strut_sagitta_ratio=7;
 rear_strut_bottom_dx = d / 2 - material_thickness - strut_pivot_r * 1.5;
 rear_strut_bottom_dy = -1;
-rear_strut_top_dx = d / 2 - material_thickness - strut_width * 6;
+rear_strut_top_dx = d / 2 - material_thickness - strut_width * 5;
 rear_strut_top_dy = -1;
 
 
@@ -35,10 +35,10 @@ echo("closed angle", rear_strut_init_angle);
 rear_strut_max_angle = 120;
 // rear_strut_max_angle = rear_strut_init_angle;
 
-front_strut_sagitta_ratio=10;
-front_strut_bottom_dx = d / 2 - material_thickness - strut_width * 6;
+front_strut_sagitta_ratio=13;
+front_strut_bottom_dx = d / 2 - material_thickness - strut_width * 4 - 1;
 front_strut_bottom_dy = -1;
-front_strut_top_dx = -(d / 2 - material_thickness - strut_width * 0.5);
+front_strut_top_dx = -(d / 2 - material_thickness - strut_width * 0.5 - 1);
 front_strut_top_dy = -1;
 
 front_strut_delta_x = abs(front_strut_bottom_dx - front_strut_top_dx);
@@ -209,8 +209,8 @@ module right_bottom_retainer() {
 module complete_box() {
   translate([0, -d/2 + material_thickness/2 - 0.001, 0]) rotate([90, 0, 0]) front();
   translate([0, d/2 - material_thickness/2, 0]) rotate([0, 0, 180]) rotate([90, 0, 0]) back();
-  // translate([-w/2 + material_thickness/2, 0, 0]) rotate([0, 0, -90]) rotate([90, 0, 0]) side();
-  // translate([w/2 - material_thickness/2, 0, 0]) rotate([0, 0, 90]) rotate([90, 0, 0]) side();
+  translate([-w/2 + material_thickness/2, 0, 0]) rotate([0, 0, -90]) rotate([90, 0, 0]) side();
+  translate([w/2 - material_thickness/2, 0, 0]) rotate([0, 0, 90]) rotate([90, 0, 0]) side();
   translate([0, 0, -bottom_h/2 + material_thickness/2]) bottom();
 
   translate([-w/2 + material_thickness/2 + 2*material_thickness, 0, 0]) rotate([0, 0, 90]) rotate([90, 0, 0]) left_bottom_retainer();
@@ -222,28 +222,6 @@ module complete_box() {
     rotate([0, 0, a]) translate([0, -92/2, 0]) rotate([90, 0, 90]) blade_support(bottom_h);
   }
 }
-
-// module lid_front_back_base() {
-//   difference() {
-//     cube(size=[w+laser_beam_width, lid_h+laser_beam_width, material_thickness], center=true);
-//     for (a = [0, 180]) {
-//       rotate([0, a, 0]) {
-//         translate([w/2 - material_thickness/2, 0, 0]) {
-//           rotate([0, 0, 90]) sawtooth(material_thickness, 0, (bottom_h - material_thickness) / material_thickness);
-//         }
-//       }
-//     }
-//     translate([0, -lid_h/2 + material_thickness/2, 0]) sawtooth(w/11, 0, 6);
-// 
-//     for (a = [0, 180]) {
-//       rotate([0, a, 0]) {
-//         translate([w/2 - material_thickness/2 - 2*material_thickness, material_thickness * 4, 0]) {
-//           rotate([0, 0, 90]) sawtooth(material_thickness, 0, (bottom_h - material_thickness) / material_thickness);
-//         }
-//       }
-//     }
-//   }
-// }
 
 module lid_front() {
   color([255/255, 0/255, 0/255]) {
@@ -279,7 +257,7 @@ module lid_bottom() {
   color([0/255, 0/255, 255/255]) {
     render() difference() {
       bottom_base();
-      scale([1.5, 1.5, 1]) linear_extrude(height=material_thickness*2, center=true) oshw(-laser_beam_width/2);
+      linear_extrude(height=material_thickness*2, center=true) oshw(-laser_beam_width/2, 1.5);
     }
   }
 }
@@ -313,8 +291,8 @@ module left_lid_retainer() {
 module complete_lid() {
   translate([0, -d/2 + material_thickness/2 - 0.001, 0]) rotate([90, 0, 0]) lid_front();
   translate([0, d/2 - material_thickness/2, 0]) rotate([0, 0, 180]) rotate([90, 0, 0]) lid_back();
-  // translate([-w/2 + material_thickness/2, 0, 0]) rotate([0, 0, -90]) rotate([90, 0, 0]) lid_side();
-  // translate([w/2 - material_thickness/2, 0, 0]) rotate([0, 0, 90]) rotate([90, 0, 0]) lid_side();
+  translate([-w/2 + material_thickness/2, 0, 0]) rotate([0, 0, -90]) rotate([90, 0, 0]) lid_side();
+  translate([w/2 - material_thickness/2, 0, 0]) rotate([0, 0, 90]) rotate([90, 0, 0]) lid_side();
   translate([0, 0, -lid_h/2 + material_thickness/2]) rotate([0, 0, 180]) lid_bottom();
 
   translate([-w/2 + material_thickness/2 + 2*material_thickness, 0, 0]) rotate([0, 0, 90]) rotate([90, 0, 0]) right_lid_retainer();
@@ -535,7 +513,7 @@ module panelized() {
   translate([0, d/2+1, 0]) lid_bottom();
   translate([0, -d/2-1, 0]) bottom();
   
-  // render() 
+  render() 
   translate([0, d+2 + bottom_h/2, 0]) array(bottom_h+1) {
     front();
     back();
@@ -555,7 +533,7 @@ module panelized() {
     
   }
 
-  // render() 
+  render() 
   translate([d*2 + 3, d+2 + bottom_h/2, 0]) array(bottom_h+1) {
     lid_front();
     lid_back();
@@ -574,7 +552,7 @@ module panelized() {
     }
   }
 
-  // render() 
+  render() 
   translate([w/2 + 10, 0, 0]) rotate([0, 0, -90]) array(20) {
     strut(front_strut_length, strut_width, front_strut_length/front_strut_sagitta_ratio, 1, strut_pivot_r);
     strut(front_strut_length, strut_width, front_strut_length/front_strut_sagitta_ratio, -1, strut_pivot_r);
@@ -582,14 +560,14 @@ module panelized() {
     strut(rear_strut_length, strut_width, rear_strut_length/rear_strut_sagitta_ratio, -1, strut_pivot_r);
   }
 
-  //render() 
+  render() 
   translate([w/2 + 10, d/4, 0]) {
     for (i=[0:15]) {
       translate([(strut_pivot_r *2 + 2) * (i % 8), floor(i / 8) * -(strut_pivot_r*2 + 1), 0]) strut_pivot(strut_pivot_r);
     }
   }
 
-  //render() 
+  render() 
   translate([w/2 + 10, d / 2, 0]) rotate([0, 0, -90]) array(11) {
     latch_pivot_endplate();
     latch_pivot_inside();
@@ -600,12 +578,18 @@ module panelized() {
   }
 
   translate([w/2 + 100, d / 2, 0]) latch_plate();
+
 }
 
-assembled();
+// assembled();
 // 
 // translate([0, 0, h/2 - bottom_h/2]) paddle();
 
 // projection(cut=true) {
-  // panelized();
+//   panelized();
 // }
+translate([w + 20, d / 2, 0]) !rotate([0, 0, -90]) array(100) {
+  oshw(-laser_beam_width*1.5, 1.5);
+  oshw(-laser_beam_width*2, 1.5);
+  oshw(-laser_beam_width*2.5, 1.5);
+}
