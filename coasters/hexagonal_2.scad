@@ -1,11 +1,15 @@
-gutter_w = 2.5;
+gutter_w = 3;
 total_r = 50;
 total_divisions = 3.375;
 
 section_r = (total_r - gutter_w) * 2 / total_divisions;
 
 module hex() {
-  circle(r=section_r/2+gutter_w/2*tan(30), center=true, $fn=6);
+  for (a=[0:5]) {
+    rotate([0, 0, a*60]) translate([0, (section_r/2 - gutter_w/2)/2, 0]) square(size=[(section_r/2 - gutter_w/2)*tan(30)*2, section_r/2 - gutter_w/2], center=true);
+  }
+  
+  // circle(r=section_r/2+gutter_w/2*tan(30), center=true, $fn=6);
 }
 
 difference() {
