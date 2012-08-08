@@ -16,7 +16,7 @@ difference() {
   circle(r=total_r, $fn=150);
 
   intersection() {
-    circle(r=total_r-gutter_w);
+    circle(r=total_r-gutter_w, $fn=150);
     difference() {
       union() {
         hex();
