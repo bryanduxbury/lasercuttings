@@ -1,4 +1,4 @@
-central_dimension = 75;
+central_dimension = 60;
 tab_dimension = 10;
 
 module hook_tab() {
@@ -39,7 +39,7 @@ module flap_assembly(folds) {
     if (folds == 1) {
       #translate([0, tab_dimension/2, 0]) square(size=[central_dimension/2, 0.001], center=true);
       #translate([central_dimension/4, tab_dimension/2 + central_dimension/4, 0]) square(size=[0.001, central_dimension/2], center=true);
-      #translate([0, tab_dimension/2 + central_dimension/4, 0]) rotate([0, 0, -45]) square(size=[0.001, sqrt(2)*central_dimension/2], center=true);
+      #translate([0, tab_dimension/2 + central_dimension/4, 0]) rotate([0, 0, -45]) square(size=[0.01, sqrt(2)*central_dimension/2], center=true);
       #translate([0, -tab_dimension/2, 0]) square(size=[central_dimension/2, 0.001], center=true);
     } else {
       translate([0, tab_dimension/2 + central_dimension/4, 0]) rotate([0, 0, 45]) translate([0, tab_dimension/2, 0]) long_tab();
