@@ -209,10 +209,10 @@ module right_bottom_retainer() {
 }
 
 module complete_box() {
-  // translate([0, -d/2 + material_thickness/2 - 0.001, 0]) rotate([90, 0, 0]) front();
+  translate([0, -d/2 + material_thickness/2 - 0.001, 0]) rotate([90, 0, 0]) front();
   translate([0, d/2 - material_thickness/2, 0]) rotate([0, 0, 180]) rotate([90, 0, 0]) back();
-  // translate([-w/2 + material_thickness/2, 0, 0]) rotate([0, 0, -90]) rotate([90, 0, 0]) side();
-  // translate([w/2 - material_thickness/2, 0, 0]) rotate([0, 0, 90]) rotate([90, 0, 0]) side();
+  translate([-w/2 + material_thickness/2, 0, 0]) rotate([0, 0, -90]) rotate([90, 0, 0]) side();
+  translate([w/2 - material_thickness/2, 0, 0]) rotate([0, 0, 90]) rotate([90, 0, 0]) side();
   translate([0, 0, -bottom_h/2 + material_thickness/2]) bottom();
 
   translate([-w/2 + material_thickness/2 + 2*material_thickness, 0, 0]) rotate([0, 0, 90]) rotate([90, 0, 0]) left_bottom_retainer();
@@ -292,7 +292,7 @@ module left_lid_retainer() {
 }
 
 module complete_lid() {
-  // translate([0, -d/2 + material_thickness/2 - 0.001, 0]) rotate([90, 0, 0]) lid_front();
+  translate([0, -d/2 + material_thickness/2 - 0.001, 0]) rotate([90, 0, 0]) lid_front();
   translate([0, d/2 - material_thickness/2, 0]) rotate([0, 0, 180]) rotate([90, 0, 0]) lid_back();
   translate([-w/2 + material_thickness/2, 0, 0]) rotate([0, 0, -90]) rotate([90, 0, 0]) lid_side();
   translate([w/2 - material_thickness/2, 0, 0]) rotate([0, 0, 90]) rotate([90, 0, 0]) lid_side();
@@ -313,7 +313,6 @@ module complete_lid() {
 module strut_pivot(pivot_r) {
   render() difference() {
     cylinder(r=pivot_r+laser_beam_width/2, h=material_thickness, center=true, $fn=100);
-    alignment_mark();
   }
 }
 
@@ -324,7 +323,8 @@ module strut(length, width, sagitta, dir, pivot_r) {
       for (x = [0,length]) translate([x, 0, 0]) {
         difference() {
           cylinder(r=pivot_r+0.5, h=material_thickness, center=true, $fn=100);
-          alignment_mark();
+          // alignment_mark();
+          cylinder(r=pivot_r, h=material_thickness+0.1, center=true);
         }
       }
 
@@ -533,7 +533,7 @@ module panelized() {
     union() {
       translate([-31, 0, 0]) face_support(bottom_h);
       blade_support(bottom_h);
-      translate([31, 0, 0]) blade_support(bottom_h);
+      translate([31, 0, 0]) rotate([0, 180, 0]) blade_support(bottom_h);
     }
     
   }
@@ -553,7 +553,7 @@ module panelized() {
     union() {
       translate([-31, 0, 0]) face_support(lid_h);
       blade_support(lid_h);
-      translate([31, 0, 0]) blade_support(lid_h);
+      translate([31, 0, 0]) rotate([0, 180, 0]) blade_support(lid_h);
     }
   }
 
@@ -586,18 +586,18 @@ module panelized() {
 
 }
 
-assembled();
+// assembled();
+// 
+// translate([0, 0, h/2 - bottom_h/2]) paddle();
 
-translate([0, 0, h/2 - bottom_h/2]) paddle();
+// translate([w/2 - material_thickness*7 - 20, d/2 - material_thickness * 2 - 20, bottom_h/2]) sphere(r=20);
+// translate([w/2 - material_thickness*7 - 20 - 40, d/2 - material_thickness * 2 - 20, bottom_h/2]) sphere(r=20);
 
-translate([w/2 - material_thickness*7 - 20, d/2 - material_thickness * 2 - 20, bottom_h/2]) sphere(r=20);
-translate([w/2 - material_thickness*7 - 20 - 40, d/2 - material_thickness * 2 - 20, bottom_h/2]) sphere(r=20);
-
-// projection(cut=true) {
-//   panelized();
-// }
+projection(cut=true) {
+  panelized();
+}
 // translate([w + 20, d / 2, 0]) !rotate([0, 0, -90]) array(100) {
-//   oshw(-laser_beam_width*1.5, 1.5);
-//   oshw(-laser_beam_width*2, 1.5);
 //   oshw(-laser_beam_width*2.5, 1.5);
+//   oshw(-laser_beam_width*3, 1.5);
+//   oshw(-laser_beam_width*3.5, 1.5);
 // }
