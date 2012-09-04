@@ -1,5 +1,5 @@
 central_dimension = 60;
-tab_dimension = 10;
+tab_dimension = 13;
 
 module hook_tab() {
   
