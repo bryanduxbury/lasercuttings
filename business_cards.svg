@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="2160"
+   height="1620"
+   id="svg52801"
+   version="1.1"
+   inkscape:version="0.48.1 r9760"
+   sodipodi:docname="business_cards.eps">
+  <defs
+     id="defs52803" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="6.5579313"
+     inkscape:cx="442.91339"
+     inkscape:cy="389.76383"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     units="in"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="1680"
+     inkscape:window-height="1002"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0">
+    <sodipodi:guide
+       orientation="1,0"
+       position="354.33071,354.33071"
+       id="guide52809" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="354.33071,354.33071"
+       id="guide52811" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="531.49606,354.33071"
+       id="guide52813" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="531.49606,425.19685"
+       id="guide52815" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="357.87402,421.65354"
+       id="guide52846" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="357.87402,421.65354"
+       id="guide52848" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="384.44882,393.30709"
+       id="guide52862" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="368.50394,396.85039"
+       id="guide52866" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="372.04724,400.3937"
+       id="guide52868" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="379.13386,411.02362"
+       id="guide52870" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="375.59055,403.93701"
+       id="guide52872" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="386.22047,386.22047"
+       id="guide52904" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="357.87402,357.87402"
+       id="guide52906" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="386.22047,386.22047"
+       id="guide52908" />
+    <inkscape:grid
+       type="xygrid"
+       id="grid53439"
+       empspacing="2"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true"
+       units="mm"
+       spacingx="0.25mm"
+       spacingy="0.5mm" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata52806">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,567.64025)">
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.17716534;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect52817"
+       width="177.16534"
+       height="70.866142"
+       x="354.33072"
+       y="1194.8031"
+       ry="9.1472168"
+       transform="translate(0,-567.64025)" />
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
+       x="390.80331"
+       y="647.63776"
+       id="text52819"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="390.80331"
+         y="647.63776"
+         id="tspan52825"
+         style="font-size:10px">duxbury@squareup.com</tspan><tspan
+         sodipodi:role="line"
+         x="390.80331"
+         y="660.13776"
+         id="tspan52823"
+         style="font-size:10px" /></text>
+    <g
+       id="g52900"
+       transform="translate(-3.5433012,-3.5432733)">
+      <path
+         id="rect52854"
+         transform="translate(0,-567.64025)"
+         d="m 367.09375,1201.875 c -3.13809,0 -5.6875,2.5494 -5.6875,5.6875 l 0,17 c 0,3.1381 2.54941,5.6875 5.6875,5.6875 l 17,0 c 3.13809,0 5.65625,-2.5494 5.65625,-5.6875 l 0,-17 c 0,-3.1381 -2.51816,-5.6875 -5.65625,-5.6875 l -17,0 z m 1.375,5.3438 14.25,0 c 0.96474,0 1.71875,0.754 1.71875,1.7187 l 0,14.25 c 0,0.9647 -0.75401,1.7187 -1.71875,1.7187 l -14.25,0 c -0.96474,0 -1.75,-0.754 -1.75,-1.7187 l 0,-14.25 c 0,-0.9647 0.78526,-1.7187 1.75,-1.7187 z"
+         style="fill:#000000;stroke:#000000;stroke-width:0.17716534;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         inkscape:connector-curvature="0" />
+      <rect
+         ry="1.7414005"
+         transform="translate(0,-567.64025)"
+         y="1212.5197"
+         x="372.04724"
+         height="7.0866199"
+         width="7.0866199"
+         id="rect52876"
+         style="fill:#000000;stroke:#000000;stroke-width:0.17716534;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    </g>
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.88582677;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect52910"
+       width="28.346451"
+       height="28.346451"
+       x="357.87402"
+       y="666.13928"
+       ry="0" />
+    <rect
+       style="fill:#000000;stroke:none"
+       id="rect53449"
+       width="1.7716535"
+       height="1.7716535"
+       x="361.4173"
+       y="669.68256" />
+    <rect
+       style="fill:#000000;stroke:none"
+       id="rect53451"
+       width="1.7716535"
+       height="1.7716535"
+       x="380.90552"
+       y="669.68256" />
+    <rect
+       style="fill:#000000;stroke:none"
+       id="rect53453"
+       width="1.7716535"
+       height="1.7716535"
+       x="361.4173"
+       y="689.17078" />
+    <rect
+       style="fill:#000000;stroke:none"
+       id="rect53455"
+       width="1.7716535"
+       height="1.7716535"
+       x="380.90552"
+       y="689.17078" />
+    <path
+       style="fill:#4d4d4d;stroke:none"
+       d="M 366.71875 1239.0938 L 366.71875 1240.875 L 364.96875 1240.875 L 364.96875 1246.1875 L 366.71875 1246.1875 L 368.5 1246.1875 L 368.5 1240.875 L 373.8125 1240.875 L 373.8125 1246.1875 L 372.0625 1246.1875 L 372.0625 1247.9375 L 370.28125 1247.9375 L 370.28125 1251.5 L 373.8125 1251.5 L 373.8125 1247.9375 L 377.375 1247.9375 L 377.375 1240.875 L 375.59375 1240.875 L 375.59375 1239.0938 L 373.8125 1239.0938 L 368.5 1239.0938 L 366.71875 1239.0938 z "
+       transform="translate(0,-567.64025)"
+       id="rect53457" />
+    <rect
+       y="685.6275"
+       x="370.2756"
+       height="3.543263"
+       width="3.5433071"
+       id="rect53471"
+       style="fill:#4d4d4d;stroke:none" />
+    <path
+       inkscape:connector-curvature="0"
+       style="fill:#000000;stroke:none"
+       d="m 377.375,674.98475 0,5.3125 -3.5625,0 0,1.7813 0,1.7812 -1.75,0 0,1.7812 3.53125,0 0,-1.7812 0,-1.7812 1.78125,0 1.75,0 0,-1.7813 0,-5.3125 -1.75,0 z"
+       id="rect53474" />
+    <path
+       inkscape:connector-curvature="0"
+       style="fill:#000000;stroke:none"
+       d="m 373.8125,687.39095 0,1.7813 -1.75,0 0,1.7813 1.75,0 1.78125,0 0,-3.5626 -1.78125,0 z"
+       id="rect53486" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.88582677;stroke-miterlimit:4;stroke-dasharray:none"
+       id="rect53491"
+       width="24.80315"
+       height="24.80315"
+       x="359.64566"
+       y="667.91089" />
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
+       x="390.44687"
+       y="683.07129"
+       id="text53493"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan53495"
+         x="390.44687"
+         y="683.07129">bryan.duxbury@gmail.com</tspan></text>
+    <path
+       style="fill:#000000;fill-opacity:1;stroke:none"
+       d="M 368.5 1240.875 L 368.5 1242.625 L 368.5 1246.1875 L 366.71875 1246.1875 L 366.71875 1247.9375 L 370.28125 1247.9375 L 370.28125 1246.1875 L 370.28125 1242.625 L 373.8125 1242.625 L 373.8125 1240.875 L 368.5 1240.875 z "
+       transform="translate(0,-567.64025)"
+       id="rect53519" />
+  </g>
+</svg>
