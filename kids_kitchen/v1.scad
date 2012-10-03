@@ -91,6 +91,9 @@ module combined_top() {
         translate([x*(fridge_width / 2), 0, 0]) edge_slot((fridge_width - 2 * tab_width - (fridge_width / 3 - tab_width)) );
       }
     }
+    
+    translate([-total_width/2 + fridge_width - material_thickness/2, fridge_depth/2 - microwave_depth / 2, 0]) rotate([0, 0, 90]) edge_slot(tab_width);
+    translate([-total_width/2 + fridge_width - material_thickness/2, -fridge_depth/2 + (fridge_depth - microwave_depth) / 2, 0]) rotate([0, 0, 90]) edge_slot(tab_width);
   }
 }
 
@@ -99,7 +102,15 @@ module fridge_left() {
 }
 
 module fridge_right() {
-  cube(size=[fridge_depth, fridge_total_height, material_thickness], center=true);
+  render() difference() {
+    cube(size=[fridge_depth, fridge_total_height, material_thickness], center=true);
+    translate([0, fridge_total_height/2 - material_thickness/2, 0]) {
+      translate([-fridge_depth / 2 + microwave_depth/2 + (fridge_depth - microwave_depth/2 - (fridge_depth-microwave_depth)/2 - tab_width)/2 + tab_width/2, 0, 0]) 
+        edge_slot(fridge_depth - microwave_depth/2 - (fridge_depth-microwave_depth)/2 - tab_width);
+      translate([-fridge_depth/2, 0, 0]) edge_slot(microwave_depth - tab_width);
+      translate([fridge_depth/2, 0, 0]) edge_slot((fridge_depth - microwave_depth) - tab_width);
+    }
+  }
 }
 
 module fridge_divider() {
