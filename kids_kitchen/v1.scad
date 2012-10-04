@@ -61,6 +61,19 @@ module tabs_at_thirds(w) {
   }
 }
 
+// module tabify(w,n) {
+//   #union() {
+//     for (x=[-floor(n/2):floor(n/2)]) {
+//       translate([x*w/n, 0, 0]) edge_slot((w-(n-1)*tab_width)/n);
+//     }
+//     // edge_slot(w/n-tab_width);
+//     // for (x=[1,-1]) {
+//     //   translate([x*w/2, 0, 0]) edge_slot(w - (w/3+tab_width));
+//     // }
+//   }
+// }
+
+
 module slots_at_thirds(w) {
   for (x=[1,-1]) {
     translate([x*w/6, 0, 0]) edge_slot(tab_width);
@@ -101,6 +114,10 @@ module back_plate() {
     translate([total_width/2 - material_thickness/2, total_height/2 - microwave_height/2, 0]) rotate([0, 0, 90]) edge_slot(tab_width);
     translate([total_width/2 - microwave_proper_width - material_thickness/2, total_height/2 - microwave_height/2, 0]) rotate([0, 0, 90]) edge_slot(tab_width);
     translate([total_width/2 - microwave_proper_width - control_panel_width - material_thickness/2, total_height/2 - microwave_height/2, 0]) rotate([0, 0, 90]) edge_slot(tab_width);
+    
+    translate([-total_width/2 + fridge_width/2, -total_height/2, 0]) cube(size=[fridge_width - 2 * feet_width, feet_height*2, material_thickness+0.1], center=true);
+    translate([-total_width/2 + fridge_width + stove_width /2, -total_height/2, 0]) cube(size=[stove_width - 2 * feet_width, feet_height*2, material_thickness+0.1], center=true);
+    translate([-total_width/2 + fridge_width + stove_width + sink_width/2, -total_height/2, 0]) cube(size=[sink_width - 2 * feet_width, feet_height*2, material_thickness+0.1], center=true);
   }
 }
 
@@ -124,6 +141,10 @@ module combined_bottom() {
         translate([0, x*fridge_depth/2, 0]) rotate([0, 0, 90]) edge_slot(feet_width*2);
       }
     }
+
+    translate([0, fridge_depth/2 - material_thickness/2, 0]) 
+      tabs_at_thirds(total_width);
+      // tabify(total_width, 3);
   }
 
 }
@@ -180,6 +201,12 @@ module combined_top() {
   // }
 }
 
+module center_feet_cutouts() {
+  for (x=[-1,1]) {
+    translate([x*((fridge_depth - 2 * feet_width - tab_width) / 4 + tab_width/2), 0, 0]) edge_slot((fridge_depth - 2 * feet_width - tab_width) / 2);
+  }
+}
+
 module fridge_left() {
   render() difference() {
     cube(size=[fridge_depth, fridge_total_height, material_thickness], center=true);
@@ -191,7 +218,10 @@ module fridge_left() {
     }
     translate([0, fridge_total_height / 2 - fridge_freezer_height, 0]) slots_at_thirds(fridge_depth);
     translate([fridge_width/2 - material_thickness/2, 0, 0]) rotate([0, 0, 90]) tabs_at_thirds(total_height);
+
+
     translate([0, -fridge_total_height/2, 0]) cube(size=[fridge_depth - 2 * feet_width, feet_height*2, material_thickness+0.1], center=true);
+    translate([0, -fridge_total_height/2 + feet_height + material_thickness/2, 0]) edge_slot(tab_width);
   }
 }
 
@@ -208,7 +238,9 @@ module fridge_right() {
     translate([-fridge_width/2 + material_thickness/2, 0, 0]) rotate([0, 0, 90]) tabs_at_thirds(total_height);
     
     translate([0, -fridge_total_height/2 + stove_height - material_thickness/2, 0]) slots_at_thirds(fridge_depth);
+
     translate([0, -fridge_total_height/2, 0]) cube(size=[fridge_depth - 2 * feet_width, feet_height*2, material_thickness+0.1], center=true);
+    translate([0, -fridge_total_height/2 + feet_height + material_thickness/2, 0]) center_feet_cutouts();
   }
 }
 
@@ -249,7 +281,9 @@ module stove_right() {
     cube(size=[stove_depth, stove_height, material_thickness], center=true);
     translate([stove_depth/2 - material_thickness/2, 0, 0]) rotate([0, 0, 90]) tabs_at_thirds(stove_height);
     translate([0, stove_height/2 - material_thickness/2, 0]) tabs_at_thirds(stove_depth);
+
     translate([0, -sink_height/2, 0]) cube(size=[sink_depth - 2 * feet_width, feet_height*2, material_thickness+0.1], center=true);
+    translate([0, -sink_height/2 + feet_height + material_thickness/2, 0]) center_feet_cutouts();
   }
 }
 
