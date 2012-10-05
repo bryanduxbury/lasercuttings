@@ -143,7 +143,8 @@ module combined_bottom() {
     }
 
     translate([0, fridge_depth/2 - material_thickness/2, 0]) 
-      tabs_at_thirds(total_width);
+      cube(size=[total_width, material_thickness, material_thickness+0.1], center=true);
+      // tabs_at_thirds(total_width);
       // tabify(total_width, 3);
   }
 
@@ -236,11 +237,13 @@ module fridge_right() {
     }
     translate([0, fridge_total_height / 2 - fridge_freezer_height, 0]) slots_at_thirds(fridge_depth);
     translate([-fridge_width/2 + material_thickness/2, 0, 0]) rotate([0, 0, 90]) tabs_at_thirds(total_height);
-    
+
     translate([0, -fridge_total_height/2 + stove_height - material_thickness/2, 0]) slots_at_thirds(fridge_depth);
 
     translate([0, -fridge_total_height/2, 0]) cube(size=[fridge_depth - 2 * feet_width, feet_height*2, material_thickness+0.1], center=true);
     translate([0, -fridge_total_height/2 + feet_height + material_thickness/2, 0]) center_feet_cutouts();
+    
+    translate([-(fridge_depth/2 - microwave_depth / 2), fridge_total_height/2 - microwave_height + material_thickness/2, 0]) edge_slot(tab_width);
   }
 }
 
@@ -312,12 +315,14 @@ module sink_assembly() {
 }
 
 module microwave_cupboard_bottom() {
-  render() difference() {
-    color([0/255, 64/255, 32/255]) cube(size=[microwave_width, microwave_depth, material_thickness], center=true);
+  render() color([0/255, 64/255, 32/255]) difference() {
+    translate([-material_thickness/2, 0, 0]) cube(size=[microwave_width + material_thickness, microwave_depth, material_thickness], center=true);
+
     translate([microwave_width/2 - material_thickness/2, 0, 0]) rotate([0, 0, 90]) single_tab(microwave_depth);
+    translate([-microwave_width/2 - material_thickness/2, 0, 0]) rotate([0, 0, 90]) single_tab(microwave_depth);
     translate([microwave_width/2 - microwave_proper_width - material_thickness/2, 0, 0]) rotate([0, 0, 90]) edge_slot(tab_width);
     translate([microwave_width/2 - microwave_proper_width - control_panel_width - material_thickness/2, 0, 0]) rotate([0, 0, 90]) edge_slot(tab_width);
-    
+
     translate([0, microwave_depth/2 - material_thickness/2, 0]) tabs_at_thirds(microwave_width);
   }
   
