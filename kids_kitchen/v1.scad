@@ -379,8 +379,18 @@ module sink_right() {
 
 }
 
+module sink_cupboard_door() {
+  difference() {
+    cube(size=[sink_width, sink_height - feet_height, material_thickness], center=true);
+    translate([-.8 * sink_width /2, .8 * (sink_height - feet_height) / 2, 0]) cylinder(r=bit_diameter/2, h=material_thickness*10, center=true, $fn=36);
+  }
+  
+  
+}
+
 module sink_assembly() {
   translate([sink_width/2 - material_thickness/2, 0, 0]) rotate([90, 0, -90]) sink_right();
+  translate([0, -sink_depth / 2 - material_thickness/2, material_thickness]) rotate([90, 0, 0]) sink_cupboard_door();
 }
 
 module microwave_cupboard_bottom() {
