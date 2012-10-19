@@ -8,6 +8,8 @@ bit_diameter = 1/4 * 25.4;
 tab_width = 2 * 25.4;
 
 handle_width = 3*25.4;
+handle_corner_radius = 25.4;
+handle_thickness = 1.5*25.4;
 fridge_handle_height = 12 * 25.4;
 freezer_handle_height = 6 * 25.4;
 fridge_x_from_right = 2 * 25.4;
@@ -282,14 +284,32 @@ module fridge_door_main() {
   cube(size=[fridge_width, fridge_total_height - fridge_freezer_height, material_thickness], center=true);
 }
 
+module generic_f_door_handle(h) {
+  render() difference() {
+    translate([0, -handle_corner_radius/2, 0]) union() {
+      cube(size=[handle_width, h - handle_corner_radius, material_thickness], center=true);
+      translate([-handle_width/2 + handle_corner_radius, (h - handle_corner_radius)/2, 0]) cylinder(r=handle_corner_radius, h=material_thickness, center=true);
+      translate([handle_corner_radius/2, (h - handle_corner_radius)/2, 0]) cube(size=[handle_width - handle_corner_radius, handle_corner_radius*2, material_thickness], center=true);
+    }
+
+    translate([handle_width/2, 0, 0]) {
+      translate([-handle_width + handle_thickness + handle_corner_radius, (h - handle_thickness*2)/2 - handle_corner_radius, 0]) cylinder(r=handle_corner_radius, h=material_thickness+0.1, center=true);
+      translate([-handle_width + handle_thickness + handle_corner_radius, -(h - handle_thickness*2)/2 + handle_corner_radius, 0]) cylinder(r=handle_corner_radius, h=material_thickness+0.1, center=true);
+      cube(size=[(handle_width - handle_thickness)*2, h - handle_thickness*2 - handle_corner_radius*2, material_thickness+0.1], center=true);
+      cube(size=[(handle_width - handle_thickness)*2 - handle_corner_radius*2, h - handle_thickness*2, material_thickness+0.1], center=true);
+    }
+  }
+}
+
+
 module fridge_door_handle() {
-  cube(size=[handle_width, fridge_handle_height, material_thickness], center=true);
+  generic_f_door_handle(fridge_handle_height);
 }
 
 module fridge_door_assembly() {
   color([120/255, 120/255, 120/255]) fridge_door_main();
   translate([fridge_width/2 - fridge_x_from_right + material_thickness/2, (fridge_total_height - fridge_freezer_height)/2 + fridge_y_from_top - fridge_handle_height/2, handle_width / 2 - material_thickness/2]) 
-    rotate([0, 90, 0]) color([12/255, 34/255, 56/255]) fridge_door_handle();
+    rotate([0, 90, 180]) color([12/255, 34/255, 56/255]) fridge_door_handle();
 }
 
 module freezer_door_main() {
@@ -297,7 +317,7 @@ module freezer_door_main() {
 }
 
 module freezer_door_handle() {
-  cube(size=[handle_width, freezer_handle_height, material_thickness], center=true);
+  generic_f_door_handle(freezer_handle_height);
 }
 
 module freezer_door_assembly() {
@@ -305,7 +325,6 @@ module freezer_door_assembly() {
   translate([fridge_width/2 - fridge_x_from_right + material_thickness/2, -fridge_freezer_height/2 - fridge_y_from_top + freezer_handle_height/2, handle_width / 2 - material_thickness/2]) 
     rotate([0, 90, 0]) color([12/255, 34/255, 56/255]) freezer_door_handle();
 }
-
 
 module fridge_assembly() {
   translate([-fridge_width/2 + material_thickness/2, 0, 0]) rotate([90, 0, 90]) fridge_left();
