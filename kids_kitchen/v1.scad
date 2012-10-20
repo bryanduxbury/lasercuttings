@@ -22,8 +22,14 @@ fridge_depth = 18 * 25.4;
 
 fridge_freezer_height = 12 * 25.4;
 
+// open
 fridge_door_angle = -135;
 freezer_door_angle = -115;
+
+// closed
+// fridge_door_angle = 0;
+// freezer_door_angle = 0;
+
 
 // stove dimensions
 stove_height = 18 * 25.4;
@@ -385,7 +391,24 @@ module stove_door_main() {
 }
 
 module stove_door_handle() {
-  cube(size=[stove_width*.8, handle_width, material_thickness], center=true);
+  render() difference() {
+    union() {
+      cube(size=[stove_width * 0.8 - handle_corner_radius * 2, handle_width, material_thickness], center=true);
+      for (i=[-1,1]) {
+        translate([(stove_width * 0.8 - handle_corner_radius * 2)/2*i, handle_width/-2 + handle_corner_radius, 0]) cylinder(r=handle_corner_radius, h=material_thickness, center=true);
+      }
+      translate([0, handle_corner_radius/2, 0]) cube(size=[stove_width * 0.8, handle_width - handle_corner_radius, material_thickness], center=true);
+    }
+
+    translate([0, handle_thickness/2, 0]) 
+      cube(size=[(stove_width * 0.8 - handle_corner_radius * 2) - handle_thickness * 2, handle_width - handle_thickness, material_thickness], center=true);
+    for (i=[-1,1]) {
+      translate([((stove_width * 0.8 - handle_corner_radius * 2) - handle_thickness * 2)/2*i, handle_width/2 - (handle_width - handle_thickness - handle_corner_radius), 0]) 
+        cylinder(r=handle_corner_radius, h=material_thickness, center=true);
+    }
+    translate([0, handle_width/2, 0]) 
+      cube(size=[(stove_width * 0.8) - handle_thickness * 2, (handle_width - handle_thickness - handle_corner_radius)*2, material_thickness], center=true);
+  }
 }
 
 module stove_door_assembly() {
@@ -393,7 +416,7 @@ module stove_door_assembly() {
     color([128/255, 128/255, 128/255]) {
       stove_door_main();
     }
-    translate([0, (stove_height - feet_height)/2 - stove_door_gutter, handle_width/2 - material_thickness/2]) rotate([90, 0, 0]) stove_door_handle();
+    translate([0, (stove_height - feet_height)/2 - stove_door_gutter, handle_width/2 - material_thickness/2]) rotate([-90, 0, 0]) stove_door_handle();
   }
 }
 
