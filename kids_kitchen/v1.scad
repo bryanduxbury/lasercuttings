@@ -387,6 +387,12 @@ module stove_door_main() {
     cube(size=[stove_width, stove_height - feet_height, material_thickness], center=true);
     translate([0, -stove_door_gutter/2, 0]) 
       rounded_rect(material_thickness+0.1, stove_width - stove_door_gutter*2, stove_height - feet_height - stove_door_gutter * 3, stove_door_window_corner_radius);
+
+    translate([0, (stove_height - feet_height)/2 - stove_door_gutter, 0]) {
+      for (i=[-1,1]) {
+        translate([(stove_width * 0.8 / 2 - handle_thickness/4) * i, 0, 0]) edge_slot(handle_thickness/2);
+      }
+    }
   }
 }
 
@@ -408,6 +414,10 @@ module stove_door_handle() {
     }
     translate([0, handle_width/2, 0]) 
       cube(size=[(stove_width * 0.8) - handle_thickness * 2, (handle_width - handle_thickness - handle_corner_radius)*2, material_thickness], center=true);
+
+    for (i=[-1,1]) {
+      translate([(stove_width * 0.8 / 2 - handle_thickness)*i, handle_width/2-material_thickness/2, 0]) edge_slot(handle_thickness);
+    }
   }
 }
 
