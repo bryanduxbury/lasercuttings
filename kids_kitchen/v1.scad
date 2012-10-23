@@ -65,6 +65,7 @@ total_width = fridge_width+stove_width+sink_width;
 total_height = fridge_total_height;
 total_depth = fridge_depth;
 
+flatten = 1;
 
 module xy() {
   color([192/255, 64/255, 64/255]) {
@@ -74,13 +75,13 @@ module xy() {
 
 module xz() {
   color([64/255, 192/255, 64/255]) {
-    child(0);
+    rotate([90*flatten, 0, 0]) child(0);
   }
 }
 
 module yz() {
   color([64/255, 64/255, 192/255]) {
-    child(0);
+    rotate([90*flatten, 0, 90 * flatten]) child(0);
   }
 }
 
@@ -272,7 +273,7 @@ module fridge_left() {
 }
 
 module fridge_right() {
-  yz() render() difference() {
+  yz() render() !difference() {
     cube(size=[fridge_depth, fridge_total_height, material_thickness], center=true);
     translate([0, fridge_total_height/2 - material_thickness/2, 0]) {
       translate([-fridge_depth / 2 + microwave_depth/2 + (fridge_depth - microwave_depth/2 - (fridge_depth-microwave_depth)/2 - tab_width)/2 + tab_width/2, 0, 0]) 
@@ -287,7 +288,7 @@ module fridge_right() {
 
     translate([0, -fridge_total_height/2, 0]) cube(size=[fridge_depth - 2 * feet_width, feet_height*2, material_thickness+0.1], center=true);
     translate([0, -fridge_total_height/2 + feet_height + material_thickness/2, 0]) center_feet_cutouts();
-    
+
     translate([-(fridge_depth/2 - microwave_depth / 2), fridge_total_height/2 - microwave_height + material_thickness/2, 0]) edge_slot(tab_width);
   }
 }
@@ -371,8 +372,8 @@ module freezer_door_assembly() {
 }
 
 module fridge_assembly() {
-  translate([-fridge_width/2 + material_thickness/2, 0, 0]) rotate([90, 0, 90]) fridge_left();
-  translate([fridge_width/2 - material_thickness/2, 0, 0]) rotate([90, 0, -90]) fridge_right();
+  translate([-fridge_width/2 + material_thickness/2, 0, 0]) fridge_left();
+  translate([fridge_width/2 - material_thickness/2, 0, 0]) fridge_right();
   translate([0, 0, fridge_total_height / 2 - fridge_freezer_height]) fridge_divider();
   translate([-fridge_width/2, -fridge_depth/2 - material_thickness/2, -fridge_total_height/2 + (fridge_total_height - fridge_freezer_height) / 2]) 
     rotate([0, 0, fridge_door_angle]) 
@@ -572,7 +573,7 @@ module microwave_cupboard_assembly() {
 }
 
 
-translate([0, fridge_depth/2 - material_thickness/2, 0]) rotate([90, 0, 0]) back_plate();
+translate([0, fridge_depth/2 - material_thickness/2, 0]) back_plate();
 
 translate([0, 0, -total_height/2 + feet_height + material_thickness/2]) combined_bottom();
 
