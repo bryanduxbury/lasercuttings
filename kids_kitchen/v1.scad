@@ -49,6 +49,10 @@ microwave_height = 8 * 25.4;
 microwave_width = 36 * 25.4;
 microwave_depth = 8 * 25.4;
 
+microwave_window_gutter = 2*25.4;
+microwave_handle_depth = 3 * 25.4;
+
+
 cupboard_width = 16 * 25.4;
 
 control_panel_width = 4 * 25.4;
@@ -444,7 +448,6 @@ module sink_right() {
     translate([0, -sink_height/2, 0]) cube(size=[sink_depth - 2 * feet_width, feet_height*2, material_thickness+0.1], center=true);
     translate([0, -sink_height/2 + feet_height + material_thickness/2, 0]) edge_slot(tab_width);
   }
-
 }
 
 module sink_cupboard_door() {
@@ -452,8 +455,6 @@ module sink_cupboard_door() {
     cube(size=[sink_width, sink_height - feet_height, material_thickness], center=true);
     translate([-.8 * sink_width /2, .8 * (sink_height - feet_height) / 2, 0]) cylinder(r=bit_diameter/2, h=material_thickness*10, center=true, $fn=36);
   }
-  
-  
 }
 
 module sink_assembly() {
@@ -472,7 +473,6 @@ module microwave_cupboard_bottom() {
 
     translate([0, microwave_depth/2 - material_thickness/2, 0]) tabs_at_thirds(microwave_width);
   }
-  
 }
 
 module microwave_cupboard_right() {
@@ -506,6 +506,48 @@ module cupboard_left() {
   }
 }
 
+module microwave_door_main() {
+  color([128/255, 128/255, 128/255]) render() difference() {
+    cube(size=[microwave_proper_width, microwave_height, material_thickness], center=true);
+    translate([-microwave_window_gutter/2, 0, 0]) rounded_rect(material_thickness+0.1, microwave_proper_width-3*microwave_window_gutter, microwave_height - 2 * microwave_window_gutter, stove_door_window_corner_radius);
+
+    for (i=[-1,1]) {
+      translate([microwave_proper_width/2 - microwave_window_gutter, (microwave_height * 0.4 - handle_thickness/4) * i, 0]) rotate([0, 0, 90]) edge_slot(handle_thickness/2);
+    }
+  }
+}
+
+module microwave_door_handle() {
+  render() difference() {
+    union() {
+      cube(size=[microwave_height * 0.8 - handle_corner_radius * 2, microwave_handle_depth, material_thickness], center=true);
+      for (i=[-1,1]) {
+        translate([(microwave_height * 0.8 - handle_corner_radius * 2)/2*i, microwave_handle_depth/-2 + handle_corner_radius, 0]) cylinder(r=handle_corner_radius, h=material_thickness, center=true);
+      }
+      translate([0, handle_corner_radius/2, 0]) cube(size=[microwave_height * 0.8, microwave_handle_depth - handle_corner_radius, material_thickness], center=true);
+    }
+
+    translate([0, handle_thickness/2, 0]) 
+      cube(size=[(microwave_height * 0.8 - handle_corner_radius * 2) - handle_thickness * 2, microwave_handle_depth - handle_thickness, material_thickness], center=true);
+    for (i=[-1,1]) {
+      translate([((microwave_height * 0.8 - handle_corner_radius * 2) - handle_thickness * 2)/2*i, microwave_handle_depth/2 - (microwave_handle_depth - handle_thickness - handle_corner_radius), 0]) 
+        cylinder(r=handle_corner_radius, h=material_thickness, center=true);
+    }
+    translate([0, microwave_handle_depth/2, 0]) 
+      cube(size=[(microwave_height * 0.8) - handle_thickness * 2, (microwave_handle_depth - handle_thickness - handle_corner_radius)*2, material_thickness], center=true);
+
+    for (i=[-1,1]) {
+      translate([(microwave_height * 0.8 / 2 - handle_thickness)*i, microwave_handle_depth/2-material_thickness/2, 0]) edge_slot(handle_thickness);
+    }
+  }
+}
+
+module microwave_door_assembly() {
+  microwave_door_main();
+  translate([microwave_proper_width/2 - microwave_window_gutter, 0, microwave_handle_depth / 2 - material_thickness/2]) 
+    rotate([-90, 0, 90]) microwave_door_handle();
+}
+
 
 module microwave_cupboard_assembly() {
   translate([0, 0, -microwave_height/2 + material_thickness/2]) color([0/255, 128/255, 64/255]) microwave_cupboard_bottom();
@@ -516,6 +558,9 @@ module microwave_cupboard_assembly() {
   translate([microwave_width/2 - material_thickness/2 - cupboard_width - control_panel_width, 0, 0]) rotate([0, 90, 0]) microwave_right();
 
   microwave_control_panel();
+
+  translate([-microwave_width/2 + microwave_proper_width/2, -microwave_depth / 2 - material_thickness/2, 0]) 
+    rotate([90, 0, 0]) microwave_door_assembly();
 }
 
 
