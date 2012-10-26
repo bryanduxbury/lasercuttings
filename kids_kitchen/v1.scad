@@ -273,7 +273,7 @@ module fridge_left() {
 }
 
 module fridge_right() {
-  yz() render() !difference() {
+  yz() render() rotate([0, 180, 0]) difference() {
     cube(size=[fridge_depth, fridge_total_height, material_thickness], center=true);
     translate([0, fridge_total_height/2 - material_thickness/2, 0]) {
       translate([-fridge_depth / 2 + microwave_depth/2 + (fridge_depth - microwave_depth/2 - (fridge_depth-microwave_depth)/2 - tab_width)/2 + tab_width/2, 0, 0]) 
@@ -347,8 +347,8 @@ module fridge_door_handle() {
 
 module fridge_door_assembly() {
   fridge_door_main();
-  translate([fridge_width/2 - fridge_x_from_right + material_thickness/2, (fridge_total_height - fridge_freezer_height)/2 + fridge_y_from_top - fridge_handle_height/2, handle_width / 2 - material_thickness/2]) 
-    rotate([0, 90, 180]) fridge_door_handle();
+  translate([fridge_width/2 - fridge_x_from_right + material_thickness/2, -(handle_width / 2 - material_thickness/2), (fridge_total_height - fridge_freezer_height)/2 + fridge_y_from_top - fridge_handle_height/2]) 
+    rotate([0, 180, 0]) fridge_door_handle();
 }
 
 module freezer_door_main() {
@@ -367,8 +367,8 @@ module freezer_door_handle() {
 
 module freezer_door_assembly() {
   freezer_door_main();
-  translate([fridge_width/2 - fridge_x_from_right + material_thickness/2, -fridge_freezer_height/2 - fridge_y_from_top + freezer_handle_height/2, handle_width / 2 - material_thickness/2]) 
-    rotate([0, 90, 0]) freezer_door_handle();
+  translate([fridge_width/2 - fridge_x_from_right + material_thickness/2, -(handle_width / 2 - material_thickness/2), -fridge_freezer_height/2 - fridge_y_from_top + freezer_handle_height/2]) 
+    freezer_door_handle();
 }
 
 module fridge_assembly() {
@@ -378,12 +378,12 @@ module fridge_assembly() {
   translate([-fridge_width/2, -fridge_depth/2 - material_thickness/2, -fridge_total_height/2 + (fridge_total_height - fridge_freezer_height) / 2]) 
     rotate([0, 0, fridge_door_angle]) 
       translate([fridge_width/2, 0, 0]) 
-        rotate([90, 0, 0]) fridge_door_assembly();
+        fridge_door_assembly();
 
   translate([-fridge_width/2, -fridge_depth/2 - material_thickness/2, fridge_total_height/2 - fridge_freezer_height / 2]) 
     rotate([0, 0, freezer_door_angle]) 
       translate([fridge_width/2, 0, 0]) 
-        rotate([90, 0, 0]) freezer_door_assembly();
+        freezer_door_assembly();
 }
 
 module stove_right() {
@@ -527,7 +527,7 @@ module microwave_door_main() {
 }
 
 module microwave_door_handle() {
-  yz() render() difference() {
+  yz() render() rotate([0, 0, -90]) difference() {
     union() {
       cube(size=[microwave_height * 0.8 - handle_corner_radius * 2, microwave_handle_depth, material_thickness], center=true);
       for (i=[-1,1]) {
@@ -553,23 +553,23 @@ module microwave_door_handle() {
 
 module microwave_door_assembly() {
   microwave_door_main();
-  translate([microwave_proper_width/2 - microwave_window_gutter, 0, microwave_handle_depth / 2 - material_thickness/2]) 
-    rotate([-90, 0, 90]) microwave_door_handle();
+  translate([microwave_proper_width/2 - microwave_window_gutter, -(microwave_handle_depth / 2 - material_thickness/2), 0]) 
+    microwave_door_handle();
 }
 
 
 module microwave_cupboard_assembly() {
   translate([0, 0, -microwave_height/2 + material_thickness/2]) microwave_cupboard_bottom();
-  translate([microwave_width/2 - material_thickness/2, 0, 0]) rotate([0, 90, 0]) microwave_cupboard_right();
+  translate([microwave_width/2 - material_thickness/2, 0, 0]) microwave_cupboard_right();
 
-  translate([microwave_width/2 - material_thickness/2 - cupboard_width, 0, 0]) rotate([0, 90, 0]) cupboard_left();
+  translate([microwave_width/2 - material_thickness/2 - cupboard_width, 0, 0]) cupboard_left();
 
-  translate([microwave_width/2 - material_thickness/2 - cupboard_width - control_panel_width, 0, 0]) rotate([0, 90, 0]) microwave_right();
+  translate([microwave_width/2 - material_thickness/2 - cupboard_width - control_panel_width, 0, 0]) microwave_right();
 
   microwave_control_panel();
 
   translate([-microwave_width/2 + microwave_proper_width/2, -microwave_depth / 2 - material_thickness/2, 0]) 
-    rotate([90, 0, 0]) microwave_door_assembly();
+    microwave_door_assembly();
 }
 
 
