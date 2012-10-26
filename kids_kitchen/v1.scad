@@ -1,3 +1,6 @@
+// todo: why are sink right and stove right different?
+// todo: standardize a single depth parameter
+
 material_thickness = 0.5 * 25.4;
 
 feet_height = 25.4;
@@ -437,20 +440,18 @@ module stove_door_handle() {
 }
 
 module stove_door_assembly() {
-  rotate([90, 0, 0]) {
-    stove_door_main();
-    translate([0, (stove_height - feet_height)/2 - stove_door_gutter, handle_width/2 - material_thickness/2]) rotate([-90, 0, 0]) stove_door_handle();
-  }
+  stove_door_main();
+  translate([0, -(handle_width/2 - material_thickness/2), (stove_height - feet_height)/2 - stove_door_gutter]) stove_door_handle();
 }
 
 module oven_assembly() {
-  translate([stove_width/2, 0, 0]) rotate([90, 0, 90]) stove_right();
+  translate([stove_width/2, 0, 0]) stove_right();
   translate([0, -fridge_depth / 2 - material_thickness/2, material_thickness]) stove_door_assembly();
   stove_control_panel();
 }
 
 module sink_right() {
-  yz() render() difference() {
+  yz() rotate([0, 180, 0])  render() difference() {
     cube(size=[sink_depth, sink_height, material_thickness], center=true);
     translate([-sink_depth/2 + material_thickness/2, 0, 0]) rotate([0, 0, 90]) tabs_at_thirds(sink_height);
     translate([0, sink_height/2 - material_thickness/2, 0]) tabs_at_thirds(sink_depth);
@@ -467,8 +468,8 @@ module sink_cupboard_door() {
 }
 
 module sink_assembly() {
-  translate([sink_width/2 - material_thickness/2, 0, 0]) rotate([90, 0, -90]) sink_right();
-  translate([0, -sink_depth / 2 - material_thickness/2, material_thickness]) rotate([90, 0, 0]) sink_cupboard_door();
+  translate([sink_width/2 - material_thickness/2, 0, 0]) sink_right();
+  translate([0, -sink_depth / 2 - material_thickness/2, material_thickness]) sink_cupboard_door();
 }
 
 module microwave_cupboard_bottom() {
@@ -484,35 +485,32 @@ module microwave_cupboard_bottom() {
   }
 }
 
+module microwave_inside_vertical_separator() {
+  yz() rotate([0, 0, -90]) render() difference() {
+    cube(size=[microwave_height, microwave_depth, material_thickness], center=true);
+    for (x=[-1,1]) {
+      translate([x * (microwave_height/2-material_thickness/2), 0]) rotate([0, 0, 90]) single_tab(microwave_depth);
+    }
+    translate([0, microwave_depth/2-material_thickness/2, 0]) single_tab(microwave_height);
+  }
+}
+
 module microwave_cupboard_right() {
-  yz() render() difference() {
+  yz() render() rotate([0, 0, -90]) difference() {
     cube(size=[microwave_height, microwave_depth, material_thickness], center=true);
     for (x=[-1,1]) {
       translate([x * (microwave_height/2-material_thickness/2), 0]) rotate([0, 0, 90]) edge_slot(tab_width);
     }
     translate([0, microwave_depth/2 - material_thickness/2, 0]) single_tab(microwave_height);
   }
-  
 }
 
 module microwave_right() {
-  yz() render() difference() {
-    cube(size=[microwave_height, microwave_depth, material_thickness], center=true);
-    for (x=[-1,1]) {
-      translate([x * (microwave_height/2-material_thickness/2), 0]) rotate([0, 0, 90]) single_tab(microwave_depth);
-    }
-    translate([0, microwave_depth/2-material_thickness/2, 0]) single_tab(microwave_height);
-  }
+  microwave_inside_vertical_separator();
 }
 
 module cupboard_left() {
-  yz() render() difference() {
-    cube(size=[microwave_height, microwave_depth, material_thickness], center=true);
-    for (x=[-1,1]) {
-      translate([x * (microwave_height/2-material_thickness/2), 0]) rotate([0, 0, 90]) single_tab(microwave_depth);
-    }
-    translate([0, microwave_depth/2-material_thickness/2, 0]) single_tab(microwave_height);
-  }
+  microwave_inside_vertical_separator();
 }
 
 module microwave_door_main() {
@@ -521,7 +519,8 @@ module microwave_door_main() {
     translate([-microwave_window_gutter/2, 0, 0]) rounded_rect(material_thickness+0.1, microwave_proper_width-3*microwave_window_gutter, microwave_height - 2 * microwave_window_gutter, stove_door_window_corner_radius);
 
     for (i=[-1,1]) {
-      translate([microwave_proper_width/2 - microwave_window_gutter, (microwave_height * 0.4 - handle_thickness/4) * i, 0]) rotate([0, 0, 90]) edge_slot(handle_thickness/2);
+      translate([microwave_proper_width/2 - microwave_window_gutter, (microwave_height * 0.4 - handle_thickness/4) * i, 0]) 
+        rotate([0, 0, 90]) edge_slot(handle_thickness/2);
     }
   }
 }
