@@ -1,3 +1,10 @@
+// TODOs
+// - add rounded corner top to square drawers
+// - finish up drawer joinery
+// - add cutouts for drawer pivots
+// - remove the middle tab cut on the drawer sides (remove matching tab from bottom plate)
+
+
 // parameters
 
 material_thickness = 5.2;
@@ -10,7 +17,7 @@ leg_top_width = 25.4;
 leg_bottom_width = .75 * 25.4;
 bottom_gutter = 2;
 
-drawer_stack_multiple = 9 ;
+drawer_stack_multiple = 5;
 corner_radius = 5;
 
 laser_beam_width = 0.005 * 25.4;
@@ -125,7 +132,7 @@ module side_base() {
 }
 
 module front_back() {
-  difference() {
+  render() difference() {
     side_base();
     for (x=[-1,1]) {
       translate([x*(side_dim()/2 - corner_radius - material_thickness/2), -bottom_height()/2, 0]) 
@@ -138,7 +145,7 @@ module front_back() {
 }
 
 module side() {
-  difference() {
+  render() difference() {
     side_base();
     for (x=[-1,1]) {
       translate([x*(side_dim()/2 - corner_radius - material_thickness/2), bottom_height()/2, 0]) 
@@ -161,7 +168,7 @@ module drawer_mockup() {
 }
 
 module drawer_bottom() {
-  difference() {
+  render() difference() {
     intersection() {
       square(size=[drawer_width(), drawer_width()/2], center=true);
       translate([0, -drawer_width()/4, 0]) circle(r=drawer_width()/2, $fn=250);
@@ -171,7 +178,7 @@ module drawer_bottom() {
 }
 
 module drawer_wall() {
-  union() {
+  render() union() {
     difference() {
       intersection() {
         square(size=[drawer_width(), drawer_width()/2], center=true);
@@ -195,7 +202,6 @@ module drawer_wall() {
   }
 }
 
-
 module drawer_assembly() {
   translate([0, 0, -drawer_height()/2 + t/2]) color([128/255, 128/255, 128/255]) ext() drawer_bottom();
   translate([0, 0, -drawer_height()/2 + t + t/2]) {
@@ -204,6 +210,42 @@ module drawer_assembly() {
     }
   }
   translate([0, -drawer_width()/4 + t + 2.5, 0]) translate([0, 0, -drawer_height()/2 + t * (drawer_stack_multiple) + t/2]) ext() circle(r=2.5, $fn=36);
+}
+
+module square_drawer_side() {
+  square(size=[drawer_body_depth(), drawer_height()], center=true);
+}
+
+module square_drawer_inside() {
+  square(size=[drawer_body_width(), drawer_height()], center=true);
+}
+
+module square_drawer_outside() {
+  square(size=[drawer_width(), drawer_height()], center=true);
+}
+
+module square_drawer_top() {
+  
+}
+
+function drawer_body_width() = drawer_width() * sin(45);
+function drawer_body_depth() = drawer_width() * sin(45) / 2;
+
+module square_drawer_bottom() {
+  square(size=[drawer_body_width(), drawer_body_depth()], center=true);
+}
+
+module square_drawer_assembly() {
+  translate([0, -drawer_width()/4 + drawer_body_depth()/2, -drawer_height()/2 + t/2]) color([128/255, 128/255, 128/255]) ext() square_drawer_bottom();
+  translate([0, -drawer_width()/4 + t/2, 0]) rotate([90, 0, 0]) ext() square_drawer_outside();
+  for (i=[1,-1]) {
+    translate([i*(drawer_body_width() / 2 - t/2), -drawer_width()/4 + drawer_body_depth()/2, 0]) rotate([90, 0, 90]) ext() square_drawer_side();
+  }
+  
+  translate([0, -drawer_width()/4 + drawer_body_depth() - t/2, 0]) rotate([90, 0, 0]) ext() square_drawer_inside();
+  
+  
+  // translate([0, -drawer_width()/4 + t + 2.5, 0]) translate([0, 0, -drawer_height()/2 + t * (drawer_stack_multiple) + t/2]) ext() circle(r=2.5, $fn=36);
 }
 
 module grid() {
@@ -222,8 +264,8 @@ module grid() {
 
 
 module assembled() {
-  %translate([0, 0, total_height()/2 - t/2]) ext() deck();
-  %translate([0, 0, total_height()/2 - t/2 - t]) color([192/255, 168/255, 128/255]) ext() under_deck();
+  translate([0, 0, total_height()/2 - t/2]) ext() deck();
+  translate([0, 0, total_height()/2 - t/2 - t]) color([192/255, 168/255, 128/255]) ext() under_deck();
   translate([0, 0, -total_height()/2 + leg_height + bottom_gutter + t/2 - t]) ext() bottom();
 
   for (d=[-1,1]) {
@@ -234,19 +276,31 @@ module assembled() {
   for (i=[0:1]) {
     rotate([0, 0, i*180]) 
       translate([0, -(side_dim()/2 - corner_radius - t - 2.5), -total_height()/2 + leg_height + bottom_gutter + drawer_height() / 2]) 
-        rotate([0, 0, 0]) translate([0, drawer_width()/4 - t - 2.5, 0]) drawer_assembly();
+        rotate([0, 0, 0]) translate([0, drawer_width()/4 - t - 2.5, 0]) 
+          // drawer_assembly();
+          square_drawer_assembly();
   }
 }
 
 module panelized() {
   deck();
-  translate([side_dim() + 10 + total_height, 0, 0]) under_deck();
-  for (i=[0,1]) {
-    rotate([0, 0, 180*i]) translate([side_dim() / 2 + 5 + total_height/2, 0, 0]) {
-      rotate([0, 0, -90]) front_back();
-    }
-    rotate([0, 0, 180*i]) translate([0, side_dim() / 2 + 5 + total_height/2, 0]) {
-      side();
+  translate([side_dim() + 2, 0, 0]) under_deck();
+  translate([2 * side_dim() + 2, 0, 0]) bottom();
+  translate([0, -side_dim()/2 - bottom_height()/2 - 2, 0]) {
+    side();
+    translate([0, -bottom_height() - 2, 0]) side();
+  }
+  translate([side_dim(), -side_dim()/2 - bottom_height()/2 - 2, 0]) {
+    front_back();
+    translate([0, -bottom_height() - 2, 0]) front_back();
+  }
+  
+  for (x=[0,1]) {
+    translate([side_dim()*x, -side_dim()/2 - bottom_height()*2 - 2*t - drawer_width()/4, 0]) {
+      drawer_bottom();
+      for (i=[1:(drawer_stack_multiple-1)]) {
+        translate([0, i*(-drawer_width()/2-2), 0]) drawer_wall();
+      } 
     }
   }
 }
