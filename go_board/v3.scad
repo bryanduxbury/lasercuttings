@@ -1,8 +1,5 @@
 // TODOs
 // - add rounded corner top to square drawers
-// - finish up drawer joinery
-// - add cutouts for drawer pivots
-// - remove the middle tab cut on the drawer sides (remove matching tab from bottom plate)
 
 
 // parameters
@@ -15,7 +12,7 @@ count = 9;
 leg_height = 0.25*25.4;
 leg_top_width = 25.4;
 leg_bottom_width = .75 * 25.4;
-bottom_gutter = 2;
+bottom_gutter = 3;
 
 drawer_stack_multiple = 5;
 corner_radius = 5;
@@ -213,15 +210,36 @@ module drawer_assembly() {
 }
 
 module square_drawer_side() {
-  square(size=[drawer_body_depth(), drawer_height()], center=true);
+  difference() {
+    square(size=[drawer_body_depth(), drawer_height()], center=true);
+    for (y=[-1,1]) {
+      translate([drawer_body_depth()/2, y*drawer_height()/2, 0]) square(size=[t*2 - l, (drawer_height() - tab_width)], center=true);
+    }
+    translate([-(drawer_body_depth()/2), -drawer_height()/2, 0]) square(size=[t*2-l, 2*(drawer_height()/2 - l)], center=true);
+    translate([0, -drawer_height()/2, 0]) square(size=[tab_width-l, t*2-l], center=true);
+  }
 }
 
 module square_drawer_inside() {
-  square(size=[drawer_body_width(), drawer_height()], center=true);
+  difference() {
+    square(size=[drawer_body_width(), drawer_height()], center=true);
+    for (x=[-1,1]) {
+      translate([x*(drawer_body_width()/2), drawer_height()/2, 0]) square(size=[t*2-l, 2*(drawer_height()/2 - l)], center=true);
+    }
+    translate([0, -drawer_height()/2, 0]) square(size=[tab_width - l, t*2-l], center=true);
+  }
+  
 }
 
 module square_drawer_outside() {
-  square(size=[drawer_width(), drawer_height()], center=true);
+  difference() {
+    square(size=[drawer_width(), drawer_height()], center=true);
+    for (x=[-1,1]) {
+      translate([x*(drawer_body_width()/2 - t/2), 0, 0]) square(size=[t-l, tab_width], center=true);
+    }
+    
+    translate([0, -drawer_height() / 2 , 0]) square(size=[tab_width-l, t*2 - l], center=true);
+  }
 }
 
 module square_drawer_top() {
@@ -232,14 +250,29 @@ function drawer_body_width() = drawer_width() * sin(45);
 function drawer_body_depth() = drawer_width() * sin(45) / 2;
 
 module square_drawer_bottom() {
-  square(size=[drawer_body_width(), drawer_body_depth()], center=true);
+  difference() {
+    square(size=[drawer_body_width(), drawer_body_depth()], center=true);
+    for (y=[-1,1]) {
+      for (x=[-1,1]) {
+        translate([x*drawer_body_width()/2, y*drawer_body_depth()/2, 0]) {
+          square(size=[drawer_body_width() - tab_width, t*2-l], center=true);
+          square(size=[t*2-l, drawer_body_depth() - tab_width], center=true);
+        }
+      }
+    }
+    
+    translate([0, -drawer_body_depth()/2 + t + 2.5, 0]) circle(r=2.5, $fn=36);
+  }
 }
 
 module square_drawer_assembly() {
   translate([0, -drawer_width()/4 + drawer_body_depth()/2, -drawer_height()/2 + t/2]) color([128/255, 128/255, 128/255]) ext() square_drawer_bottom();
-  translate([0, -drawer_width()/4 + t/2, 0]) rotate([90, 0, 0]) ext() square_drawer_outside();
+  translate([0, -drawer_width()/4 + t/2, 0]) rotate([90, 0, 0]) color([192/255, 128/255, 128/255]) ext() square_drawer_outside();
   for (i=[1,-1]) {
-    translate([i*(drawer_body_width() / 2 - t/2), -drawer_width()/4 + drawer_body_depth()/2, 0]) rotate([90, 0, 90]) ext() square_drawer_side();
+    translate([i*(drawer_body_width() / 2 - t/2), -drawer_width()/4 + drawer_body_depth()/2, 0]) 
+      rotate([90, 0, -90]) 
+        color([128/255, 192/255, 128/255]) 
+          ext() square_drawer_side();
   }
   
   translate([0, -drawer_width()/4 + drawer_body_depth() - t/2, 0]) rotate([90, 0, 0]) ext() square_drawer_inside();
@@ -264,8 +297,8 @@ module grid() {
 
 
 module assembled() {
-  translate([0, 0, total_height()/2 - t/2]) ext() deck();
-  translate([0, 0, total_height()/2 - t/2 - t]) color([192/255, 168/255, 128/255]) ext() under_deck();
+  // translate([0, 0, total_height()/2 - t/2]) ext() deck();
+  // translate([0, 0, total_height()/2 - t/2 - t]) color([192/255, 168/255, 128/255]) ext() under_deck();
   translate([0, 0, -total_height()/2 + leg_height + bottom_gutter + t/2 - t]) ext() bottom();
 
   for (d=[-1,1]) {
@@ -284,31 +317,47 @@ module assembled() {
 
 module panelized() {
   deck();
-  translate([side_dim() + 2, 0, 0]) under_deck();
-  translate([2 * side_dim() + 2, 0, 0]) bottom();
-  translate([0, -side_dim()/2 - bottom_height()/2 - 2, 0]) {
+  translate([side_dim() + 10, 0, 0]) under_deck();
+  translate([2 * side_dim() + 20, 0, 0]) bottom();
+  translate([0, -side_dim()/2 - bottom_height()/2 - 10, 0]) {
     side();
-    translate([0, -bottom_height() - 2, 0]) side();
+    translate([0, -bottom_height() - 10, 0]) side();
   }
-  translate([side_dim(), -side_dim()/2 - bottom_height()/2 - 2, 0]) {
+  translate([side_dim(), -side_dim()/2 - bottom_height()/2 - 10, 0]) {
     front_back();
-    translate([0, -bottom_height() - 2, 0]) front_back();
+    translate([0, -bottom_height() - 10, 0]) front_back();
   }
   
   for (x=[0,1]) {
-    translate([side_dim()*x, -side_dim()/2 - bottom_height()*2 - 2*t - drawer_width()/4, 0]) {
-      drawer_bottom();
-      for (i=[1:(drawer_stack_multiple-1)]) {
-        translate([0, i*(-drawer_width()/2-2), 0]) drawer_wall();
-      } 
+    translate([side_dim()*x, -side_dim()/2 - bottom_height()*2 - 2*t - drawer_body_depth()/2 - 20, 0]) {
+      square_drawer_bottom();
+      translate([0, -drawer_body_depth()/2 - drawer_height()/2 - 10, 0]) {
+        for (a=[0:1]) {
+          rotate([a*180, 0, a*180]) translate([drawer_body_depth()/2 + 1, 0, 0]) square_drawer_side();
+        }
+        translate([0, -drawer_height() - 10, 0]) {
+          square_drawer_inside();
+          translate([0, -drawer_height() - 10, 0]) {
+            square_drawer_outside();
+          }
+          
+        }
+      }
     }
+    
+    // translate([side_dim()*x, -side_dim()/2 - bottom_height()*2 - 2*t - drawer_width()/4, 0]) {
+    //   drawer_bottom();
+    //   for (i=[1:(drawer_stack_multiple-1)]) {
+    //     translate([0, i*(-drawer_width()/2-2), 0]) drawer_wall();
+    //   } 
+    // }
   }
 }
 
-assembled();
+// assembled();
 
 // panelized();
 
 
 // translate([0, 0, total_height/2 + 10]) color([0/255, 0/255, 0/255]) ext() 
-// grid();
+grid();
