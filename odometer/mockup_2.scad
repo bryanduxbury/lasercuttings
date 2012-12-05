@@ -61,7 +61,7 @@ module connecting_gear() {
 }
 
 module drum_complete_gear() {
-  !difference() {
+  difference() {
     quick_gear(mm_per_tooth = 19, number_of_teeth = 40, thickness = 3, hole_diameter=6);
     for (a=[0:9]) {
       rotate([0, 0, a*360/10]) {
