@@ -80,7 +80,7 @@ module gear (
 		difference() {
 			for (i = [0:number_of_teeth-teeth_to_hide-1] )
 				rotate([0,0,i*360/number_of_teeth])
-					linear_extrude(height = thickness, center = true, convexity = 10, twist = twist)
+					render() linear_extrude(height = thickness, center = true, convexity = 20, twist = twist)
 						polygon(
 							points=[
 								[0, -hole_diameter/10],

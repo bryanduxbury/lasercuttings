@@ -2,13 +2,10 @@
 // - create drum stands
 // - add tab-ins for numeral plates
 // - create connecting gear stands
-// - create the d-cutout drive gear
-// - mock up the motor
 // - create a motor mount bracket
 // - mock up the arduino
 // - create arduino mounting holes/bracket
 // - design the external case
-// - create cutouts in drum sides
 // - decide if the pipe mounting plan is the right way to go, figure out the mounting hole situation for that
 
 
@@ -41,7 +38,9 @@ function partial_gear_num_hidden_teeth() = major_gear_num_teeth - major_gear_num
 function minor_gear_num_teeth() = major_gear_num_teeth/4;
 
 // number of teeth on the connecting gears (as well as on the drive gear)
-connecting_gear_num_teeth = 10;
+connecting_gear_num_teeth = 8;
+
+gear_minimum_width = 15;
 
 // case 
 case_width = 24*25.4;
@@ -80,28 +79,53 @@ module my_gear(number_of_teeth, teeth_to_hide=0) {
 }
 
 module connecting_gear() {
-  my_gear(connecting_gear_num_teeth);
+  color([128/255, 192/255, 0/255]) my_gear(connecting_gear_num_teeth);
+}
+
+module drive_gear() {
+  color([64/255, 225/255, 64/255]) union() {
+    my_gear(connecting_gear_num_teeth);
+    translate([0, shaft_diameter/2, 0]) cube(size=[shaft_diameter, 1.2, t], center=true);
+  }
+}
+
+module inside_corner(args) {
+  // body...
+}
+
+module drum_gear_cutouts() {
+  assign(or = root_radius(number_of_teeth = major_gear_num_teeth, mm_per_tooth = mm_per_tooth) - gear_minimum_width) difference()  {
+    cylinder(r=or, h=10, center=true, $fn=72);
+    cylinder(r=gear_minimum_width + shaft_diameter/2, h=11, center=true, $fn=250);
+    for (a=[0:3]) {
+      rotate([0, 0, a*90]) 
+        translate([0, or/2, 0]) cube(size=[gear_minimum_width, or, 11], center=true);
+    }
+  }
+  
 }
 
 module drum_complete_gear() {
-  difference() {
+  render() difference() {
     my_gear(number_of_teeth = 40);
-    // for (a=[0:9]) {
-    //   rotate([0, 0, a*360/10]) {
-    //     translate([0, outer_radius(mm_per_tooth = 19, number_of_teeth = 40)/2, 0]) cube(size=[5, outer_radius(mm_per_tooth = 19, number_of_teeth = 40)/2 - 10, 3.1], center=true);
-    //   }
-    // }
-    
+    drum_gear_cutouts();
+    for (a=[0:9]) {
+      rotate([0, 0, a*36+18]) translate([numeral_radius(), 0, 0]) cube(size=[t, tab_size, t+0.1], center=true);
+    }
   }
 }
 
 module drum_partial_gear() {
-  difference() {
+  render() difference() {
     union() {
       my_gear(number_of_teeth = major_gear_num_teeth, teeth_to_hide=partial_gear_num_hidden_teeth());
       cylinder(r=root_radius(major_gear_num_teeth,0), h=t, center=true, $fn=128);
     }
     cylinder(r=shaft_diameter/2, h=t+0.1, center=true, $fn=36);
+    drum_gear_cutouts();
+    for (a=[0:9]) {
+      rotate([0, 0, a*36+18]) translate([numeral_radius(), 0, 0]) cube(size=[t, tab_size, t+0.1], center=true);
+    }
   }
 }
 
@@ -119,7 +143,7 @@ module drum_support() {
 }
 
 module numeral_plate() {
-  union() {
+  color([200/255, 200/255, 200/255]) union() {
     cube(size=[numeral_w, numeral_h, t], center=true);
     cube(size=[numeral_w + 2*t, tab_size, t], center=true);
   }
@@ -139,7 +163,7 @@ module bottom() {
 }
 
 module mock_motor() {
-  !color([128/255, 128/255, 128/255]) union() {
+  color([128/255, 128/255, 128/255]) translate([0, 7, 0]) union() {
     translate([0, 0, -11]) difference() {
       cylinder(r=36.8/2, h=22, center=true, $fn=72);
       for (i=[0:5]) {
@@ -162,24 +186,43 @@ module mock_motor() {
   
 }
 
+// drum assemblies
 for (i=[-4:4]) {
-  translate([-i*(3*t + numeral_w), 0, 0]) {
-    // render() 
+  translate([i*(3*t + numeral_w), 0, 0]) {
       drum_assembly();
-    rotate([-30, 0, 0]) 
+  }
+}
+
+// stacks of connecting gears
+for (i=[-3:4]) {
+  translate([i*(3*t + numeral_w), 0, 0]) {
+    rotate([-45, 0, 0]) 
       translate([0, center_distance(major_gear_num_teeth, connecting_gear_num_teeth), 0]) 
         for (x=[0, t, 2*t]) {
-          translate([-(numeral_w/2 + t/2 + x), 0, 0]) rotate([360/10/6, 0, 0]) rotate([0, 90, 0]) connecting_gear();
+          translate([-(numeral_w/2 + t/2 + x), 0, 0]) rotate([360/connecting_gear_num_teeth/2, 0, 0]) rotate([0, 90, 0]) connecting_gear();
         }
   }
 }
 
+//singular drive gear
+translate([4*(3*t + numeral_w), 0, 0]) {
+  rotate([-45, 0, 0]) 
+    translate([0, center_distance(major_gear_num_teeth, connecting_gear_num_teeth), 0]) 
+      translate([(numeral_w/2 + t/2), 0, 0]) rotate([360/connecting_gear_num_teeth/2, 0, 0]) rotate([0, 90, 0]) drive_gear();
+}
+
+
 for (i=[-5:4]) {
   translate([i * (drum_width() + t) + drum_width()/2 + t/2, 0, 0]) rotate([90, 0, 90]) color([128/255, 0/255, 0/255]) drum_support();
 }
-  
 
 
 translate([0, 0, -case_height/2]) bottom();
 
-translate([5 * drum_width(), 0, 0]) rotate([-30, 0, 0]) translate([0, center_distance(major_gear_num_teeth, connecting_gear_num_teeth), 0]) rotate([0, -90, 0]) mock_motor();
+translate([5 * drum_width() + 5, 0, 0]) rotate([-45, 0, 0]) 
+  translate([0, center_distance(major_gear_num_teeth, connecting_gear_num_teeth), 0]) 
+    rotate([-45, 0, 0]) rotate([0, -90, 0]) mock_motor();
+    
+rotate([0, 90, 0]) cylinder(r=shaft_diameter/2, h=9*(drum_width()+t) + shaft_diameter*4, center=true, $fn=36);
+rotate([-45, 0, 0]) translate([0, center_distance(major_gear_num_teeth, connecting_gear_num_teeth), 0]) 
+  rotate([0, 90, 0]) cylinder(r=shaft_diameter/2, h=7*(drum_width()+t) + shaft_diameter*6, center=true, $fn=36);
