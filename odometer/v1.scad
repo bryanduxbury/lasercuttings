@@ -36,6 +36,7 @@ major_gear_num_teeth = 40;
 // ... and some consequences of this choice
 function partial_gear_num_hidden_teeth() = major_gear_num_teeth - major_gear_num_teeth / 10;
 function minor_gear_num_teeth() = major_gear_num_teeth/4;
+function major_gear_outer_diameter() = 2 * outer_radius(number_of_teeth = major_gear_num_teeth, mm_per_tooth = mm_per_tooth);
 
 // number of teeth on the connecting gears (as well as on the drive gear)
 connecting_gear_num_teeth = 8;
@@ -43,14 +44,21 @@ connecting_gear_num_teeth = 8;
 gear_minimum_width = 15;
 
 // case 
-case_width = 24*25.4;
-case_height = 10 * 25.4 + 30;
-case_depth = 10 * 25.4;
+case_clearance = 15;
+
+
+motor_body_length = 22 + 30 + 12.5;
+motor_nonconnecting_shaft_length = 10;
+case_width = 9 * drum_width() + 10 * t + 2 * case_clearance + motor_body_length + motor_nonconnecting_shaft_length;
+case_height = major_gear_outer_diameter() + 2*case_clearance;
+case_depth = major_gear_outer_diameter() + 2*case_clearance;
 
 // some functionalized parameters
 function numeral_radius() = 10 * (numeral_h + 2) / 3.141592 / 2;
 function drum_width() = numeral_w + 2*t;
 
+
+// gear related functions
 function p(
   mm_per_tooth    = 3,    //this is the "circular pitch", the circumference of the pitch circle divided by the number of teeth
   number_of_teeth = 11    //total number of teeth around the entire perimeter
@@ -70,6 +78,7 @@ function root_radius(
 function center_distance(t1, t2) = pitch_radius(number_of_teeth=t1, mm_per_tooth = mm_per_tooth) 
   + pitch_radius(number_of_teeth=t2, mm_per_tooth = mm_per_tooth);
 
+// save some parameters on calls to gear()
 module my_gear(number_of_teeth, teeth_to_hide=0) {
   render() gear(mm_per_tooth = mm_per_tooth, 
     number_of_teeth = number_of_teeth, 
@@ -89,10 +98,6 @@ module drive_gear() {
   }
 }
 
-module inside_corner(args) {
-  // body...
-}
-
 module drum_gear_cutouts() {
   assign(or = root_radius(number_of_teeth = major_gear_num_teeth, mm_per_tooth = mm_per_tooth) - gear_minimum_width) difference()  {
     cylinder(r=or, h=10, center=true, $fn=72);
@@ -102,7 +107,6 @@ module drum_gear_cutouts() {
         translate([0, or/2, 0]) cube(size=[gear_minimum_width, or, 11], center=true);
     }
   }
-  
 }
 
 module drum_complete_gear() {
@@ -133,9 +137,9 @@ module drum_support() {
   difference() {
     union() {
       cylinder(r=10, h=t, center=true, $fn=36);
-      assign(h=outer_radius(number_of_teeth = major_gear_num_teeth, mm_per_tooth=mm_per_tooth)+10) {
+      assign(h=outer_radius(number_of_teeth = major_gear_num_teeth, mm_per_tooth=mm_per_tooth)+case_clearance) {
         translate([0, -h/2, 0]) cube(size=[20, h, t], center=true);
-        translate([0, -h, 0]) cube(size=[h, 20, t], center=true);
+        translate([0, -h + 10, 0]) cube(size=[h, 20, t], center=true);
       }
     }
     cylinder(r=shaft_diameter/2, h=t+0.1, center=true);
@@ -163,7 +167,7 @@ module bottom() {
 }
 
 module mock_motor() {
-  color([128/255, 128/255, 128/255]) translate([0, 7, 0]) union() {
+  color([128/255, 128/255, 128/255]) translate([0, 7, -10]) union() {
     translate([0, 0, -11]) difference() {
       cylinder(r=36.8/2, h=22, center=true, $fn=72);
       for (i=[0:5]) {
@@ -186,43 +190,52 @@ module mock_motor() {
   
 }
 
-// drum assemblies
-for (i=[-4:4]) {
-  translate([i*(3*t + numeral_w), 0, 0]) {
-      drum_assembly();
+module assembled() {
+  
+  // drum assemblies
+  translate([-case_width/2 + case_clearance + t + drum_width()/2, 0, 0]) for (i=[0:8]) {
+    translate([i*(3*t + numeral_w), 0, 0]) {
+        drum_assembly();
+    }
   }
-}
 
-// stacks of connecting gears
-for (i=[-3:4]) {
-  translate([i*(3*t + numeral_w), 0, 0]) {
+  // stacks of connecting gears
+  translate([-case_width/2 + case_clearance + t + drum_width()/2, 0, 0]) for (i=[1:8]) {
+    translate([i*(3*t + numeral_w), 0, 0]) {
+      rotate([-45, 0, 0]) 
+        translate([0, center_distance(major_gear_num_teeth, connecting_gear_num_teeth), 0]) 
+          for (x=[0, t, 2*t]) {
+            translate([-(numeral_w/2 + t/2 + x), 0, 0]) rotate([360/connecting_gear_num_teeth/2, 0, 0]) rotate([0, 90, 0]) connecting_gear();
+          }
+    }
+  }
+
+  // singular drive gear
+  translate([-case_width/2 + case_clearance + t + drum_width()/2 + 8 * (drum_width()+t), 0, 0]) {
     rotate([-45, 0, 0]) 
       translate([0, center_distance(major_gear_num_teeth, connecting_gear_num_teeth), 0]) 
-        for (x=[0, t, 2*t]) {
-          translate([-(numeral_w/2 + t/2 + x), 0, 0]) rotate([360/connecting_gear_num_teeth/2, 0, 0]) rotate([0, 90, 0]) connecting_gear();
-        }
+        translate([(numeral_w/2 + t/2), 0, 0]) rotate([360/connecting_gear_num_teeth/2, 0, 0]) rotate([0, 90, 0]) drive_gear();
   }
-}
 
-//singular drive gear
-translate([4*(3*t + numeral_w), 0, 0]) {
-  rotate([-45, 0, 0]) 
+
+  translate([-case_width/2 + case_clearance + t/2, 0, 0]) for (i=[0:9]) {
+    translate([i * (drum_width() + t), 0, 0]) rotate([90, 0, 90]) color([128/255, 0/255, 0/255]) drum_support();
+  }
+
+
+  translate([0, 0, -case_height/2]) bottom();
+
+  // mock motor!
+  translate([-case_width/2 + case_clearance + t + drum_width()/2 + 8.5 * (drum_width()+t), 0, 0]) rotate([-45, 0, 0]) 
     translate([0, center_distance(major_gear_num_teeth, connecting_gear_num_teeth), 0]) 
-      translate([(numeral_w/2 + t/2), 0, 0]) rotate([360/connecting_gear_num_teeth/2, 0, 0]) rotate([0, 90, 0]) drive_gear();
+      rotate([-45, 0, 0]) rotate([0, -90, 0]) mock_motor();
+
+  // // drum shaft
+  // rotate([0, 90, 0]) cylinder(r=shaft_diameter/2, h=9*(drum_width()+t) + shaft_diameter*4, center=true, $fn=36);
+  // // connecting gear shaft
+  // rotate([-45, 0, 0]) translate([0, center_distance(major_gear_num_teeth, connecting_gear_num_teeth), 0]) 
+  //   rotate([0, 90, 0]) cylinder(r=shaft_diameter/2, h=7*(drum_width()+t) + shaft_diameter*6, center=true, $fn=36);
+
 }
 
-
-for (i=[-5:4]) {
-  translate([i * (drum_width() + t) + drum_width()/2 + t/2, 0, 0]) rotate([90, 0, 90]) color([128/255, 0/255, 0/255]) drum_support();
-}
-
-
-translate([0, 0, -case_height/2]) bottom();
-
-translate([5 * drum_width() + 5, 0, 0]) rotate([-45, 0, 0]) 
-  translate([0, center_distance(major_gear_num_teeth, connecting_gear_num_teeth), 0]) 
-    rotate([-45, 0, 0]) rotate([0, -90, 0]) mock_motor();
-    
-rotate([0, 90, 0]) cylinder(r=shaft_diameter/2, h=9*(drum_width()+t) + shaft_diameter*4, center=true, $fn=36);
-rotate([-45, 0, 0]) translate([0, center_distance(major_gear_num_teeth, connecting_gear_num_teeth), 0]) 
-  rotate([0, 90, 0]) cylinder(r=shaft_diameter/2, h=7*(drum_width()+t) + shaft_diameter*6, center=true, $fn=36);
+assembled();
