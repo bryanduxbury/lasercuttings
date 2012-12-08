@@ -1,13 +1,11 @@
 // TODOs
-// - create drum stands
-// - add tab-ins for numeral plates
-// - create connecting gear stands
-// - create a motor mount bracket
 // - mock up the arduino
 // - create arduino mounting holes/bracket
 // - design the external case
 // - decide if the pipe mounting plan is the right way to go, figure out the mounting hole situation for that
-
+// - tab-ins for drum stands
+// - tab-ins for connecting gear stands
+// - measure a 1/4" nut
 
 use <../publicDomainGearV1.1.scad>
 
@@ -135,32 +133,49 @@ module drum_partial_gear() {
 }
 
 module drum_support() {
-  color([128/255, 0/255, 0/255]) difference() {
+  color([128/255, 0/255, 0/255]) render() 
+    assign(h=outer_radius(number_of_teeth = major_gear_num_teeth, mm_per_tooth=mm_per_tooth)+case_clearance)
+    difference() {
     union() {
       cylinder(r=10, h=t, center=true, $fn=36);
-      assign(h=outer_radius(number_of_teeth = major_gear_num_teeth, mm_per_tooth=mm_per_tooth)+case_clearance) {
-        translate([0, -h/2, 0]) cube(size=[20, h, t], center=true);
-        translate([0, -h + 10, 0]) cube(size=[h, 20, t], center=true);
+      translate([0, -h/2, 0]) cube(size=[h, h, t], center=true);
+      translate([0, -h + 10, 0]) cube(size=[h, 20, t], center=true);
+      for (x=[-1,1]) translate([x * h/2, -h + t, 0]) intersection() {
+        cylinder(r=20 - t, h=t, center=true);
+        translate([0, 20, 0]) cube(size=[40, 40, 10], center=true);
       }
     }
     cylinder(r=shaft_diameter/2, h=t+0.1, center=true);
+    for (x=[-1,1]) translate([x * h/2, 0, 0]) scale([(h-20)/2, h-20, 1]) cylinder(r=1, h=t+0.1, center=true, $fn=720);
+    
+    for (x=[-1:1]) {
+      translate([x * (h/2 - (h-2*tab_size)/3/2), -h, 0]) cube(size=[(h-2*tab_size)/3, 2*t, t+0.1], center=true);
+    }
   }
 }
 
 module connecting_gear_support() {
-  color([128/255, 0/255, 0/255]) difference() {
-    union() {
-      cylinder(r=10, h=t, center=true, $fn=72);
-      assign(cd = center_distance(connecting_gear_num_teeth, major_gear_num_teeth))
-      assign(pr1 = pitch_radius(number_of_teeth=major_gear_num_teeth, mm_per_tooth=mm_per_tooth))
-      assign(or1 = outer_radius(number_of_teeth=major_gear_num_teeth, mm_per_tooth=mm_per_tooth))
-      assign(c = clearance + (or1 - pr1))
-      assign(h=(or1 + case_clearance) - (cd * cos(45))) {
-        translate([0, -h/2, 0]) cube(size=[20, h, t], center=true);
+  color([128/255, 0/255, 0/255]) 
+    assign(cd = center_distance(connecting_gear_num_teeth, major_gear_num_teeth))
+    assign(pr1 = pitch_radius(number_of_teeth=major_gear_num_teeth, mm_per_tooth=mm_per_tooth))
+    assign(or1 = outer_radius(number_of_teeth=major_gear_num_teeth, mm_per_tooth=mm_per_tooth))
+    assign(c = case_clearance + (or1 - pr1))
+    assign(h=(or1 + case_clearance) - (cd * cos(45))) 
+    render() difference() {
+      union() {
+        cylinder(r=10, h=t, center=true, $fn=72);
+        translate([40, -h/2, 0]) cube(size=[100, h, t], center=true);
+        translate([90, -h+t, 0]) intersection() {
+          cylinder(r=20-t, h=t, center=true);
+          translate([0, 20, 0]) cube(size=[40, 40, 10], center=true);
+        }
+      }
+      cylinder(r=shaft_diameter/2, h=t+0.1, center=true, $fn=72);
+      translate([90, 0, 0]) scale([80, (h-20), 1]) cylinder(r=1, h=10, center=true, $fn=720);
+      translate([40, 0, 0]) for (x=[-1:1]) {
+        translate([x * (100/2 - (100-2*tab_size)/3/2), -h, 0]) cube(size=[(100-2*tab_size)/3+0.1, 2*t, t+0.1], center=true);
       }
     }
-    cylinder(r=shaft_diameter/2, h=t+0.1, center=true, $fn=72);
-  }
 }
 
 module numeral_plate() {
@@ -180,24 +195,105 @@ module drum_assembly() {
 }
 
 module bottom() {
-  color([240/255, 240/255, 240/255, 0.5]) cube(size=[case_width, case_depth, t], center=true);
+  // color([240/255, 240/255, 240/255, 0.5]) cube(size=[case_width, case_depth, t], center=true);
+  top();
 }
 
 module top() {
-  color([240/255, 240/255, 240/255, 0.5]) cube(size=[case_width, case_depth, t], center=true);
+  color([240/255, 240/255, 240/255, 0.5]) difference() {
+    cube(size=[case_width, case_depth, t], center=true);
+    for (x=[-1:1]) {
+      for (y=[-1,1]) {
+        translate([(case_width/2 - (case_width - (2*tab_size))/3/2) * x, case_depth/2 * y, 0]) 
+          cube(size=[(case_width - (2*tab_size))/3, 10, 10], center=true);
+      }
+    }
+  }
+}
+
+module front_back_base() {
+  difference() {
+    cube(size=[case_width + 2 * t, case_height + 2*t, t], center=true);
+    for (x=[-1:1]) {
+      for (y=[-1,1]) {
+        translate([x * (-case_width/2 + shaft_diameter/2 + t), y * (-case_height/2 + shaft_diameter/2 + t), 0]) 
+          cylinder(r=shaft_diameter/2, h=t+0.1, center=true,$fn=36);
+      }
+    }
+  }
 }
 
 module front() {
-  color([240/255, 240/255, 240/255, 0.5]) cube(size=[case_width + 2 * t, case_height + 2*t, t], center=true);
+  color([240/255, 240/255, 240/255, 0.5]) front_back_base();
 }
 
 module back() {
-  color([240/255, 240/255, 240/255, 0.5]) cube(size=[case_width + 2 * t, case_height + 2*t, t], center=true);
+  color([240/255, 240/255, 240/255, 0.5]) front_back_base();
 }
 
 
 module side() {
-  color([240/255, 240/255, 240/255, 0.5]) cube(size=[case_depth, case_height, t], center=true);
+  color([240/255, 240/255, 240/255, 0.5]) difference() {
+    cube(size=[case_depth, case_height, t], center=true);
+    for (x=[-1:1]) {
+      for (y=[-1,1]) {
+        translate([(case_height/2 - (case_height - (2*tab_size))/3/2) * x, case_depth/2 * y, 0]) 
+          cube(size=[(case_height - (2*tab_size))/3, 10, 10], center=true);
+      }
+    }
+  }
+}
+
+module motor_basket() {
+  translate([0, -7, 0]) 
+  assign(cd = center_distance(connecting_gear_num_teeth, major_gear_num_teeth))
+  assign(pr1 = pitch_radius(number_of_teeth=major_gear_num_teeth, mm_per_tooth=mm_per_tooth))
+  assign(or1 = outer_radius(number_of_teeth=major_gear_num_teeth, mm_per_tooth=mm_per_tooth))
+  assign(c = case_clearance + (or1 - pr1))
+  assign(h=(or1 + case_clearance) - (cd * cos(45)) - 7)
+  render() difference() {
+    union() {
+      cylinder(r=36.8/2, h=t, center=true, $fn=72);
+      translate([0, -h/2, 0]) cube(size=[36.8, h, t], center=true);
+    }
+    
+    cylinder(r=36.8/2+0.1, h=10, center=true);
+    
+    cube(size=[40, 36.8/2, 10], center=true);
+
+
+    translate([0, -h, 0]) cube(size=[40, 2*t, t+0.1], center=true);
+
+    for (x=[-1,1]) {
+      translate([x*(36.8/2 - t), -h + 2 * t + 1.6, 0]) cylinder(r=1.6, h=10, center=true,$fn=36);
+    }
+  }
+}
+
+module motor_face_bracket() {
+  translate([0, -7, 0]) 
+  assign(cd = center_distance(connecting_gear_num_teeth, major_gear_num_teeth))
+  assign(pr1 = pitch_radius(number_of_teeth=major_gear_num_teeth, mm_per_tooth=mm_per_tooth))
+  assign(or1 = outer_radius(number_of_teeth=major_gear_num_teeth, mm_per_tooth=mm_per_tooth))
+  assign(c = case_clearance + (or1 - pr1))
+  assign(h=(or1 + case_clearance) - (cd * cos(45)) - 7)
+  difference() {
+    union() {
+      cylinder(r=36.8/2, h=t, center=true, $fn=72);
+      translate([0, -h/2, 0]) cube(size=[36.8, h, t], center=true);
+    }
+
+    translate([0, 7, 0]) cylinder(r=6, h=10, center=true, $fn=36);
+
+    for (a=[0:5]) {
+      rotate([0, 0, a*60]) translate([15.5, 0, 0]) cylinder(r=1.5, h=10, center=true, $fn=36);
+    }
+
+    for (x=[-1,1]) {
+      translate([x * 36.8/2, -h, 0]) cube(size=[(36.8-tab_size), 2*t, t+0.1], center=true);
+      translate([x*(36.8/2 - t), -h + 2 * t + 1.6, 0]) cylinder(r=1.6, h=10, center=true,$fn=36);
+    }
+  }
 }
 
 module mock_motor() {
@@ -257,13 +353,22 @@ module assembled() {
 
   // support struts for the connecting gears
   translate([-case_width/2 + case_clearance + t + drum_width() - t - t/2, 0, 0]) rotate([-45, 0, 0]) for (x2=[0, 4]) for (x=[0:7]) {
-    translate([x2 * t + x * (drum_width() + t), center_distance(major_gear_num_teeth, connecting_gear_num_teeth), 0]) rotate([135, 0, 0]) rotate([0, 90, 0]) connecting_gear_support();
+    translate([x2 * t + x * (drum_width() + t), center_distance(major_gear_num_teeth, connecting_gear_num_teeth), 0]) 
+      rotate([45, 0, 0]) rotate([90, 0, -90]) connecting_gear_support();
   }
 
-  // mock motor!
+  // mock motor + bracket
   translate([-case_width/2 + case_clearance + t + drum_width()/2 + 8.5 * (drum_width()+t), 0, 0]) rotate([-45, 0, 0]) 
-    translate([0, center_distance(major_gear_num_teeth, connecting_gear_num_teeth), 0]) 
+    translate([0, center_distance(major_gear_num_teeth, connecting_gear_num_teeth), 0]) {
       rotate([-45, 0, 0]) rotate([0, -90, 0]) mock_motor();
+      translate([10 - t/2, 0, 0]) rotate([135, 0, 0]) rotate([0, 90, 0]) motor_face_bracket();
+      for (i=[1:ceil(22/t)]) {
+        translate([10 - t/2 + i*t, 0, 0]) rotate([135, 0, 0]) rotate([0, 90, 0]) motor_basket();
+      }
+      
+
+    }
+      
 
   // drum shaft
   translate([-case_width/2 + case_clearance + 4.5*(drum_width()+t), 0, 0]) rotate([0, 90, 0]) cylinder(r=shaft_diameter/2, h=9*(drum_width()+t) + shaft_diameter*2, center=true, $fn=36);
