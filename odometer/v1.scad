@@ -1,6 +1,6 @@
 // TODOs
 // - design the external case
-// - decide if i want long bolt connection points on the sides too
+// - zip tie holes
 
 use <../publicDomainGearV1.1.scad>
 
@@ -9,10 +9,10 @@ render_gears = true;
 // Parameters
 
 // material thickness
-t = 0.177 * 25.4;
+t = 4.5;
 
 // 1/4" rod for shafts
-shaft_diameter = .250 * 25.4;
+shaft_diameter = 6.1;
 // nut dims
 //   t = 5.66 mm 
 //   shortest across = 10.97 mm
@@ -25,11 +25,11 @@ nut_shortest_dia = 11;
 tab_size = 10;
 
 // panels used to display numerals
-numeral_h = 2.5 * 25.4;
+numeral_h = 2.25 * 25.4;
 numeral_w = 1.25 * 25.4;
 
 // gear parameters
-mm_per_tooth = 19; // arbitrary
+mm_per_tooth = 17; // arbitrary
 
 // number of teeth on the numeral drums
 major_gear_num_teeth = 40;
@@ -41,7 +41,7 @@ function major_gear_outer_diameter() = 2 * outer_radius(number_of_teeth = major_
 // number of teeth on the connecting gears (as well as on the drive gear)
 connecting_gear_num_teeth = 8;
 
-gear_minimum_width = 15;
+gear_minimum_width = 20;
 
 // case 
 
@@ -75,15 +75,16 @@ function numeral_radius() = 10 * (numeral_h + 2) / 3.141592 / 2;
 function drum_width() = numeral_w + 2*t;
 
 // tslot stuff
-tslot_screw_d = 3;
-tslot_screw_nut_t = 3;
-tslot_screw_nut_dia = 6;
+tslot_screw_d = 6;
+tslot_screw_nut_t = nut_t;
+tslot_screw_nut_dia = nut_shortest_dia;
+echo("tslot bolt length: ", (t + t/2 + tslot_screw_nut_t));
 
 module tslot_cutout() {
-  assign(total_len = t + t/2 + tslot_screw_nut_t)
+  assign(total_len = t + tslot_screw_nut_t)
   union() {
     translate([0, total_len/2 - 0.1, 0]) cube(size=[tslot_screw_d, total_len, t+0.1], center=true);
-    translate([0, t + tslot_screw_nut_t/2, 0]) cube(size=[tslot_screw_nut_dia, tslot_screw_nut_t, t+0.1], center=true);
+    translate([0, t/2 + tslot_screw_nut_t/2, 0]) cube(size=[tslot_screw_nut_dia, tslot_screw_nut_t, t+0.1], center=true);
   }
 }
 
@@ -140,7 +141,7 @@ module drum_gear_cutouts() {
 
 module drum_complete_gear() {
   render() difference() {
-    my_gear(number_of_teeth = 40);
+    my_gear(number_of_teeth = major_gear_num_teeth);
     drum_gear_cutouts();
     for (a=[0:9]) {
       rotate([0, 0, a*36+18]) translate([numeral_radius(), 0, 0]) cube(size=[t, tab_size, t+0.1], center=true);
@@ -151,7 +152,7 @@ module drum_complete_gear() {
 module drum_partial_gear() {
   render() difference() {
     union() {
-      my_gear(number_of_teeth = major_gear_num_teeth, teeth_to_hide=partial_gear_num_hidden_teeth());
+      rotate([0, 0, -360/major_gear_num_teeth * 4]) my_gear(number_of_teeth = major_gear_num_teeth, teeth_to_hide=partial_gear_num_hidden_teeth());
       cylinder(r=root_radius(major_gear_num_teeth,0), h=t, center=true, $fn=128);
     }
     cylinder(r=shaft_diameter/2, h=t+0.1, center=true, $fn=36);
@@ -291,20 +292,22 @@ module front_back_base() {
   render()
   difference() {
     union() {
+      echo("front/back height: ", case_height + nut_shortest_dia + 2 * (nut_shortest_dia/2 + t));
       cube(size=[case_width + nut_shortest_dia, case_height + nut_shortest_dia, t], center=true);
 
       // bolt tabs
       for (x=[-1:1]) {
         for (y=[-1,1]) {
+          echo("bolt tab dia: ", 2 * (nut_shortest_dia/2 + t));
           translate([x * (-case_width/2 + 2 * t + nut_shortest_dia/2), y * (-case_height/2 - nut_shortest_dia/2), 0]) 
             cylinder(r=nut_shortest_dia/2 + t, h=t, center=true,$fn=36);
         }
       }
 
-      for (x=[-1,1]) for (y=[-1,1]) {
-        translate([x * (-case_width/2 - nut_shortest_dia/2), y * (-case_height/2 + 2 * t + nut_shortest_dia/2), 0]) 
-          cylinder(r=nut_shortest_dia/2 + t, h=t, center=true,$fn=36);
-      }
+      // for (x=[-1,1]) for (y=[-1,1]) {
+      //   translate([x * (-case_width/2 - nut_shortest_dia/2), y * (-case_height/2 + 2 * t + nut_shortest_dia/2), 0]) 
+      //     cylinder(r=nut_shortest_dia/2 + t, h=t, center=true,$fn=36);
+      // }
     }
 
     // bolt drill-outs
@@ -315,10 +318,10 @@ module front_back_base() {
       }
     }
     
-    for (x=[-1,1]) for (y=[-1,1]) {
-      translate([x * (-case_width/2 - nut_shortest_dia/2), y * (-case_height/2 + 2 * t + nut_shortest_dia/2), 0]) 
-        cylinder(r=shaft_diameter/2, h=t+0.1, center=true,$fn=36);
-    }
+    // for (x=[-1,1]) for (y=[-1,1]) {
+    //   translate([x * (-case_width/2 - nut_shortest_dia/2), y * (-case_height/2 + 2 * t + nut_shortest_dia/2), 0]) 
+    //     cylinder(r=shaft_diameter/2, h=t+0.1, center=true,$fn=36);
+    // }
 
     for (x=[-1,1]) for (y=[-1,1]) {
       translate([x * (case_width/6), y * (case_height/2 - t/2), 0]) cube(size=[tab_size, t, t+0.1], center=true);
@@ -550,3 +553,15 @@ module assembled() {
 }
 
 assembled();
+
+module panelized() {
+  projection(cut=true) {
+    // bottom();
+    // drum_support();
+    // connecting_gear_support();
+    // connecting_gear();
+    front();
+  }
+}
+
+// panelized();
