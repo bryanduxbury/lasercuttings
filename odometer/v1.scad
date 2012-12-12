@@ -84,6 +84,8 @@ tslot_screw_nut_t = nut_t;
 tslot_screw_nut_dia = nut_shortest_dia;
 echo("tslot bolt length: ", (t + t/2 + tslot_screw_nut_t));
 
+echo("closing bolt length: ", case_depth + nut_t * 2);
+
 module tslot_cutout() {
   assign(total_len = t + tslot_screw_nut_t)
   union() {
@@ -606,9 +608,11 @@ module assembled() {
     }
 
   // drum shaft
+  echo("drum shaft length: ", 9*(drum_width()+t) + nut_t * 3);
   translate([-case_width/2 + case_clearance + t / 2 + 4.5*(drum_width()+t), 0, 0]) rotate([0, 90, 0]) 
     cylinder(r=shaft_diameter/2, h=9*(drum_width()+t) + nut_t * 3, center=true, $fn=36);
   // connecting gear shaft
+  echo("connecting gear shaft length: ", 7*(drum_width()+t) + shaft_diameter*6);
   translate([-case_width/2 + case_clearance + drum_width() + t + 3.5*(drum_width()+t), 0, 0]) rotate([-45, 0, 0]) translate([0, center_distance(major_gear_num_teeth, connecting_gear_num_teeth), 0]) 
     rotate([0, 90, 0]) cylinder(r=shaft_diameter/2, h=7*(drum_width()+t) + shaft_diameter*6, center=true, $fn=36);
 
@@ -628,7 +632,7 @@ module assembled() {
 
 }
 
-// assembled();
+assembled();
 
 module panelized() {
   projection(cut=true) {
@@ -649,4 +653,4 @@ module panelized() {
   }
 }
 
-panelized();
+// panelized();
