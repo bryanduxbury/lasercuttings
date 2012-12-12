@@ -162,9 +162,9 @@ module drive_gear() {
     render() gear(mm_per_tooth = mm_per_tooth, 
       number_of_teeth = connecting_gear_num_teeth, 
       thickness = t, 
-      hole_diameter=6 - l);
+      hole_diameter=6 - l/2);
 
-    translate([0, 6/2 - l / 2, 0]) cube(size=[12, 1.2, t], center=true);
+    translate([0, 6/2 - l / 4, 0]) cube(size=[12, 1.2, t], center=true);
   }
 }
 
@@ -632,7 +632,7 @@ module assembled() {
 
 }
 
-assembled();
+// assembled();
 
 module panelized() {
   projection(cut=true) {
@@ -653,4 +653,4 @@ module panelized() {
   }
 }
 
-// panelized();
+panelized();
