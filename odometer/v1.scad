@@ -157,8 +157,12 @@ module connecting_gear_assembly() {
 
 module drive_gear() {
   color([64/255, 225/255, 64/255]) union() {
-    my_gear(connecting_gear_num_teeth);
-    translate([0, shaft_diameter/2, 0]) cube(size=[shaft_diameter, 1.2, t], center=true);
+    render() gear(mm_per_tooth = mm_per_tooth, 
+      number_of_teeth = connecting_gear_num_teeth, 
+      thickness = t, 
+      hole_diameter=6 - l);
+
+    translate([0, 6/2 - l / 2, 0]) cube(size=[12, 1.2, t], center=true);
   }
 }
 
@@ -640,8 +644,8 @@ module panelized() {
     // drum_complete_gear();
     // numeral_plate();
     // motor_face_bracket();
-    // drive_gear();
-    front();
+    drive_gear();
+    // front();
   }
 }
 
