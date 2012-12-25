@@ -1,7 +1,8 @@
 #include <SPI.h>
 #include <Ethernet.h>
+#include "SpeedController.h"
 
-#define PULSES_PER_REV 300
+#define PULSES_PER_REV 600
 
 #define MOTOR_PIN 5
 #define BUTTON_PIN 7
@@ -39,18 +40,18 @@ void setup() {
   currentRPM = 0.0;
   
   // attach interrupts to int 0 + int 1 for the quadrature pulses
-  attachInterrupt(0, quadraturePulse, RISING);
+  attachInterrupt(0, quadraturePulse, CHANGE);
 //  attachInterrupt(1, quadraturePulse, CHANGE);
 }
 
 void quadraturePulse() {
-  unsigned long curPulseMicros = micros();
-  
-  unsigned long timeSinceLastPulseMicros = curPulseMicros - lastPulseMicros;
-  unsigned long usecPerRevolution = PULSES_PER_REV * timeSinceLastPulseMicros;
-  double minutesPerRevolution = usecPerRevolution / 1000.0 / 1000.0 / 60.0;
-  currentRPM = 1.0 / minutesPerRevolution;
-  lastPulseMicros = curPulseMicros;
+//  unsigned long curPulseMicros = micros();
+//  
+//  unsigned long timeSinceLastPulseMicros = curPulseMicros - lastPulseMicros;
+//  unsigned long usecPerRevolution = PULSES_PER_REV * timeSinceLastPulseMicros;
+//  double minutesPerRevolution = usecPerRevolution / 1000.0 / 1000.0 / 60.0;
+//  currentRPM = 1.0 / minutesPerRevolution;
+//  lastPulseMicros = curPulseMicros;
 }
 
 
@@ -153,8 +154,15 @@ void processHttpRequests() {
     Serial.println("client disonnected");
   }
 }
-  
+
+unsigned long lastSpeedAdjustment = 0;
+#define SPEED_ADJUSTMENT_DELAY 50
+
 void adjustMotorSpeed() {
+  unsigned long now = millis();
+  if (now - lastSpeedAdjustment < SPEED_ADJUSTMENT_DELAY) 
+    return;
+    
   if (currentRPM < targetRPM) {
     if (currentMotorPower < 255) {
       currentMotorPower++;
@@ -166,9 +174,10 @@ void adjustMotorSpeed() {
   }
   
   analogWrite(MOTOR_PIN, currentMotorPower); 
+  lastSpeedAdjustment = now;
 }
 
 void loop() {
-  processHttpRequests();  
+  processHttpRequests();
   adjustMotorSpeed();
 }
