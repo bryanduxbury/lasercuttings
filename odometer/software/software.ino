@@ -1,13 +1,19 @@
+// TODO: config params in eeprom
+// TODO: config ui on web page
+// TODO: display steps remaining to be taken on web ui
+// TODO: consider taking small bursts to cope with coasting
+// TODO: factory reset functionality
+
 #include <SPI.h>
 #include <Ethernet.h>
-#include "SpeedController.h"
+//#include "SpeedController.h"
+#include "StepController.h"
+#include "TimerOne.h"
 
-#define PULSES_PER_REV 600
+#define PULSES_PER_DIGIT (5 * 1200 / 10)
 
 #define MOTOR_PIN 5
 #define BUTTON_PIN 7
-//#define QUADRATURE_PIN_1 2
-//#define QUADRATURE_PIN_2 3
 
 //#define MAX_FAULT_PIN 7
 //#define COMM_PIN 8
@@ -17,12 +23,8 @@ IPAddress ip(10,1,1,123);
 
 EthernetServer server(80);
 
-volatile double currentRPM;
-double targetRPM;
-
-volatile unsigned long lastPulseMicros;
-
-byte currentMotorPower = 0;
+//SpeedController speed_controller;
+StepController step_controller;
 
 void setup() {
   Serial.begin(9600);
@@ -33,28 +35,17 @@ void setup() {
   Serial.print("server is at ");
   Serial.println(Ethernet.localIP());
   
-  analogWrite(MOTOR_PIN, 0);
-  pinMode(MOTOR_PIN, OUTPUT);
-//  analogWrite(MOTOR_PIN, 255);
-  
-  currentRPM = 0.0;
   
   // attach interrupts to int 0 + int 1 for the quadrature pulses
   attachInterrupt(0, quadraturePulse, CHANGE);
-//  attachInterrupt(1, quadraturePulse, CHANGE);
+  attachInterrupt(1, quadraturePulse, CHANGE);
+
+  step_controller.begin(MOTOR_PIN, 128);
 }
 
 void quadraturePulse() {
-//  unsigned long curPulseMicros = micros();
-//  
-//  unsigned long timeSinceLastPulseMicros = curPulseMicros - lastPulseMicros;
-//  unsigned long usecPerRevolution = PULSES_PER_REV * timeSinceLastPulseMicros;
-//  double minutesPerRevolution = usecPerRevolution / 1000.0 / 1000.0 / 60.0;
-//  currentRPM = 1.0 / minutesPerRevolution;
-//  lastPulseMicros = curPulseMicros;
+  step_controller.quadPulse();
 }
-
-
 
 void processHttpRequests() {
   // listen for incoming clients
@@ -89,14 +80,15 @@ void processHttpRequests() {
               Serial.println("Woot! It's a setter param!");
               // start parsing from here
               firstLineBufferPointer++;
-              if (*firstLineBufferPointer == 'r') {
+              if (*firstLineBufferPointer == 'c') {
                 Serial.println("Woah! Check it! We're supposed to set the target rpm!");
                 Serial.print("Here's what the buffer looks where we're planning to start: ");
                 Serial.println(firstLineBufferPointer+1);
                 // setting target RPM
                 // skip the 'r=' part
                 firstLineBufferPointer+=2;
-                targetRPM = atof(firstLineBufferPointer);
+                Serial.println(atol(firstLineBufferPointer));
+                step_controller.advance(atol(firstLineBufferPointer) * PULSES_PER_DIGIT);
               }
             }
           }
@@ -117,21 +109,10 @@ void processHttpRequests() {
           // add a meta refresh tag, so the browser pulls again every 5 seconds:
 //          client.println("<meta http-equiv=\"refresh\" content=\"5\">");
 
-          client.print("Current RPM: <b>");
-          client.print(currentRPM);
-//          client.print(",");
-//          client.print(lastPulseMicros);
-          client.println("</b><br/>");
-
-          client.print("Current motor power: ");
-          client.print(currentMotorPower);
-          client.println("</br>");
-
-
           client.println("<form action='/'>");
-          client.println("Target RPM:");
-          client.print("<input type=text name=r value='"); client.print(targetRPM); client.println("'/>");
-          client.println("<input type=submit value='Adjust RPM'/>");
+//          client.println("Target RPM:");
+          client.print("<input type=text name=c value='"); client.println("'/>");
+          client.println("<input type=submit value='Advance Count'/>");
           client.println("</form>");
 
           client.println("</html>");
@@ -155,29 +136,8 @@ void processHttpRequests() {
   }
 }
 
-unsigned long lastSpeedAdjustment = 0;
-#define SPEED_ADJUSTMENT_DELAY 50
-
-void adjustMotorSpeed() {
-  unsigned long now = millis();
-  if (now - lastSpeedAdjustment < SPEED_ADJUSTMENT_DELAY) 
-    return;
-    
-  if (currentRPM < targetRPM) {
-    if (currentMotorPower < 255) {
-      currentMotorPower++;
-    }
-  } else if (currentRPM > targetRPM) {
-    if (currentMotorPower > 0) {
-      currentMotorPower--;
-    }
-  }
-  
-  analogWrite(MOTOR_PIN, currentMotorPower); 
-  lastSpeedAdjustment = now;
-}
-
 void loop() {
   processHttpRequests();
-  adjustMotorSpeed();
+//  step_controller.advance(100);
+  delay(10);
 }
