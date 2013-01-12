@@ -1,0 +1,17 @@
+flange dims
+  outside dia = 77.12 mm
+  opposite holes outside to outside = 60.66 mm
+  hole diameter = 7.0mm
+
+  inner dia = 18.19 mm
+  cylinder dia = 27.75mm
+
+  base t = 5.6mm
+  total t = 14.36
+
+
+nut dims
+  t = 5.66 mm 
+  shortest across = 10.97 mm
+  longest across = 12.34 mm
+  id = 5.22mm
