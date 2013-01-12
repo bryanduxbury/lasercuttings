@@ -86,12 +86,14 @@ module gear (
 								[0, -hole_diameter/10],
 								polar(r, -181/number_of_teeth),
 								polar(r, r<b ? k : -180/number_of_teeth),
-								q7(0/5,r,b,c,k, 1),q7(1/5,r,b,c,k, 1),q7(2/5,r,b,c,k, 1),q7(3/5,r,b,c,k, 1),q7(4/5,r,b,c,k, 1),q7(5/5,r,b,c,k, 1),
-								q7(5/5,r,b,c,k,-1),q7(4/5,r,b,c,k,-1),q7(3/5,r,b,c,k,-1),q7(2/5,r,b,c,k,-1),q7(1/5,r,b,c,k,-1),q7(0/5,r,b,c,k,-1),
+								q7(0/10,r,b,c,k, 1),q7(1/10,r,b,c,k, 1),q7(2/10,r,b,c,k, 1),q7(3/10,r,b,c,k, 1),q7(4/10,r,b,c,k, 1),q7(5/10,r,b,c,k, 1),
+								q7(6/10,r,b,c,k, 1),q7(7/10,r,b,c,k, 1),q7(8/10,r,b,c,k, 1),q7(9/10,r,b,c,k, 1),q7(10/10,r,b,c,k, 1),
+								q7(10/10,r,b,c,k,-1),q7(9/10,r,b,c,k,-1),q7(8/10,r,b,c,k,-1),q7(7/10,r,b,c,k,-1),q7(6/10,r,b,c,k,-1),q7(5/10,r,b,c,k,-1),
+								q7(4/10,r,b,c,k,-1),q7(3/10,r,b,c,k,-1),q7(2/10,r,b,c,k,-1),q7(1/10,r,b,c,k,-1),q7(0/10,r,b,c,k,-1),
 								polar(r, r<b ? -k : 180/number_of_teeth),
 								polar(r, 181/number_of_teeth)
 							],
- 							paths=[[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]]
+ 							paths=[[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26]]
 						);
 			cylinder(h=2*thickness+1, r=hole_diameter/2, center=true, $fn=20);
 		}
@@ -115,7 +117,7 @@ module rack (
 ) {
 	assign(pi = 3.1415926)
 	assign(a = mm_per_tooth / pi) //addendum
-	assign(t = a*cos(pressure_angle)-1)         //tooth side is tilted so top/bottom corners move this amount
+	assign(t = a/2*cos(pressure_angle)-1)         //tooth side is tilted so top/bottom corners move this amount
 		for (i = [0:number_of_teeth-1] )
 			translate([i*mm_per_tooth,0,0])
 				linear_extrude(height = thickness, center = true, convexity = 10)
