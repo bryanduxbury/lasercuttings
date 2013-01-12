@@ -1,4 +1,5 @@
 // TODOs
+// design roller detent
 
 use <../publicDomainGearV1.1.scad>
 
@@ -37,7 +38,7 @@ mm_per_tooth = 17; // arbitrary
 // number of teeth on the numeral drums
 major_gear_num_teeth = 40;
 // ... and some consequences of this choice
-function partial_gear_num_hidden_teeth() = major_gear_num_teeth - major_gear_num_teeth / 10;
+function partial_gear_num_hidden_teeth() = major_gear_num_teeth - major_gear_num_teeth / 10 + 1;
 function minor_gear_num_teeth() = major_gear_num_teeth/4;
 function major_gear_outer_diameter() = 2 * outer_radius(number_of_teeth = major_gear_num_teeth, mm_per_tooth = mm_per_tooth);
 
@@ -72,6 +73,21 @@ echo("case width: ", case_width);
 case_height = major_gear_outer_diameter() + 2*case_clearance;
 echo("case height: ", case_height);
 case_depth = major_gear_outer_diameter() + 2*case_clearance;
+
+// roller detent
+roller_od = 1/4 * 25.4; // 1/4" outside diameter nylon spacer
+roller_id = 1/8 * 25.4; // 1/8" inside diameter
+roller_w = 25.4; // TODO: this should be a calculated parameter
+
+detent_spacing = 3;
+detent_arm_width = 10;
+function r_p() = outer_radius(mm_per_tooth=mm_per_tooth, number_of_teeth=connecting_gear_num_teeth) + detent_spacing + roller_id/2;
+// function r_p() = outer_radius(mm_per_tooth=mm_per_tooth, number_of_teeth=connecting_gear_num_teeth) / 2;
+function r_d() = pitch_radius(mm_per_tooth=mm_per_tooth, number_of_teeth=connecting_gear_num_teeth) + 4.5;
+function detent_pivot_to_roller_length() = sqrt(pow(r_p(),2) + pow(r_d(), 2) - 2 * r_p() * r_d() * cos(90-360/connecting_gear_num_teeth*1));
+function detent_arm_rest_angle() = acos((pow(r_p(),2) + pow(detent_pivot_to_roller_length(), 2) - pow(r_d(), 2)) / 2 / r_p() / detent_pivot_to_roller_length());
+echo("detent arm rest angle:", detent_arm_rest_angle());
+detent_lever_length = 10; // the length of the non-roller-side of the roller detent. this might end up being calculated.
 
 // some functionalized parameters
 function numeral_radius() = 10 * (numeral_h + 2) / 3.141592 / 2;
@@ -133,6 +149,8 @@ module connecting_gear() {
     for (a=[0:2]) {
       rotate([0, 0, 120*a]) translate([shaft_diameter/2 + 1.5 * t, 0, 0]) cube(size=[t, tab_size-l, t+0.1], center=true);
     }
+    
+    translate([0, pitch_radius(number_of_teeth=connecting_gear_num_teeth, mm_per_tooth=mm_per_tooth), 0]) cylinder(r=0.5, h=t*2, center=true);
   }
 }
 
@@ -202,7 +220,7 @@ module drum_complete_gear() {
 module drum_partial_gear() {
   render() difference() {
     union() {
-      rotate([0, 0, -360/major_gear_num_teeth * 4]) my_gear(number_of_teeth = major_gear_num_teeth, teeth_to_hide=partial_gear_num_hidden_teeth());
+      rotate([0, 0, -360/major_gear_num_teeth * 3]) my_gear(number_of_teeth = major_gear_num_teeth, teeth_to_hide=partial_gear_num_hidden_teeth());
       cylinder(r=root_radius(major_gear_num_teeth,0), h=t, center=true, $fn=128);
     }
     cylinder(r=shaft_diameter/2 + 0.1, h=t+0.1, center=true, $fn=36);
@@ -522,7 +540,7 @@ module mock_motor() {
     }
   }
   
-  color([192/255, 192/255, 192/255]) translate([0, 0, 4]) scale([1, 1, 1]) rotate([0, 0, 0]) motor_mounting_bracket();
+  color([192/255, 192/255, 192/255]) translate([0, 0, 4]) scale([1, 1, 1]) rotate([0, 0, 360/connecting_gear_num_teeth/-2 - 45]) motor_mounting_bracket();
 }
 
 module mock_arduino() {
@@ -579,82 +597,119 @@ module motor_mounting_bracket() {
   }
 }
 
+module roller_detent_arm() {
+  difference() {
+    union() {
+      cylinder(r=5, h=t, center=true);
+      translate([0, detent_pivot_to_roller_length()/2, 0]) cube(size=[detent_arm_width, detent_pivot_to_roller_length(), t], center=true);
+      // translate([0, 25, 0]) cylinder(r=5, h=t, center=true);
+    }
+    // for (i=[0:2]) {
+    //   translate([0, 25 * i/2, 0]) cylinder(r=1.5, h=t*2, center=true);
+    // }
+  }
+}
+
+module roller_detent_roller() {
+  color([54/255, 54/255, 54/255]) render() difference() {
+    cylinder(r=roller_od/2, h=roller_w, center=true, $fn=36);
+    cylinder(r=roller_id/2, h=roller_w+0.1, center=true, $fn=36);
+  }
+}
+
+module roller_detent_assembly() {
+  for (i=[-1,1]) {
+    translate([(2*t + 2*t + t + 2*washer_t + t + washer_t + 2*washer_t)/2*i, 0, 0]) rotate([90, 0, 90]) roller_detent_arm();
+  }
+  
+  translate([0, 0, detent_pivot_to_roller_length()]) rotate([0, 90, 0]) {
+    roller_detent_roller();
+    cylinder(r=1.5, h=(2*t + 2*t + t + 2*washer_t + t)+2*t, center=true, $fn=36);
+  }
+  
+}
+
 module assembled() {
   // drum assemblies
-  translate([-case_width/2 + case_clearance + t + drum_width()/2, 0, 0]) for (i=[0:8]) {
+  translate([-case_width/2 + case_clearance + t + drum_width()/2, 0, 0]) for (i=[8:8]) {
     translate([i*(t + drum_width()), 0, 0]) {
-      drum_assembly();
+      // echo("tttttttttttt >>>>>>>", ($t % 400));
+      rotate([$t * 72, 0, 0]) 
+      rotate([-360/major_gear_num_teeth*5, 0, 0]) drum_assembly();
     }
   }
 
-  // stacks of connecting gears
   // support struts for the main drums
-  translate([-case_width/2 + case_clearance + t/2, 0, 0]) for (i=[1:8]) {
-    rotate([-45, 0, 0]) translate([i * (drum_width() + t), center_distance(major_gear_num_teeth, connecting_gear_num_teeth), 0])
-      rotate([360/connecting_gear_num_teeth / 2, 0, 0]) connecting_gear_assembly();
+  translate([-case_width/2 + case_clearance + t/2, 0, 0]) for (i=[8:9]) {
+    translate([i * (drum_width() + t), 0, 0]) rotate([90, 0, 90]) drum_support();
   }
-  
-  // translate([-case_width/2 + case_clearance + t + drum_width()/2, 0, 0]) for (i=[1:8]) {
-  //   translate([i*(t + drum_width()), 0, 0]) {
-  //     rotate([-45, 0, 0]) 
-  //       translate([0, center_distance(major_gear_num_teeth, connecting_gear_num_teeth), 0]) 
-  //         for (x=[0, 2*(t+washer_t)]) {
-  //           translate([-(numeral_w/2 + t/2 + x), 0, 0]) rotate([360/connecting_gear_num_teeth/2, 0, 0]) rotate([0, 90, 0]) connecting_gear();
-  //         }
+
+
+  // connecting gears
+  translate([-case_width/2 + case_clearance + t/2, 0, 0]) for (i=[8:8]) {
+    rotate([-45, 0, 0]) translate([i * (drum_width() + t), center_distance(major_gear_num_teeth, connecting_gear_num_teeth), 0])
+      rotate([$t * -360, 0, 0]) 
+      rotate([360/connecting_gear_num_teeth / 2, 0, 0]) 
+      connecting_gear_assembly();
+  }
+
+  // roller detents
+  // translate([-case_width/2 + case_clearance + t/2, 0, 0]) for (i=[8:8]) {
+  //   rotate([-45, 0, 0]) 
+  //   translate([i * (drum_width() + t), center_distance(major_gear_num_teeth, connecting_gear_num_teeth), 0])
+  //   rotate([45, 0, 0]) {
+  //     translate([0, r_p(), 0]) 
+  //       rotate([90-detent_arm_rest_angle() - $t * 5 * connecting_gear_num_teeth * 5, 0, 0]) roller_detent_assembly();
   //   }
+  //     
   // }
+
+  // support struts for the connecting gears
+  translate([-case_width/2 + case_clearance + t + drum_width() - t - t/2, 0, 0]) rotate([-45, 0, 0]) for (x2=[/*-2*washer_t,*/ 4*t+2*washer_t]) for (x=[7:7]) {
+    translate([x2 + x * (drum_width() + t), center_distance(major_gear_num_teeth, connecting_gear_num_teeth), 0]) 
+      rotate([45, 0, 0]) rotate([90, 0, -90]) connecting_gear_support();
+  }
+
 
   // singular drive gear
   translate([-case_width/2 + case_clearance + t + drum_width()/2 + 8 * (drum_width()+t), 0, 0]) {
     rotate([-45, 0, 0]) 
       translate([0, center_distance(major_gear_num_teeth, connecting_gear_num_teeth), 0]) 
-        translate([(numeral_w/2 + t/2), 0, 0]) rotate([360/connecting_gear_num_teeth/2, 0, 0]) rotate([0, 90, 0]) drive_gear();
+        translate([(numeral_w/2 + t/2), 0, 0]) 
+        rotate([$t * -360, 0, 0]) 
+        rotate([360/connecting_gear_num_teeth/2, 0, 0]) rotate([0, 90, 0]) drive_gear();
   }
 
-  // support struts for the main drums
-  translate([-case_width/2 + case_clearance + t/2, 0, 0]) for (i=[0:9]) {
-    translate([i * (drum_width() + t), 0, 0]) rotate([90, 0, 90]) drum_support();
-  }
 
-  // support struts for the connecting gears
-  translate([-case_width/2 + case_clearance + t + drum_width() - t - t/2, 0, 0]) rotate([-45, 0, 0]) for (x2=[-2*washer_t, 4*t+2*washer_t]) for (x=[0:7]) {
-    translate([x2 + x * (drum_width() + t), center_distance(major_gear_num_teeth, connecting_gear_num_teeth), 0]) 
-      rotate([45, 0, 0]) rotate([90, 0, -90]) connecting_gear_support();
-  }
 
   // mock motor + bracket
   translate([-case_width/2 + case_clearance + t + drum_width()/2 + 8.5 * (drum_width()+t), 0, 0]) rotate([-45, 0, 0]) 
     translate([0, center_distance(major_gear_num_teeth, connecting_gear_num_teeth), 0]) {
       rotate([-45, 0, 0]) rotate([0, -90, 0]) mock_motor();
       translate([10 - t/2, 0, 0]) rotate([45, 0, 0]) rotate([0, 0, 180]) rotate([90, 0, 90]) motor_face_bracket();
-      // for (i=[1:ceil(22/t)]) {
-      //   translate([10 - t/2 + i*t, 0, 0]) rotate([135, 0, 0]) rotate([0, 90, 0]) motor_basket();
-      // }
     }
 
-  // drum shaft
-  echo("drum shaft length: ", 9*(drum_width()+t) + nut_t * 3);
-  translate([-case_width/2 + case_clearance + t / 2 + 4.5*(drum_width()+t), 0, 0]) rotate([0, 90, 0]) 
-    cylinder(r=shaft_diameter/2, h=9*(drum_width()+t) + nut_t * 3, center=true, $fn=36);
-  // connecting gear shaft
-  echo("connecting gear shaft length: ", 7*(drum_width()+t) + shaft_diameter*6);
-  translate([-case_width/2 + case_clearance + drum_width() + t + 3.5*(drum_width()+t), 0, 0]) rotate([-45, 0, 0]) translate([0, center_distance(major_gear_num_teeth, connecting_gear_num_teeth), 0]) 
-    rotate([0, 90, 0]) cylinder(r=shaft_diameter/2, h=7*(drum_width()+t) + shaft_diameter*6, center=true, $fn=36);
+  // // drum shaft
+  // echo("drum shaft length: ", 9*(drum_width()+t) + nut_t * 3);
+  // translate([-case_width/2 + case_clearance + t / 2 + 4.5*(drum_width()+t), 0, 0]) rotate([0, 90, 0]) 
+  //   cylinder(r=shaft_diameter/2, h=9*(drum_width()+t) + nut_t * 3, center=true, $fn=36);
+  // // connecting gear shaft
+  // echo("connecting gear shaft length: ", 7*(drum_width()+t) + shaft_diameter*6);
+  // translate([-case_width/2 + case_clearance + drum_width() + t + 3.5*(drum_width()+t), 0, 0]) rotate([-45, 0, 0]) translate([0, center_distance(major_gear_num_teeth, connecting_gear_num_teeth), 0]) 
+  //   rotate([0, 90, 0]) cylinder(r=shaft_diameter/2, h=7*(drum_width()+t) + shaft_diameter*6, center=true, $fn=36);
 
-  for (i=[-1,1]) {
-    translate([i * (-case_width/2 - t/2), 0, 0]) rotate([0, -i*90, 0]) flange();
-  }
+  // for (i=[-1,1]) {
+  //   translate([i * (-case_width/2 - t/2), 0, 0]) rotate([0, -i*90, 0]) flange();
+  // }
 
   // case
   // translate([0, 0, -case_height/2 + t/2]) bottom();
   // translate([0, 0, case_height/2 - t/2]) top();
   // translate([-1 * (case_width/2 - t/2), 0, 0]) rotate([90, 0, 90]) side();
   // translate([(case_width/2 - t/2), 0, 0]) rotate([90, 0, 90]) right_side();
-  // 
-  // 
+
   // translate([0, -case_depth/2 + t/2, 0]) rotate([90, 0, 0]) front();
   // translate([0, case_depth/2 - t/2, 0]) rotate([90, 0, 0]) back();
-
 }
 
 assembled();
@@ -681,3 +736,5 @@ module panelized() {
 // panelized();
 
 // !motor_mounting_bracket();
+
+// roller_detent_assembly();
