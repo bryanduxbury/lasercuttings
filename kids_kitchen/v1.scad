@@ -75,25 +75,25 @@ total_height = fridge_total_height;
 
 flatten = 0;
 
-module xy() {
+module _xy() {
   color([192/255, 64/255, 64/255]) {
     child(0);
   }
 }
 
-module xz() {
+module _xz() {
   color([64/255, 192/255, 64/255]) {
     rotate([90*flatten, 0, 0]) child(0);
   }
 }
 
-module yz() {
+module _yz() {
   color([64/255, 64/255, 192/255]) {
     rotate([90*flatten, 0, 90 * flatten]) child(0);
   }
 }
 
-module rounded_rect(h, w, d, r) {
+module _rounded_rect(h, w, d, r) {
   union() {
     cube(size=[w-r*2, d-r*2, h], center=true);
     for (x=[-1,1]) {
@@ -139,7 +139,7 @@ module single_tab(w) {
 }
 
 module back_plate() {
-  xz() render() difference() {
+  _xz() render() difference() {
     cube(size=[total_width, total_height, material_thickness], center=true);
     translate([-total_width/2 + fridge_width/2, total_height/2 - material_thickness/2, 0]) {
       for (x=[-1,1]) {
@@ -173,7 +173,7 @@ module back_plate() {
 }
 
 module combined_bottom() {
-  xy() render() difference() {
+  _xy() render() difference() {
     cube(size=[total_width, overall_depth, material_thickness], center=true);
 
     translate([total_width/2 - material_thickness/2, 0, 0]) rotate([0, 0, 90]) single_tab(overall_depth);
@@ -226,7 +226,7 @@ module stove_coil(dia) {
 }
 
 module combined_countertop() {
-  xy() render() difference() {
+  _xy() render() difference() {
     union() {
       translate([-(stove_width + sink_width)/2 - material_thickness/2, 0, 0]) cube(size=[material_thickness, overall_depth, material_thickness], center=true);
 
@@ -234,7 +234,7 @@ module combined_countertop() {
       translate([-(stove_width + sink_width)/2 + stove_width / 2, 0, 0]) union() {
         difference() {
           cube(size=[stove_width, overall_depth, material_thickness], center=true);
-          translate([0, -overall_depth*.05, material_thickness/2 - material_thickness/8 + 0.1]) rounded_rect(material_thickness / 4, stove_width * 0.8, overall_depth * 0.7, bit_diameter);
+          translate([0, -overall_depth*.05, material_thickness/2 - material_thickness/8 + 0.1]) _rounded_rect(material_thickness / 4, stove_width * 0.8, overall_depth * 0.7, bit_diameter);
         }
         translate([0, -overall_depth*0.05, 0]) {
           for (x=[-1,1]) {
@@ -248,7 +248,7 @@ module combined_countertop() {
       // sink
       translate([(stove_width + sink_width)/2 - sink_width / 2, 0, 0]) difference() {
         cube(size=[sink_width, overall_depth, material_thickness], center=true);
-        rounded_rect(material_thickness *2, basin_width, basin_depth, bit_diameter);
+        _rounded_rect(material_thickness *2, basin_width, basin_depth, bit_diameter);
       }
     }
     translate([-(stove_width + sink_width)/2 - material_thickness/2, 0, 0]) rotate([0, 0, 90]) tabs_at_thirds(overall_depth);
@@ -259,7 +259,7 @@ module combined_countertop() {
 }
 
 module combined_top() {
-  xy() render() 
+  _xy() render() 
     union() {
       translate([-total_width/2 + fridge_width/2, 0, 0]) difference() {
         cube(size=[fridge_width, overall_depth, material_thickness], center=true);
@@ -293,7 +293,7 @@ module center_feet_cutouts() {
 }
 
 module fridge_left() {
-  yz() render() difference() {
+  _yz() render() difference() {
     cube(size=[overall_depth, fridge_total_height, material_thickness], center=true);
     translate([0, fridge_total_height/2 - material_thickness/2, 0]) {
       translate([-(-overall_depth / 2 + microwave_depth/2 + (overall_depth - microwave_depth/2 - (overall_depth-microwave_depth)/2 - tab_width)/2 + tab_width/2), 0, 0]) 
@@ -328,7 +328,7 @@ module fridge_left() {
 }
 
 module fridge_right() {
-  yz() render() rotate([0, 180, 0]) difference() {
+  _yz() render() rotate([0, 180, 0]) difference() {
     cube(size=[overall_depth, fridge_total_height, material_thickness], center=true);
     translate([0, fridge_total_height/2 - material_thickness/2, 0]) {
       translate([-overall_depth / 2 + microwave_depth/2 + (overall_depth - microwave_depth/2 - (overall_depth-microwave_depth)/2 - tab_width)/2 + tab_width/2, 0, 0]) 
@@ -349,7 +349,7 @@ module fridge_right() {
 }
 
 module fridge_divider() {
-  xy() render() difference() {
+  _xy() render() difference() {
     cube(size=[fridge_width, overall_depth, material_thickness], center=true);
 
     translate([0, overall_depth/2 - material_thickness/2, 0]) tabs_at_thirds(fridge_width);
@@ -361,7 +361,7 @@ module fridge_divider() {
 }
 
 module fridge_door_main() {
-  xz() render() difference() {
+  _xz() render() difference() {
     cube(size=[fridge_width, fridge_total_height - fridge_freezer_height, material_thickness], center=true);
     scale([-1, 1, 1]) translate([fridge_width/2 - fridge_x_from_right + material_thickness/2, 0, 0]) {
       translate([0, (fridge_total_height - fridge_freezer_height)/2, 0]) rotate([0, 0, 90]) edge_slot(handle_thickness);
@@ -401,7 +401,7 @@ module generic_f_door_handle(h) {
 
 
 module fridge_door_handle() {
-  yz() generic_f_door_handle(fridge_handle_height);
+  _yz() generic_f_door_handle(fridge_handle_height);
 }
 
 module fridge_door_assembly() {
@@ -411,7 +411,7 @@ module fridge_door_assembly() {
 }
 
 module freezer_door_main() {
-  xz() render() difference() {
+  _xz() render() difference() {
     cube(size=[fridge_width, fridge_freezer_height, material_thickness], center=true);
     scale([-1, 1, 1]) translate([fridge_width/2 - fridge_x_from_right + material_thickness/2, 0, 0]) {
       translate([0, -fridge_freezer_height/2, 0]) rotate([0, 0, 90]) edge_slot(handle_thickness);
@@ -428,7 +428,7 @@ module freezer_door_main() {
 }
 
 module freezer_door_handle() {
-  yz() generic_f_door_handle(freezer_handle_height);
+  _yz() generic_f_door_handle(freezer_handle_height);
 }
 
 module freezer_door_assembly() {
@@ -453,7 +453,7 @@ module fridge_assembly() {
 }
 
 module stove_right() {
-  yz() render() difference() {
+  _yz() render() difference() {
     cube(size=[overall_depth, stove_height, material_thickness], center=true);
     translate([overall_depth/2 - material_thickness/2, 0, 0]) rotate([0, 0, 90]) tabs_at_thirds(stove_height);
     translate([0, stove_height/2 - material_thickness/2, 0]) tabs_at_thirds(overall_depth);
@@ -464,10 +464,10 @@ module stove_right() {
 }
 
 module stove_door_main() {
-  xz() render() difference() {
+  _xz() render() difference() {
     cube(size=[stove_width, stove_height - feet_height, material_thickness], center=true);
     translate([0, -stove_door_gutter/2, 0]) 
-      rounded_rect(material_thickness+0.1, stove_width - stove_door_gutter*2, stove_height - feet_height - stove_door_gutter * 3, stove_door_window_corner_radius);
+      _rounded_rect(material_thickness+0.1, stove_width - stove_door_gutter*2, stove_height - feet_height - stove_door_gutter * 3, stove_door_window_corner_radius);
 
     translate([0, (stove_height - feet_height)/2 - stove_door_gutter, 0]) {
       for (i=[-1,1]) {
@@ -485,7 +485,7 @@ module stove_door_main() {
 }
 
 module stove_door_handle() {
-  xy() render() difference() {
+  _xy() render() difference() {
     union() {
       cube(size=[stove_width * 0.8 - handle_corner_radius * 2, handle_width, material_thickness], center=true);
       for (i=[-1,1]) {
@@ -521,7 +521,7 @@ module oven_assembly() {
 }
 
 module sink_right() {
-  yz() rotate([0, 180, 0]) render() difference() {
+  _yz() rotate([0, 180, 0]) render() difference() {
     cube(size=[overall_depth, sink_height, material_thickness], center=true);
     translate([-overall_depth/2 + material_thickness/2, 0, 0]) rotate([0, 0, 90]) tabs_at_thirds(sink_height);
     translate([0, sink_height/2 - material_thickness/2, 0]) tabs_at_thirds(overall_depth);
@@ -535,7 +535,7 @@ module sink_right() {
 }
 
 module sink_cupboard_door() {
-  xz() render() difference() {
+  _xz() render() difference() {
     cube(size=[sink_width, sink_height - feet_height, material_thickness], center=true);
     translate([.8 * sink_width /2, .8 * (sink_height - feet_height) / 2, 0]) cylinder(r=bit_diameter/2, h=material_thickness*10, center=true, $fn=36);
 
@@ -551,7 +551,7 @@ module sink_assembly() {
 }
 
 module microwave_cupboard_bottom() {
-  xy() render() difference() {
+  _xy() render() difference() {
     translate([-material_thickness/2, 0, 0]) cube(size=[microwave_width + material_thickness, microwave_depth, material_thickness], center=true);
 
     translate([microwave_width/2 - material_thickness/2, 0, 0]) rotate([0, 0, 90]) single_tab(microwave_depth);
@@ -564,7 +564,7 @@ module microwave_cupboard_bottom() {
 }
 
 module microwave_inside_vertical_separator() {
-  yz() rotate([0, 0, -90]) render() difference() {
+  _yz() rotate([0, 0, -90]) render() difference() {
     cube(size=[microwave_height, microwave_depth, material_thickness], center=true);
     for (x=[-1,1]) {
       translate([x * (microwave_height/2-material_thickness/2), 0]) rotate([0, 0, 90]) single_tab(microwave_depth);
@@ -574,7 +574,7 @@ module microwave_inside_vertical_separator() {
 }
 
 module microwave_cupboard_right() {
-  yz() render() rotate([0, 0, -90]) difference() {
+  _yz() render() rotate([0, 0, -90]) difference() {
     cube(size=[microwave_height, microwave_depth, material_thickness], center=true);
     for (x=[-1,1]) {
       translate([x * (microwave_height/2-material_thickness/2), 0]) rotate([0, 0, 90]) edge_slot(tab_width);
@@ -595,9 +595,9 @@ module cupboard_left() {
 }
 
 module microwave_door_main() {
-  xz() render() difference() {
+  _xz() render() difference() {
     cube(size=[microwave_proper_width, microwave_height, material_thickness], center=true);
-    translate([-microwave_window_gutter/2, 0, 0]) rounded_rect(material_thickness+0.1, microwave_proper_width-3*microwave_window_gutter, microwave_height - 2 * microwave_window_gutter, stove_door_window_corner_radius);
+    translate([-microwave_window_gutter/2, 0, 0]) _rounded_rect(material_thickness+0.1, microwave_proper_width-3*microwave_window_gutter, microwave_height - 2 * microwave_window_gutter, stove_door_window_corner_radius);
 
     for (i=[-1,1]) {
       translate([microwave_proper_width/2 - microwave_window_gutter, (microwave_height * 0.4 - handle_thickness/4) * i, 0]) 
@@ -610,7 +610,7 @@ module microwave_door_main() {
 }
 
 module microwave_door_handle() {
-  yz() render() rotate([0, 0, -90]) difference() {
+  _yz() render() rotate([0, 0, -90]) difference() {
     union() {
       cube(size=[microwave_height * 0.8 - handle_corner_radius * 2, microwave_handle_depth, material_thickness], center=true);
       for (i=[-1,1]) {
@@ -642,7 +642,7 @@ module microwave_door_assembly() {
 
 
 module cupboard_door() {
-  xz() render() difference() {
+  _xz() render() difference() {
     cube(size=[cupboard_width+material_thickness, microwave_height, material_thickness], center=true);
 
     // handle hole
@@ -700,15 +700,31 @@ module assembled() {
 }
 
 module panelized() {
-  freezer_door_main();
-  translate([fridge_width/2 + bit_diameter + handle_width/2, 0, 0]) freezer_door_handle();
-  translate([0, -fridge_freezer_height/2 - bit_diameter - microwave_height/2, 0]) {
-    microwave_door_main();
-    translate([microwave_proper_width/2 + bit_diameter + handle_width/2, 0, 0]) microwave_door_handle();
-  }
+  // freezer_door_main();
+  // freezer_door_handle();
+  // fridge_door_main();
+  // fridge_door_handle();
+  // microwave_door_main();
+  // microwave_door_handle();
+  // stove_door_main();
+  // stove_door_handle();
+  // sink_cupboard_door();
+  // combined_countertop();
+  // combined_top();
+  // combined_bottom();
+  // back_plate();
+  // cupboard_door();
+  // sink_right();
+  // stove_right();
+  // fridge_right();
+  // microwave_cupboard_bottom();
+  // microwave_inside_vertical_separator();
+  // microwave_right();
+  // fridge_divider();
+  cupboard_left();
 }
 
 // assembled();
-// projection(cut=true) 
+projection(cut=true) 
 panelized();
 
