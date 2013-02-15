@@ -9,10 +9,17 @@ acrylic_t = 3;
 trunk_w = 40;
 trunk_h = 150;
 
-central_canopy_h = 100;
+central_canopy_h = 48;
 central_canopy_w = 125;
-side_canopy_h = 75;
-side_canopy_w = 100;
+central_canopy_d = 100;
+
+side_canopy_h = 36;
+side_canopy_w = 90;
+side_canopy_d = 75;
+
+canopy_overlap = 50;
+
+
 // todo: add offset parameter to indicate spread of canopy
 
 big_root_w = 75;
@@ -132,17 +139,36 @@ module external_branch_assembly() {
   rotate([0, 0, -90]) root_section(30, 60, 8);
 }
 
-module canopy_assembly() {
-  for (slicenum=[-9:9]) {
-    translate([0, 0, -3 * slicenum]) ext(3) projection(cut=true) translate([0, 0, slicenum*3]) union() {
-      scale([75, 60, 24]) sphere(r=1, $fn=64);
-      translate([0, 0, -6]) {
-        translate([-75, 0, 0]) scale([50, 50, 18]) sphere(r=1, $fn=64);
-        translate([75, 0, 0]) scale([50, 50, 18]) sphere(r=1, $fn=64);
-      }
+module 3d_canopy_blank2() {
+  union() {
+    difference() {
+      scale([central_canopy_w/2, central_canopy_d/2, central_canopy_h]) sphere(r=1, $fn=64);
+      translate([0, 0, -central_canopy_h]) cube(size=[2*central_canopy_w, 2*central_canopy_d, 2*central_canopy_h], center=true);
+    }
+    translate([-side_canopy_w/2 - central_canopy_w/2 + canopy_overlap, 0, -central_canopy_h/2]) difference() {
+      scale([side_canopy_w/2, side_canopy_d/2, side_canopy_h]) sphere(r=1, $fn=64);
+      translate([0, 0, -central_canopy_h/2]) cube(size=[2*central_canopy_w, 2*central_canopy_d, central_canopy_h], center=true);
     }
   }
 }
+
+
+module 3d_canopy_blank() {
+  union() {
+    scale([75, 60, 24]) sphere(r=1, $fn=64);
+    translate([0, 0, -6]) for (x=[-1,1]) {
+      translate([x * 75, 0, 0]) scale([50, 50, 18]) sphere(r=1, $fn=64);
+    }
+  }
+}
+
+module canopy_assembly() {
+  for (slicenum=[-11:11]) {
+    translate([0, 0, -3 * slicenum]) ext(3) projection(cut=true) translate([0, 0, slicenum*3 + 0.1]) 3d_canopy_blank2();
+  }
+}
+
+
 
 module assembled() {
   translate([0, -trunk_w / 2 + wood_t/2, 0]) rotate(_xz()) color(brown1) ext(wood_t) front();
@@ -153,12 +179,13 @@ module assembled() {
   }
   
   translate([0, 0, -trunk_h/2 + bottom_clearance + wood_t/2]) ext(wood_t) bottom();
-  translate([0, 0, trunk_h/2]) canopy_assembly();
+  translate([0, 0, trunk_h/2 - 10]) canopy_assembly();
   
-  for (x=[-1,1]) {
+  for (x=[-1]) {
     translate([x * trunk_w/2, 0, trunk_h/2 - 25]) rotate([0, 0, -90 + 90 * x]) rotate(_xz()) color(brown1) ext(wood_t) external_branch_assembly();
   }
 }
 
 assembled();
 
+// !3d_canopy_blank2();
