@@ -8,9 +8,9 @@
 #include <Ethernet.h>
 //#include "SpeedController.h"
 #include "StepController.h"
-#include "TimerOne.h"
+//#include "TimerOne.h"
 
-#define PULSES_PER_DIGIT (5 * 1200 / 10)
+#define PULSES_PER_DIGIT (5 * 6533 / 10)
 
 #define MOTOR_PIN 5
 #define BUTTON_PIN 7
@@ -40,7 +40,7 @@ void setup() {
   attachInterrupt(0, quadraturePulse, CHANGE);
   attachInterrupt(1, quadraturePulse, CHANGE);
 
-  step_controller.begin(MOTOR_PIN, 128);
+  step_controller.begin(MOTOR_PIN, 192);
 }
 
 void quadraturePulse() {
