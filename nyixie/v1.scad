@@ -27,6 +27,58 @@ module _tube() {
   }
 }
 
+module _pcb(args) {
+  color("darkgreen")
+  difference() {
+    cube(size=[150, 70, 1.5], center=true);
+    for (x=[-1:1], y=[-1,1]) {
+      translate([x * 70, y * 30, 0]) cylinder(r=1.5, h=10, center=true, $fn=36); 
+    }
+  }
+}
+
+module _pcba() {
+  _pcb();
+  for (x=[-1.5, -0.5, 0.5, 1.5]) {
+    translate([x * tube_spacing, 0, 0.75]) _tube();
+  }
+}
+
+module _power_switch() {
+  color("silver")
+  union() {
+    translate([0, 0, -14.65/2]) cube(size=[16.24, 24, 14.65], center=true);
+    translate([0, 0, 10]) cylinder(r=12/2, h=20, center=true);
+  }
+}
+
+module _meter() {
+  color("black")
+  union() {
+    translate([0, 0, 11.2/2]) cube(size=[121, 101, 11.2], center=true);
+    translate([0, -101/2 + 67.26 - 64.25/2, (42-11.2)/-2]) cylinder(r=64.25/2, h=(42-11.2), center=true);
+    for (x=[-1,1], y=[-1,1]) {
+      translate([x * (103.73/2 - 3.91/2), y * (83.69/2 - 3.91/2), 0]) cylinder(r=3.91/2, h=20, center=true);
+    }
+  }
+}
+
+module _selector_switch() {
+  color("silver")
+  union() {
+    translate([0, 0, -16.6/2]) cylinder(r=32.64/2, h=16.6, center=true);
+    translate([0, 0, 25/2]) cylinder(r=9.5/2, h=25, center=true);
+  }
+  
+  translate([0, 0, 20]) {
+    color("grey")
+    union() {
+      cylinder(r=20/2, h=19.1, center=true);
+      cube(size=[12, 31.5, 19.1], center=true);
+    }
+  }
+}
+
 module top() {
   difference() {
     cube(size=[face_width, overall_depth, t], center=true);
@@ -129,7 +181,7 @@ module face() {
 
 module face_assembly() {
   translate([(face_width/2 - t * 3 - handle_d - 10 - power_switch_width/2), 0, -5]) 
-    !switch_assembly();
+    switch_assembly();
 
   for (x=[-1,1]) {
     translate([x * (face_width/2 - t*3 - handle_d/2), 0, 0]) handle();
@@ -167,3 +219,8 @@ module assembled() {
 }
 
 assembled();
+// !_meter();
+// !_power_switch();
+// !_pcb();
+// !_pcba();
+!_selector_switch();
