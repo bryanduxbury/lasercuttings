@@ -1,3 +1,14 @@
+// TODOs
+// cut actual holes in the faceplate
+// model the two pots
+// joints for corners of boxes
+// model rear features
+// cut out rear features
+// create drawer frame
+// add screw holes to drawer frame
+// add board table to drawer frame
+
+
 use <raspberry pi.scad>
 use <external_parts.scad>
 
@@ -17,32 +28,54 @@ handle_w = 80;
 handle_corner_r = 15;
 
 t = 5.2;
+k = 0.005 * 25.4;
 
 module top() {
+  render()
   difference() {
     cube(size=[face_width, overall_depth, t], center=true);
     translate([-tube_spacing * (num_tubes/2 - 0.5), 0, 0]) {
       for (x = [0:(num_tubes-1)]) {
-        translate([x * tube_spacing, 0, 0]) cylinder(r=tube_d/2 + 1, h=t*2, center=true);
+        translate([x * tube_spacing, 0, 0]) cylinder(r=tube_d/2 + 1, h=t*2, center=true, $fn=72);
       }
+    }
+
+    for (x=[-1,1]) {
+      translate([x * (face_width / 2), 0, 0]) cube(size=[t*2-k, overall_depth/3, t*2], center=true);
+    }
+
+    for (x=[-1:1]) {
+      translate([x * face_width/3, overall_depth/2 - t*1.5, 0]) cube(size=[10-k, t+k, t*2], center=true);
     }
   }
 }
 
 module bottom() {
+  render()
   difference() {
     cube(size=[face_width, overall_depth, t], center=true);
-    // translate([-tube_spacing * (num_tubes/2 - 0.5), 0, 0]) {
-    //   for (x = [0:(num_tubes-1)]) {
-    //     translate([x * tube_spacing, 0, 0]) cylinder(r=tube_d/2 + 1, h=t*2, center=true);
-    //   }
-    // }
+    for (x=[-1,1]) {
+      translate([x * (face_width / 2), 0, 0]) cube(size=[t*2-k, overall_depth/3, t*2], center=true);
+    }
+
+    for (x=[-1:1]) {
+      translate([x * face_width/3, overall_depth/2 - t*1.5, 0]) cube(size=[10-k, t+k, t*2], center=true);
+    }
   }
 }
 
 module back() {
   color("red")
-  cube(size=[face_width, face_height, t], center=true);
+  union() {
+    cube(size=[face_width-t*2+k, face_height-t*2+k, t], center=true);
+    for (x=[-1:1], y=[-1,1]) {
+      translate([x * face_width/3, y * (face_height/2 - t/2), 0]) cube(size=[10+k, t+k, t], center=true);
+    }
+
+    for (x=[-1,1], y=[-1,1]) {
+      translate([x * (face_width/2 - t/2), y * (face_height/3), 0]) cube(size=[t+k, 10+k, t], center=true);
+    }
+  }
 }
 
 module handle() {
@@ -85,7 +118,17 @@ module face_assembly() {
 
 module side() {
   color("blue")
-  cube(size=[overall_depth, face_height, t], center=true);
+  render()
+  difference() {
+    cube(size=[overall_depth, face_height, t], center=true);
+    for (x=[-1,1], y=[-1,1]) {
+      translate([x * overall_depth/2, y * face_height/2, 0]) cube(size=[overall_depth/3*2-k, t*2-k, t*2], center=true);
+    }
+
+    for (x=[1], y=[-1,1]) {
+      translate([x * (overall_depth/2 - t*1.5), y * (face_height/3), 0]) cube(size=[t+k, 10-k, t*2], center=true);
+    }
+  }
 }
 
 module assembled() {
