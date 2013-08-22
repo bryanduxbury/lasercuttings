@@ -2,9 +2,10 @@
 // cut actual holes in the faceplate
 // model rear features
 // cut out rear features
-// create drawer frame
 // add screw holes to drawer frame
 // add board table to drawer frame
+// position raspi
+// position power supply
 
 
 use <raspberry pi.scad>
