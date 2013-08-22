@@ -35,8 +35,9 @@ module _pcb(args) {
 module _pcba() {
   translate([0, 0, -0.75]) _pcb();
   for (x=[-1.5, -0.5, 0.5, 1.5]) {
-    translate([x * tube_spacing, 0, 0.75]) _tube();
+    translate([x * tube_spacing, 0, 3.5]) _tube();
   }
+  translate([0, 20, -1.5 - 5]) color("black") cube(size=[1.4*25.4, 12, 10], center=true);
 }
 
 module _power_switch() {
@@ -147,5 +148,44 @@ module _ac_plug() {
 
 module _power_supply() {
   color("white")
-  cube(size=[100, 50, 30], center=true);
+  cube(size=[115, 52, 37], center=true);
+}
+
+module _lamp() {
+  color("orange")
+    translate([0, 0, (22.75 - 11.23)/2]) cylinder(r=16/2, h=22.75 - 11.23, center=true);
+
+  color("silver")
+    translate([0, 0, 1]) cylinder(r=19/2, h=2, center=true);
+
+  color("silver")
+    translate([0, 0, -11.25/2]) cylinder(r=17/2, h=11.25, center=true);
+}
+
+module _voltage_plate() {
+  color("black")
+  difference() {
+    cube(size=[31.87, 11.17, 1], center=true);
+    translate([0, -11.17/2 + 1.5 + 3.3/2, 0]) {
+      for (x=[-1,1]) {
+        translate([x * (31.87 / 2 - 1.5 - 3.3/2 ), 0, 0]) cylinder(r=3.3/2, h=2, center=true, $fn=36);
+      }
+    }
+  }
+}
+
+module _probe_plug() {
+  color("silver") {
+    difference() {
+      union() {
+        translate([0, 0, 1]) cylinder(r=41/2, h=2, center=true);
+        translate([0, 0, (21 - 13.4 - 2)/2 + 2]) cylinder(r=25/2, h=(21 - 13.4 - 2), center=true);
+        translate([0, 0, -13.4/2]) cylinder(r=25/2, h=13.4, center=true);
+      }
+
+      for (a=[0:2]) {
+        rotate([0, 0, 90 + a*120]) translate([41 / 2 - 2.5, 0, 1]) cylinder(r=3/2, h=4, center=true, $fn=12);
+      }
+    }
+  }
 }

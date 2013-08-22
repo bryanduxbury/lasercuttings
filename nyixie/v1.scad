@@ -1,13 +1,7 @@
 // TODOs
 // add screw holes to drawer frame
-// add board table to drawer frame
-// position raspi
-// screw holes for the meter
 // holes for mounting the raspi
-// model and place the input voltage plate
-// model and place the "probe" jack
-// model and place the power lamp
-
+// place the input voltage plate
 
 use <raspberry pi.scad>
 use <external_parts.scad>
@@ -109,6 +103,18 @@ module face() {
 
     // meter body
     translate([0, -101/2 + 67.26 - 64.25/2, 0]) cylinder(r=67/2, h=t*2, center=true);
+    // meter mounting screws
+    for (x=[-1,1], y=[-1,1]) {
+      translate([x * (103.73 - 3.91) / 2, y * (83.69 - 3.91) / 2, 0]) cylinder(r=2, h=t*2, center=true, $fn=36);
+    }
+
+
+    translate([121/2 + 25 + 25 + 15 + 41/2, -(face_height - 4*t) / 2 + 41/2 + 5, 0]) {
+      cylinder(r=25/2, h=t*2, center=true);
+      for (a=[0:2]) {
+        rotate([0, 0, 90 + a*120]) translate([41 / 2 - 2.5, 0, 1]) cylinder(r=3/2, h=t*2, center=true, $fn=12);
+      }
+    }
 
     // handles
     for (x=[-1,1]) {
@@ -119,20 +125,19 @@ module face() {
         }
       }
     }
-    
+
     translate([face_width/2 - 2*t - 10 - 10 - 25 - 16.24/2, 0, 0]) {
-      // _power_switch();
-      cylinder(r=12/2, h=10, center=true);
+      translate([0, -20, 0]) cylinder(r=12/2, h=t*2, center=true);
+      translate([0, 20, 0]) cylinder(r=17.5/2, h=t*2, center=true);
     }
-    
-    
+
     translate([121/2 + 25 + 25, 0, 0]) cylinder(r=9.5/2, h=10, center=true);
-    
+
     translate([-(121/2 + 25 + 12), 0, 0]) {
       translate([0, 25, 0]) cylinder(r=9.5/2, h=10, center=true);
       translate([0, -25, 0]) cylinder(r=9.5/2, h=10, center=true);
     }
-    
+
     translate([-face_width/2 + 2*t + 10 + 10 + 50, 0, 0]) {
       for (x=[-1,1], y=[-1,1]) {
         translate([x * 20, y*20, 0]) rotate([0, 0, 45]) {
@@ -166,11 +171,16 @@ module face_assembly() {
     translate([x * (face_width/2 - 2*t - 10 - 5), 0, 0]) _handle();
   }
 
-  translate([face_width/2 - 2*t - 10 - 10 - 25 - 16.24/2, 0, -t/2]) _power_switch();
+  translate([face_width/2 - 2*t - 10 - 10 - 25 - 16.24/2, 0, -t/2]) {
+    translate([0, -20, 0]) _power_switch();
+    translate([0, 20, t]) _lamp();
+  }
 
   translate([0, 0, t/2]) _meter();
 
   translate([121/2 + 25 + 25, 0, -t/2]) _selector_switch();
+
+  translate([121/2 + 25 + 25 + 15 + 41/2, -(face_height - 4*t) / 2 + 41/2 + 5, t/2]) _probe_plug();
 
   translate([-(121/2 + 25 + 12), 0, -t/2]) {
     translate([0, 25, 0]) _pot_250();
@@ -222,7 +232,7 @@ module drawer_side() {
         polygon(points=[
           [-t/2, -(face_height/2 - t) + t],
           [-t/2, (face_height/2 - t)],
-          [t*2, (face_height/2 - t)],
+          [-t/2 + drawer_depth/2 + 35 + 10, (face_height/2 - t)],
           [drawer_depth - t/2, -(face_height/2 - t) + 55],
           [drawer_depth - t/2, -(face_height/2 - t) + t],
         ]);
@@ -234,6 +244,13 @@ module drawer_side() {
     translate([overall_depth - t/2 - 2*t - t/2 + k, -(face_height/2 - t) + 25, 0]) cube(size=[t, 10-k, t*2], center=true);
     for (y=[-1,1]) {
       translate([-k/2, y * (face_height - 2*t)/3, 0]) cube(size=[t, 10-k, t*2], center=true);
+    }
+
+    translate([-t/2 + drawer_depth/2, (face_height - 2 * t)/2 - t/2 - 4 - 1.5 - 15, 0]) {
+      translate([0, -10 - t, 0]) cube(size=[t-k, 10-k, t*2], center=true);
+      for (x=[-1,1]) {
+        translate([x * 30, -t/2, 0]) cube(size=[10-k, t-k, t*2], center=true);
+      }
     }
   }
 }
@@ -260,13 +277,40 @@ module drawer_back() {
 
 module pcb_deck() {
   assign(drawer_inside_width = face_width - t*4) 
+  render()
   difference () {
-    cube(size=[drawer_inside_width, 70, t], center=true);
+    cube(size=[drawer_inside_width + t*2, 70, t], center=true);
     for (x=[-1:1]) {
       translate([x * 150, 0, 0]) {
         for (x1=[-1:1], y=[-1,1]) {
-          translate([x1*70, y*30, 0]) cylinder(r=3/2, h=t*2, center=true);
+          translate([x1*70, y*30, 0]) cylinder(r=3/2, h=t*2, center=true, $fn=36);
         }
+      }
+    }
+
+    for (x = [-1,1]) {
+      translate([x * (drawer_inside_width + t*2)/2, 0, 0]) cube(size=[t*2-k, 70-20-k, t*2], center=true);
+    }
+
+    for (x=[-1:1]) {
+      translate([x*150, 0, 0]) cube(size=[10-k, t-k, t*2], center=true);
+    }
+  }
+}
+
+module pcb_deck_support() {
+  color("green")
+  assign(drawer_inside_width = face_width - t*4) 
+  render()
+  difference () {
+    union() {
+      cube(size=[drawer_inside_width, 20+k, t], center=true);
+      for (x = [-1:1]) {
+        translate([x * 150, 10+t/2, 0]) cube(size=[10+k, t+k, t], center=true);
+      }
+
+      for (x=[-1,1]) {
+        translate([x * (drawer_inside_width / 2 + t/2), 0, 0]) cube(size=[t+k, 10+k, t], center=true);
       }
     }
   }
@@ -286,12 +330,15 @@ module drawer_assembly() {
 
     translate([(face_width - t*4) / 2 - 35/2, drawer_depth - t/2, -(face_height - t*4) / 2 + 35/2]) 
       rotate([-90, 0, 0]) _ac_plug();
-      
+
     translate([drawer_inside_width/2 - 50 - 50, drawer_depth - 40, -face_height/2 + 10 + 20]) _power_supply();
-    
+
     translate([-drawer_inside_width/2 + 30, drawer_depth - 75, -35]) raspi();
-    
-    translate([0, drawer_depth/2 - t/2, (face_height - 2 * t)/2 - t/2 - 1.5 - 5]) pcb_deck();
+
+    translate([0, drawer_depth/2 - t/2, (face_height - 2 * t)/2 - t/2 - 4 - 1.5 - 15]) {
+      translate([0, 0, -t/2]) pcb_deck();
+      translate([0, 0, -t - 10]) rotate([90, 0, 0]) pcb_deck_support();
+    }
   }
 }
 
@@ -299,19 +346,18 @@ module assembled() {
   translate([0, 0, face_height/2 - t/2]) top();
   translate([0, 0, -face_height/2 + t/2]) bottom();
 
-  translate([0, overall_depth/-2 + 1.5*t, 0]) !drawer_assembly();
+  translate([0, overall_depth/-2 + 1.5*t, 0]) drawer_assembly();
   translate([0, overall_depth/2 - 1.5*t, 0]) rotate([90, 0, 0]) back();
 
   translate([face_width/2 - t/2, 0, 0]) rotate([90, 0, 90]) side();
   translate([-face_width/2 + t/2, 0, 0]) rotate([90, 0, 90]) side();
 
-  // translate([100, -30, -face_height/2 + 15]) raspi();
-
-  translate([0, 0, face_height/2 - t])
+  translate([0, 0, face_height/2 - t - 4])
   for (x=[-1:1]) {
     translate([x * 160, 0, 0]) _pcba();
   }
 }
 
+// !_pcba();
 assembled();
 
