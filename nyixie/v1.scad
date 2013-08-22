@@ -1,11 +1,12 @@
 // TODOs
-// cut actual holes in the faceplate
-// model rear features
-// cut out rear features
 // add screw holes to drawer frame
 // add board table to drawer frame
 // position raspi
-// position power supply
+// screw holes for the meter
+// holes for mounting the raspi
+// model and place the input voltage plate
+// model and place the "probe" jack
+// model and place the power lamp
 
 
 use <raspberry pi.scad>
@@ -257,8 +258,23 @@ module drawer_back() {
   }
 }
 
+module pcb_deck() {
+  assign(drawer_inside_width = face_width - t*4) 
+  difference () {
+    cube(size=[drawer_inside_width, 70, t], center=true);
+    for (x=[-1:1]) {
+      translate([x * 150, 0, 0]) {
+        for (x1=[-1:1], y=[-1,1]) {
+          translate([x1*70, y*30, 0]) cylinder(r=3/2, h=t*2, center=true);
+        }
+      }
+    }
+  }
+}
+
 module drawer_assembly() {
-  assign(drawer_depth=overall_depth - t*3){
+  assign(drawer_depth=overall_depth - t*3)
+  assign(drawer_inside_width = face_width - t*4) {
     rotate([90, 0, 0]) face_assembly();
     translate([0, overall_depth/2 - 2*t, -face_height/2 + t + t/2]) drawer_bottom();
 
@@ -270,6 +286,12 @@ module drawer_assembly() {
 
     translate([(face_width - t*4) / 2 - 35/2, drawer_depth - t/2, -(face_height - t*4) / 2 + 35/2]) 
       rotate([-90, 0, 0]) _ac_plug();
+      
+    translate([drawer_inside_width/2 - 50 - 50, drawer_depth - 40, -face_height/2 + 10 + 20]) _power_supply();
+    
+    translate([-drawer_inside_width/2 + 30, drawer_depth - 75, -35]) raspi();
+    
+    translate([0, drawer_depth/2 - t/2, (face_height - 2 * t)/2 - t/2 - 1.5 - 5]) pcb_deck();
   }
 }
 
@@ -277,13 +299,13 @@ module assembled() {
   translate([0, 0, face_height/2 - t/2]) top();
   translate([0, 0, -face_height/2 + t/2]) bottom();
 
-  translate([0, overall_depth/-2 + 1.5*t, 0]) drawer_assembly();
+  translate([0, overall_depth/-2 + 1.5*t, 0]) !drawer_assembly();
   translate([0, overall_depth/2 - 1.5*t, 0]) rotate([90, 0, 0]) back();
 
   translate([face_width/2 - t/2, 0, 0]) rotate([90, 0, 90]) side();
   translate([-face_width/2 + t/2, 0, 0]) rotate([90, 0, 90]) side();
 
-  translate([100, -30, -face_height/2 + 15]) raspi();
+  // translate([100, -30, -face_height/2 + 15]) raspi();
 
   translate([0, 0, face_height/2 - t])
   for (x=[-1:1]) {

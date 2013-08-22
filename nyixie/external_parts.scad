@@ -17,7 +17,7 @@ module _tube() {
   union() {
     translate([0, 0, (tube_h - tube_d/2)/2]) cylinder(r=tube_d/2, h=tube_h - tube_d/2, center=true, $fn=72);
     translate([0, 0, (tube_h - tube_d/2)]) sphere(r=tube_d/2, $fn=64);
-    translate([0, 0, -7/2]) cylinder(r=25/2, h=7, center=true);
+    translate([0, 0, -7/2]) cylinder(r=18.5/2, h=7, center=true);
     translate([0, 0, -17/2]) cylinder(r=7.5/2, h=17, center=true);
   }
 }
@@ -143,4 +143,9 @@ module _ac_plug() {
   for (y=[-1,1]) {
     translate([0, y * (19.5/2 - 2.8/2), -20/2]) cylinder(r=2.8/2, h=20, center=true, $fn=36);
   }
+}
+
+module _power_supply() {
+  color("white")
+  cube(size=[100, 50, 30], center=true);
 }
