@@ -2,7 +2,7 @@ use <raspberry pi.scad>
 
 tube_spacing = 40;
 tube_d = 31;
-tube_h = 60;
+tube_h = 71;
 
 handle_d = 6;
 handle_h = 30;
@@ -13,11 +13,12 @@ t = 5.2;
 
 module _tube() {
   color([128/255, 128/255, 128/255, 0.5])
-  translate([0, 0, tube_h/2]) 
   render()
   union() {
-    cylinder(r=tube_d/2, h=tube_h, center=true, $fn=72);
-    translate([0, 0, tube_h/2]) sphere(r=tube_d/2, $fn=128);
+    translate([0, 0, (tube_h - tube_d/2)/2]) cylinder(r=tube_d/2, h=tube_h - tube_d/2, center=true, $fn=72);
+    translate([0, 0, (tube_h - tube_d/2)]) sphere(r=tube_d/2, $fn=64);
+    translate([0, 0, -7/2]) cylinder(r=25/2, h=7, center=true);
+    translate([0, 0, -17/2]) cylinder(r=7.5/2, h=17, center=true);
   }
 }
 
@@ -89,5 +90,57 @@ module _handle() {
       translate([0, y, 0]) 
       cylinder(r=4/2, h=10, center=true);
     }
+  }
+}
+
+module _pot_250() {
+  color("silver")
+  union() {
+    translate([0, 0, 10/2]) cylinder(r=9.5/2, h=10, center=true);
+    translate([0, 0, -15.2/2]) cylinder(r=28/2, h=15.2, center=true);
+  }
+
+  translate([0, 0, 10]) {
+    color("grey")
+    union() {
+      translate([0, 0, 19.2/2]) cylinder(r=19.2/2, h=19, center=true);
+      translate([0, 0, 2]) cylinder(r=24/2, h=4, center=true);
+    }
+    
+  }
+}
+
+module _pot20() {
+  color("silver")
+  union() {
+    translate([0, 0, 10/2]) cylinder(r=9.5/2, h=10, center=true);
+    translate([0, 0, -28/2]) cylinder(r=32/2, h=28, center=true);
+  }
+
+  translate([0, 0, 10]) {
+    color("grey")
+    union() {
+      translate([0, 0, 19.2/2]) cylinder(r=19.2/2, h=19, center=true);
+      translate([0, 0, 2]) cylinder(r=24/2, h=4, center=true);
+    }
+    
+  }
+}
+
+module _ac_plug() {
+  color("black")
+  union() {
+    translate([0, 0, 8.13/2]) 
+      cylinder(r=28.3/2, h=8.13, center=true);
+    for (y=[-1,1]) {
+      translate([y * (25.2/2 - 12/2), 0, -6.5/2]) cylinder(r=12/2, h=6.5, center=true);
+
+      // translate([0, y * (19.5/2 - 2.8/2), -20/2]) cylinder(r=2.8/2, h=20, center=true, $fn=36);
+    }
+    
+  }
+  color("silver")
+  for (y=[-1,1]) {
+    translate([0, y * (19.5/2 - 2.8/2), -20/2]) cylinder(r=2.8/2, h=20, center=true, $fn=36);
   }
 }
