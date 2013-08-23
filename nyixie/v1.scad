@@ -1,6 +1,9 @@
 // TODOs
 // add screw holes to drawer frame
 // holes for mounting the raspi
+// get a BBB model
+// place the BBB and add mounting holes
+
 
 use <raspberry pi.scad>
 use <external_parts.scad>
@@ -114,11 +117,11 @@ module face() {
       translate([x * (103.73 - 3.91) / 2, y * (83.69 - 3.91) / 2, 0]) cylinder(r=2, h=t*2, center=true, $fn=36);
     }
 
-
+    // probe plug
     translate([121/2 + 25 + 25 + 15 + 41/2, -(face_height - 4*t) / 2 + 41/2 + 5, 0]) {
       cylinder(r=25/2, h=t*2, center=true);
       for (a=[0:2]) {
-        rotate([0, 0, 90 + a*120]) translate([41 / 2 - 2.5, 0, 1]) cylinder(r=3/2, h=t*2, center=true, $fn=12);
+        rotate([0, 0, 90 + a*120]) translate([35.6 - (41/2) + 3/2, 0, 1]) cylinder(r=3/2, h=t*2, center=true, $fn=12);
       }
     }
 
