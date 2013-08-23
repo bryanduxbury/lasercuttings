@@ -1,12 +1,7 @@
 // TODOs
 // add screw holes to drawer frame
-// holes for mounting the raspi
-// get a BBB model
-// place the BBB and add mounting holes
-// round the handle holes more so they'll go on easier
 
-
-use <raspberry pi.scad>
+use <bbb.scad>
 use <external_parts.scad>
 
 tube_d = 31;
@@ -131,7 +126,7 @@ module face() {
       translate([x * (face_width/2 - 2*t - 10 - 5), 0, 0]) {
         for (y=[-86.2/2 + 6.5/2, 86.2/2 - 6.5/2, 86.2/2 - 35.4 + 6.5/2]) {
           translate([0, y, 0]) 
-          cylinder(r=4/2, h=10, center=true);
+          cylinder(r=4/2 + k, h=10, center=true, $fn=16);
         }
       }
     }
@@ -221,6 +216,7 @@ module side() {
 
 module drawer_bottom() {
   render()
+  assign(drawer_inside_width = face_width - t*4)
   assign(drawer_depth = overall_depth - 3*t)
   difference() {
     cube(size=[face_width - 2*t, drawer_depth, t], center=true);
@@ -228,6 +224,14 @@ module drawer_bottom() {
     for (x=[-1,1], y=[-1,1]) {
       translate([x * (face_width/2 - t), y * drawer_depth / 3, 0]) cube(size=[t*2-k, 10-k, t*2], center=true);
       translate([x * (face_width - 2 * t) / 3, y * (drawer_depth/2 + k/2), 0]) cube(size=[10-k, 2*t, t*2], center=true);
+    }
+
+    assign(inch = 25.4)
+    assign(holeR = 0.125/2 * inch)
+    translate([-drawer_inside_width/2 + 30, drawer_depth/2 - 75 + t/2, 0]) {
+      for (xyz=[[0.575 * inch, 0.125 * inch, 0], [0.575 * inch, 2.025 * inch, 0], [3.175 * inch, 0.250 * inch, 0], [3.175 * inch, 1.900 * inch, 0]]) {
+        translate(xyz) cylinder(r=holeR-k, h=t*2, center=true, $fn=36);
+      }
     }
   }
 }
@@ -328,7 +332,7 @@ module pcb_deck_support() {
 
 module drawer_assembly() {
   assign(drawer_depth=overall_depth - t*3)
-  assign(drawer_inside_width = face_width - t*4) {
+  !assign(drawer_inside_width = face_width - t*4) {
     rotate([90, 0, 0]) face_assembly();
     translate([0, overall_depth/2 - 2*t, -face_height/2 + t + t/2]) drawer_bottom();
 
@@ -343,12 +347,12 @@ module drawer_assembly() {
 
     translate([drawer_inside_width/2 - 50 - 50, drawer_depth - 40, -face_height/2 + 10 + 20]) _power_supply();
 
-    translate([-drawer_inside_width/2 + 30, drawer_depth - 75, -35]) raspi();
+    translate([-drawer_inside_width/2 + 30, drawer_depth - 75, -35]) beagleboneblack();
 
-    translate([0, drawer_depth/2 - t/2, (face_height - 2 * t)/2 - t/2 - 4 - 1.5 - 15]) {
-      translate([0, 0, -t/2]) pcb_deck();
-      translate([0, 0, -t - 10]) rotate([90, 0, 0]) pcb_deck_support();
-    }
+    // translate([0, drawer_depth/2 - t/2, (face_height - 2 * t)/2 - t/2 - 4 - 1.5 - 15]) {
+    //   translate([0, 0, -t/2]) pcb_deck();
+    //   translate([0, 0, -t - 10]) rotate([90, 0, 0]) pcb_deck_support();
+    // }
   }
 }
 
@@ -370,7 +374,7 @@ module assembled() {
   translate([(face_width - t*4) / 2 - 35/2, overall_depth / 2 - t + 0.5, -(face_height - t*4) / 2 + 35 + 10]) rotate([90, 0, 0]) _voltage_plate();
 }
 
-// !_pcba();
+// !beagleboneblack();
 assembled();
 
 // projection(cut=true) {
