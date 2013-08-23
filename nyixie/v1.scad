@@ -3,6 +3,7 @@
 // holes for mounting the raspi
 // get a BBB model
 // place the BBB and add mounting holes
+// round the handle holes more so they'll go on easier
 
 
 use <raspberry pi.scad>
