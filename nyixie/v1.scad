@@ -1,7 +1,6 @@
 // TODOs
 // add screw holes to drawer frame
 // holes for mounting the raspi
-// place the input voltage plate
 
 use <raspberry pi.scad>
 use <external_parts.scad>
@@ -60,7 +59,7 @@ module bottom() {
 
 module back() {
   color("red")
-  
+
   difference() {
     union() {
       cube(size=[face_width-t*2+k, face_height-t*2+k, t], center=true);
@@ -72,9 +71,16 @@ module back() {
         translate([x * (face_width/2 - t/2), y * (face_height/3), 0]) cube(size=[t+k, 10+k, t], center=true);
       }
     }
-    translate([(face_width - t*4) / 2 - 35/2, -(face_height - t*4) / 2 + 35/2, 0]) cylinder(r=30/2, h=t*2, center=true);;
-  }
+    translate([(face_width - t*4) / 2 - 35/2, -(face_height - t*4) / 2 + 35/2, 0]) {
+      cylinder(r=30/2, h=t*2, center=true);
 
+      translate([0, 35/2 + 10, 0]) {
+        for (x=[-1,1]) {
+          translate([x * (31.87 / 2 - 1.5 - 3.3/2 ), -11.17/2 + 1.5 + 3.3/2, 0]) cylinder(r=(3-k)/2, h=t*2, center=true, $fn=36);
+        }
+      }
+    }
+  }
 }
 
 module handle() {
@@ -356,11 +362,13 @@ module assembled() {
   for (x=[-1:1]) {
     translate([x * 160, 0, 0]) _pcba();
   }
+  
+  translate([(face_width - t*4) / 2 - 35/2, overall_depth / 2 - t + 0.5, -(face_height - t*4) / 2 + 35 + 10]) rotate([90, 0, 0]) _voltage_plate();
 }
 
 // !_pcba();
-// assembled();
+assembled();
 
-projection(cut=true) {
-  face();
-}
+// projection(cut=true) {
+//   face();
+// }
