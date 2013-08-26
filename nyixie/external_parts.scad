@@ -184,7 +184,7 @@ module _probe_plug() {
       }
 
       for (a=[0:2]) {
-        rotate([0, 0, 90 + a*120]) translate([41 / 2 - 2.5, 0, 1]) cylinder(r=3/2, h=4, center=true, $fn=12);
+        rotate([0, 0, 90 + a*120]) translate([35.6 - (41/2) + 3/2, 0, 1]) cylinder(r=3/2, h=4, center=true, $fn=12);
       }
     }
   }
