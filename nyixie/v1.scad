@@ -25,10 +25,10 @@ k = 0.005 * 25.4;
 module top() {
   render()
   difference() {
-    cube(size=[face_width, overall_depth, t], center=true);
+    cube(size=[face_width+k, overall_depth+k, t], center=true);
     translate([-tube_spacing * (num_tubes/2 - 0.5), 0, 0]) {
       for (x = [0:(num_tubes-1)]) {
-        translate([x * tube_spacing, 0, 0]) cylinder(r=tube_d/2 + 1, h=t*2, center=true, $fn=72);
+        translate([x * tube_spacing, -t/2, 0]) cylinder(r=tube_d/2 + 1, h=t*2, center=true, $fn=72);
       }
     }
 
@@ -45,7 +45,7 @@ module top() {
 module bottom() {
   render()
   difference() {
-    cube(size=[face_width, overall_depth, t], center=true);
+    cube(size=[face_width+k, overall_depth+k, t], center=true);
     for (x=[-1,1]) {
       translate([x * (face_width / 2), 0, 0]) cube(size=[t*2-k, overall_depth/3, t*2], center=true);
     }
@@ -70,6 +70,7 @@ module back() {
         translate([x * (face_width/2 - t/2), y * (face_height/3), 0]) cube(size=[t+k, 10+k, t], center=true);
       }
     }
+
     translate([(face_width - t*4) / 2 - 35/2, -(face_height - t*4) / 2 + 35/2, 0]) {
       cylinder(r=30/2, h=t*2, center=true);
 
@@ -79,6 +80,13 @@ module back() {
         }
       }
     }
+
+    translate([0, -face_height/2 + t + 25, 0]) 
+    for (x=[-1,1]) {
+      translate([x * face_width/3, 0, 0]) cylinder(r=3-k, h=t*2, center=true, $fn=36);
+    }
+    
+    
   }
 }
 
@@ -203,7 +211,7 @@ module side() {
   color("blue")
   render()
   difference() {
-    cube(size=[overall_depth, face_height, t], center=true);
+    cube(size=[overall_depth+k, face_height+k, t], center=true);
     for (x=[-1,1], y=[-1,1]) {
       translate([x * overall_depth/2, y * face_height/2, 0]) cube(size=[overall_depth/3*2-k, t*2-k, t*2], center=true);
     }
@@ -219,7 +227,7 @@ module drawer_bottom() {
   assign(drawer_inside_width = face_width - t*4)
   assign(drawer_depth = overall_depth - 3*t)
   difference() {
-    cube(size=[face_width - 2*t, drawer_depth, t], center=true);
+    cube(size=[face_width - 2*t + k, drawer_depth + k, t], center=true);
 
     for (x=[-1,1], y=[-1,1]) {
       translate([x * (face_width/2 - t), y * drawer_depth / 3, 0]) cube(size=[t*2-k, 10-k, t*2], center=true);
@@ -244,18 +252,18 @@ module drawer_side() {
     union() {
       linear_extrude(height=t, center=true)
         polygon(points=[
-          [-t/2, -(face_height/2 - t) + t],
+          [-t/2, -(face_height/2 - t) + t ],
           [-t/2, (face_height/2 - t)],
           [-t/2 + drawer_depth/2 + 35 + 10, (face_height/2 - t)],
           [drawer_depth - t/2, -(face_height/2 - t) + 55],
-          [drawer_depth - t/2, -(face_height/2 - t) + t],
+          [drawer_depth - t/2, -(face_height/2 - t) + t ],
         ]);
 
       for (x=[-1,1]) {
         translate([(drawer_depth) / 2 - t/2 + x * (drawer_depth) / 3, -(face_height/2 - t) + t/2, 0]) cube(size=[10+k, t+k, t], center=true);
       }
     }
-    translate([overall_depth - t/2 - 2*t - t/2 + k, -(face_height/2 - t) + 25, 0]) cube(size=[t, 10-k, t*2], center=true);
+    #translate([overall_depth - t/2 - 3*t - t/2 + k, -(face_height/2 - t) + 25, 0]) cube(size=[t, 10-k, t*2], center=true);
     for (y=[-1,1]) {
       translate([-k/2, y * (face_height - 2*t)/3, 0]) cube(size=[t, 10-k, t*2], center=true);
     }
@@ -279,7 +287,11 @@ module drawer_back() {
         translate([x * (face_width - 2 * t) / 3, -25 + t/2, 0]) cube(size=[10+k, t+k, t], center=true);
       }
     }
-    
+
+    for (x=[-1,1]) {
+      translate([x * face_width/3, 0, 0]) cylinder(r=3-k, h=t*2, center=true, $fn=36);
+    }
+
     translate([(face_width - t*4) / 2 - 35/2, -(50-t*2) / 2 + 35/2, 0]) {
       for (y=[-1,1]) {
          translate([y * (25.2/2 - 12/2), 0, 0]) cylinder(r=12/2, h=t*2, center=true);
@@ -290,6 +302,7 @@ module drawer_back() {
 }
 
 module pcb_deck() {
+  color("orange")
   assign(drawer_inside_width = face_width - t*4) 
   render()
   difference () {
@@ -332,7 +345,7 @@ module pcb_deck_support() {
 
 module drawer_assembly() {
   assign(drawer_depth=overall_depth - t*3)
-  !assign(drawer_inside_width = face_width - t*4) {
+  assign(drawer_inside_width = face_width - t*4) {
     rotate([90, 0, 0]) face_assembly();
     translate([0, overall_depth/2 - 2*t, -face_height/2 + t + t/2]) drawer_bottom();
 
@@ -349,10 +362,10 @@ module drawer_assembly() {
 
     translate([-drawer_inside_width/2 + 30, drawer_depth - 75, -35]) beagleboneblack();
 
-    // translate([0, drawer_depth/2 - t/2, (face_height - 2 * t)/2 - t/2 - 4 - 1.5 - 15]) {
-    //   translate([0, 0, -t/2]) pcb_deck();
-    //   translate([0, 0, -t - 10]) rotate([90, 0, 0]) pcb_deck_support();
-    // }
+    translate([0, drawer_depth/2 - t/2, (face_height - 2 * t)/2 - t/2 - 4 - 1.5 - 15]) {
+      translate([0, 0, -t/2]) pcb_deck();
+      translate([0, 0, -t - 10]) rotate([90, 0, 0]) pcb_deck_support();
+    }
   }
 }
 
@@ -366,17 +379,26 @@ module assembled() {
   translate([face_width/2 - t/2, 0, 0]) rotate([90, 0, 90]) side();
   translate([-face_width/2 + t/2, 0, 0]) rotate([90, 0, 90]) side();
 
-  translate([0, 0, face_height/2 - t - 4])
-  for (x=[-1:1]) {
-    translate([x * 160, 0, 0]) _pcba();
-  }
+  // translate([0, 0, face_height/2 - t - 4])
+  // for (x=[-1:1]) {
+  //   translate([x * 160, 0, 0]) _pcba();
+  // }
   
   translate([(face_width - t*4) / 2 - 35/2, overall_depth / 2 - t + 0.5, -(face_height - t*4) / 2 + 35 + 10]) rotate([90, 0, 0]) _voltage_plate();
 }
 
 // !beagleboneblack();
-assembled();
+// assembled();
 
-// projection(cut=true) {
-//   face();
-// }
+projection(cut=true) {
+//   // back();
+//   // side();
+  top();
+//   bottom();
+//   // pcb_deck();
+//   // pcb_deck_support();
+//   // drawer_back();
+//   // drawer_side();
+//   // drawer_bottom();
+//   
+}
