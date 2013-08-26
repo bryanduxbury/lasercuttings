@@ -359,8 +359,8 @@ module assembled() {
 }
 
 // !_pcba();
-// assembled();
+assembled();
 
-projection(cut=true) {
-  face();
-}
+// projection(cut=true) {
+//   face();
+// }
