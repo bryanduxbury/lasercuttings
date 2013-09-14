@@ -38,4 +38,6 @@ difference() {
   for (a=[0:4]) {
     translate(polar(x - w, 360 / 5 * (a + 0.5))) circle(r=(side - 2*w)/2 - w, $fn=36); 
   }
+  
+  translate(polar(x + (side/2 - w) - w - w/2, 360/5/2)) circle(r=hole_d/2, $fn=36);
 }
