@@ -402,3 +402,5 @@ projection(cut=true) {
 //   // drawer_bottom();
 //   
 }
+assembled();
+
