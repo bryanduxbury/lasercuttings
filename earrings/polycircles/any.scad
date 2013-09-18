@@ -1,6 +1,6 @@
 w = 4;
-side = 27;
-num_sides = 4;
+side = 20;
+num_sides = 11;
 
 r = (side/2) / sin(360/num_sides/2);
 echo("r", r);
