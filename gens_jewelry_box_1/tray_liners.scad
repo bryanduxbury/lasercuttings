@@ -23,5 +23,8 @@ module card(h, w, felt_thickness) {
   square(size=[w - felt_thickness*2, h-felt_thickness*2], center=true);
 }
 
-// felt(45.4, 71.4, 1.5, 10, 1);
-card(45.4, 71.4, 1.5);
+assign (xy = [(3 + 1/16), (10 + 11/16)]) {
+  felt(xy[0] * 25.4, xy[1] * 25.4, 1.5, 10, 1);
+  // card(xy[0] * 25.4, xy[1] * 25.4, 1.5);
+  
+}
