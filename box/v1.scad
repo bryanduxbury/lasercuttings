@@ -1,65 +1,71 @@
 
-// assign(alpha=400)
+// assign(side_curve_circle_radius=400)
 // assign(beta=150)
-// assign(gamma=900)
+// assign(lid_curve_sphere_radius=900)
 // assign(delta=100)
 // intersection() {
 //   linear_extrude(height=500) {
 //     intersection_for(a = [0:3]) {
-//       rotate([0, 0, a * 90]) translate([0, alpha-beta, 0]) circle(r=alpha, $fn=240);
+//       rotate([0, 0, a * 90]) translate([0, side_curve_circle_radius-beta, 0]) circle(r=side_curve_circle_radius, $fn=240);
 //     }
 //   }
-//   translate([0, 0, -(gamma-delta)]) sphere(r=gamma, $fn=240);
+//   translate([0, 0, -(lid_curve_sphere_radius-delta)]) sphere(r=lid_curve_sphere_radius, $fn=240);
 // }
 
 
-outside_w = 50;
-base_height=15;
-lid_height=5;
-wall_thickness=3;
+outside_w = 112;
+base_height=31;
+lid_height=10;
+wall_thickness=5;
 
-alpha = 100;
+side_curve_circle_radius = 300;
 beta = outside_w/2;
-gamma = 150;
+// lid_curve_sphere_radius must be bigger than side_curve_circle_radius!
+lid_curve_sphere_radius = 350;
+
+finishing_tool_r = 0.25 * 25.4;
+
+// width, side radius, corner radius
+module _profile(w, rs, rc) {
+  minkowski() {
+    intersection_for(a = [0:3]) {
+      rotate([0, 0, a * 90]) 
+        translate([0, w/2-rs, 0]) 
+          circle(r=rs-rc, $fn=480);
+    }
+    circle(r=rc, $fn=72);
+  }
+}
 
 module base() {
   difference() {
     linear_extrude(height=base_height) {
-      intersection_for(a = [0:3]) {
-        rotate([0, 0, a * 90]) translate([0, alpha-beta, 0]) circle(r=alpha, $fn=240);
-      }
+      _profile(outside_w, side_curve_circle_radius, finishing_tool_r/2);
     }
     translate([0, 0, wall_thickness]) linear_extrude(height=base_height) {
-      intersection_for(a = [0:3]) {
-        rotate([0, 0, a * 90]) translate([0, (alpha-wall_thickness)-(beta-wall_thickness), 0]) circle(r=alpha-wall_thickness, $fn=240);
-      }
+      _profile(outside_w-wall_thickness*2, side_curve_circle_radius-wall_thickness, finishing_tool_r);
     }
   }
-  
 }
 
 module lid() {
   union() {
     intersection() {
       linear_extrude(height=base_height) {
-        intersection_for(a = [0:3]) {
-          rotate([0, 0, a * 90]) translate([0, alpha-beta, 0]) circle(r=alpha, $fn=240);
-        }
+        _profile(outside_w, side_curve_circle_radius, finishing_tool_r/2);
       }
-      translate([0, 0, -(gamma-lid_height)]) difference() {
-        sphere(r=gamma, $fn=360);
-        translate([0, 0, -lid_height]) cube(size=[gamma*2+1, gamma*2+1, gamma*2-lid_height], center=true);
+      translate([0, 0, -(lid_curve_sphere_radius-lid_height)]) difference() {
+        sphere(r=lid_curve_sphere_radius, $fn=360);
+        translate([0, 0, -lid_height]) cube(size=[lid_curve_sphere_radius*2+1, lid_curve_sphere_radius*2+1, lid_curve_sphere_radius*2-lid_height], center=true);
       }
     }
-    
+
     // lip on the bottom of the lid to make it stay in place
-    // translate([0, 0, -1]) linear_extrude(height=2) {
-    //   intersection_for(a = [0:3]) {
-    //     rotate([0, 0, a * 90]) translate([0, (alpha - wall_thickness - 1)-(beta - wall_thickness - 1), 0]) circle(r=(alpha - wall_thickness - 1), $fn=240);
-    //   }
-    // }
+    translate([0, 0, -1]) linear_extrude(height=2) {
+      _profile(outside_w-wall_thickness*2 - 0.2, side_curve_circle_radius-wall_thickness, finishing_tool_r);
+    }
   }
 }
 
-translate([0, 0, base_height]) !lid();
+translate([0, 0, base_height + 5]) !lid();
 base();
