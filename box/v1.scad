@@ -1,18 +1,18 @@
-outside_w = 112;
-base_height=31;
+base_height=18;
 lid_height=10;
-wall_thickness=5;
+wall_thickness=8;
+floor_thickness = 3;
+outside_w = 75 + 2 * wall_thickness;
 
 foot_w = 15;
 foot_h = 1;
 foot_thickness = 3;
 
 side_curve_circle_radius = 300;
-beta = outside_w/2;
 // lid_curve_sphere_radius must be bigger than side_curve_circle_radius!
 lid_curve_sphere_radius = 350;
 
-finishing_tool_r = 0.25 * 25.4;
+finishing_tool_r = 0.25 * 25.4 / 2;
 
 // width, side radius, corner radius
 module _profile(w, rs, rc) {
@@ -29,9 +29,11 @@ module _profile(w, rs, rc) {
 module base() {
   difference() {
     linear_extrude(height=base_height) {
-      _profile(outside_w, side_curve_circle_radius, finishing_tool_r/2);
+      _profile(outside_w, side_curve_circle_radius, finishing_tool_r);
     }
-    translate([0, 0, wall_thickness]) linear_extrude(height=base_height) {
+
+    // box cavity
+    translate([0, 0, floor_thickness]) linear_extrude(height=base_height) {
       _profile(outside_w-wall_thickness*2, side_curve_circle_radius-wall_thickness, finishing_tool_r);
     }
 
@@ -53,7 +55,7 @@ module lid() {
     union() {
       intersection() {
         linear_extrude(height=base_height) {
-          _profile(outside_w, side_curve_circle_radius, finishing_tool_r/2);
+          _profile(outside_w, side_curve_circle_radius, finishing_tool_r);
         }
         translate([0, 0, -(lid_curve_sphere_radius-lid_height)]) difference() {
           sphere(r=lid_curve_sphere_radius, $fn=360);
@@ -82,5 +84,11 @@ module lid() {
   
 }
 
-translate([0, 0, base_height + 5]) !lid();
+translate([0, 0, base_height + 5]) lid();
 base();
+
+// for (x=[-1,1]) {
+//   translate([x * (6 * 25.4) / 2, 0, 0]) 
+//     circle(r=3/8 * 25.4 / 2, $fn=72);
+// }
+
