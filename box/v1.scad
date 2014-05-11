@@ -70,22 +70,24 @@ module lid() {
     }
     
     // carve-out on underside of lid
-    render()
-    intersection() {
-      translate([0, 0, -base_height/2]) linear_extrude(height=base_height) {
-        _profile(outside_w - wall_thickness * 2 - 6, side_curve_circle_radius - wall_thickness - 3, finishing_tool_r/2);
-      }
-      translate([0, 0, -(lid_curve_sphere_radius-lid_height+wall_thickness)]) difference() {
-        sphere(r=lid_curve_sphere_radius, $fn=360);
-        translate([0, 0, -lid_height]) cube(size=[lid_curve_sphere_radius*2+1, lid_curve_sphere_radius*2+1, lid_curve_sphere_radius*2-lid_height], center=true);
-      }
-    }
+    // render()
+//     intersection() {
+//       translate([0, 0, -base_height/2]) linear_extrude(height=base_height) {
+//         _profile(outside_w - wall_thickness * 2 - 6, side_curve_circle_radius - wall_thickness - 3, finishing_tool_r/2);
+//       }
+//       translate([0, 0, -(lid_curve_sphere_radius-lid_height+wall_thickness)]) difference() {
+//         sphere(r=lid_curve_sphere_radius, $fn=360);
+//         translate([0, 0, -lid_height]) cube(size=[lid_curve_sphere_radius*2+1, lid_curve_sphere_radius*2+1, lid_curve_sphere_radius*2-lid_height], center=true);
+//       }
+//     }
   }
   
 }
 
 translate([0, 0, base_height + 5]) lid();
-base();
+// !projection(cut=true) translate([0, 0, - base_height/2]){
+//   base();
+// }
 
 // for (x=[-1,1]) {
 //   translate([x * (6 * 25.4) / 2, 0, 0]) 
