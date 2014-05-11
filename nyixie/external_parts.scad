@@ -25,11 +25,15 @@ module _tube() {
 module _pcb(args) {
   color("darkgreen")
   difference() {
-    cube(size=[150, 70, 1.5], center=true);
+    cube(size=[150, 70, 1.7], center=true);
     for (x=[-1:1], y=[-1,1]) {
       translate([x * 70, y * 30, 0]) cylinder(r=1.5, h=10, center=true, $fn=36); 
     }
   }
+}
+
+module _standoff() {
+  cylinder(r=2.5, h=25.7, center=true, $fn=36);
 }
 
 module _pcba() {
@@ -37,7 +41,13 @@ module _pcba() {
   for (x=[-1.5, -0.5, 0.5, 1.5]) {
     translate([x * tube_spacing, 0, 3.5]) _tube();
   }
-  translate([0, 20, -1.5 - 5]) color("black") cube(size=[1.4*25.4, 12, 10], center=true);
+  translate([0, 20, -1.5 - 5]) color("black") 
+    cube(size=[1.4*25.4, 12, 10], center=true);
+
+  for (x=[-1:1], y=[-1,1]) {
+    color("white")
+    translate([x * 70, y * 30, -1.7/2 - 25.7/2]) _standoff();
+  }
 }
 
 module _power_switch() {
@@ -75,12 +85,12 @@ module _selector_switch() {
   }
 }
 
-module _standoff(d,h) {
-  difference() {
-    cylinder(r=d/2, h=h, center=true, $fn=36);
-    cylinder(r=d/2-1, h=h+2, center=true, $fn=36);
-  }
-}
+// module _standoff(d,h) {
+//   difference() {
+//     cylinder(r=d/2, h=h, center=true, $fn=36);
+//     cylinder(r=d/2-1, h=h+2, center=true, $fn=36);
+//   }
+// }
 
 module _handle() {
   color("silver")
