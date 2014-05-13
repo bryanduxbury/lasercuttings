@@ -90,7 +90,7 @@ module _pegboard(w, h) {
   color("sienna")
   difference() {
     cube(size=[w, h, pegboard_t], center=true);
-    assign(hole_spacing = 50)
+    assign(hole_spacing = 75)
     assign(hole_d = 6)
     assign(num_holes_x = floor(w / hole_spacing))
     assign(num_holes_y = floor(h / hole_spacing))
@@ -102,15 +102,15 @@ module _pegboard(w, h) {
   }
 }
 
-// TODO: is the top shelf too tall?
 module pipe_frame() {
   assign(adjusted_w = width - 2 * top_overlap)
   assign(adjusted_d = desktop_depth - 2 * top_overlap) 
   assign(long_support_w = adjusted_w - 2 * pipe_d) {
     // rear vertical tubes
+    assign(vertical_tube_h = top_shelf_height - wood_t - pipe_d)
     for (x=[-1,1]) {
-      translate([x * (adjusted_w / 2 - pipe_d / 2), -pipe_d/2 - top_overlap, top_shelf_height/2 - pipe_d/2]) 
-        pipe(top_shelf_height - pipe_d);
+      translate([x * (adjusted_w / 2 - pipe_d / 2), -pipe_d/2 - top_overlap, vertical_tube_h/2]) 
+        pipe(vertical_tube_h);
     }
 
     // front legs + tees
@@ -180,27 +180,42 @@ module pipe_frame() {
     }
 
     // top shelf level
-    translate([0, 0, top_shelf_height - pipe_d/2 - wood_t]) {
+    assign(rear_y = -pipe_d/2 - top_overlap)
+    assign(front_y = -top_shelf_depth + pipe_d/2 + top_overlap)
+    translate([0, 0, top_shelf_height - wood_t - pipe_d/2]) {
       // front and rear top shelf support
-      for (y = [-pipe_d/2 - top_overlap, -top_shelf_depth + pipe_d/2 + top_overlap]) {
+      for (y = [rear_y, front_y]) {
         translate([0, y, 0]) {
           rotate([0, 90, 0]) pipe(long_support_w);
           for (tx=[[-1,0],[1,180]]) {
             translate([tx[0] * (width/2 - pipe_d/2-top_overlap), 0, 0]) 
-            rotate([0, 0, tx[1]]) 
-            _elbow();
+              rotate([0, 0, tx[1]]) 
+                _elbow();
           }
         }
       }
+
+      // top shelf cross supports
+      for (x=[-1,1]) {
+        translate([x * (adjusted_w / 2 - elbow_width - tee_w/2), -(rear_y - front_y) / 2 + rear_y, 0]) {
+          rotate([90, 0, 0]) pipe(rear_y - front_y - pipe_d);
+          for (y=[-1,1]) {
+            translate([0, y * (rear_y - front_y) / 2, 0]) 
+              rotate([-90 + y * 90, 90, 0]) _tee();
+          }
+          
+        }
+      }
+      
     }
 
     // top shelf pillars
-    assign(pillar_height = top_shelf_height - desktop_height)
+    assign(pillar_height = top_shelf_height - desktop_height - wood_t)
     for (x = [-1,1]) 
     translate([x * (adjusted_w / 2 - pipe_d / 2), -top_shelf_depth + pipe_d/2 + top_overlap, desktop_height + pillar_height/2]){
       translate([0, 0, -pipe_d/2]) pipe(pillar_height - pipe_d);
       translate([0, 0, -pillar_height/2 - pipe_d/2])
-      translate([0, 0, -pipe_d/2]) rotate([-90, 0, 0])  _tee();
+      translate([0, 0, -pipe_d/2]) rotate([-90, 0, 0]) _tee();
     }
   }
 }
@@ -230,6 +245,16 @@ module assembled() {
   translate([0, -top_overlap + pegboard_t/2, desktop_height + rear_pegboard_height/2]) 
     rotate([90, 0, 0]) 
       _pegboard(width, rear_pegboard_height);
+
+  assign(side_pegboard_height = desktop_height - lower_shelf_height - wood_t)
+  assign(side_pegboard_depth = desktop_depth - top_overlap - elbow_width)
+  translate([0, -side_pegboard_depth/2, lower_shelf_height + side_pegboard_height/2]) 
+  for(x=[-1,1]) {
+    translate([x * (width - 2 * wood_t + pegboard_t) / 2, 0, 0]) 
+    rotate([90, 0, 90]) 
+      _pegboard(side_pegboard_depth, side_pegboard_height);
+  }
+    
 }
 
 assembled();
