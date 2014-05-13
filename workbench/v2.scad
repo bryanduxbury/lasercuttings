@@ -203,10 +203,8 @@ module pipe_frame() {
             translate([0, y * (rear_y - front_y) / 2, 0]) 
               rotate([-90 + y * 90, 90, 0]) _tee();
           }
-          
         }
       }
-      
     }
 
     // top shelf pillars
