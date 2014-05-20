@@ -354,22 +354,42 @@ module top_shelf() {
   cube(size=[width, top_shelf_depth, wood_t], center=true);
 }
 
+module _rounded_rect(w, h, r) {
+  hull() {
+    for (x=[-1,1], y=[-1,1]) {
+      translate([x * (w/2 - r), y * (h/2 - r), 0]) {
+        circle(r=r, $fn=144);
+      }
+    }
+  }
+}
+
 module desktop() {
   color("tan")
   difference() {
     linear_extrude(height=wood_t, center=true) {
       difference() {
-        hull() {
-          for (x=[-1,1], y=[-1,1]) {
-            translate([x * (width/2 - corner_r), y * (desktop_depth/2 - corner_r), 0]) {
-              circle(r=corner_r, $fn=144);
-            }
-          }
+        union() {
+          // front rect
+          assign(h=(desktop_depth - top_shelf_depth + top_overlap - tee_metal_thickness))
+          translate([0, - desktop_depth/2 + h / 2, 0]) 
+            _rounded_rect(width, h, corner_r);
+          // mid rect
+          assign(h=top_shelf_depth - top_overlap * 2 - pipe_d*2 - tee_metal_thickness)
+          translate([0, + desktop_depth/2 - top_shelf_depth/2 + tee_metal_thickness/2, 0]) 
+            _rounded_rect(width, h, corner_r);
+          // back rect
+          assign(h=top_overlap)
+          translate([0, desktop_depth/2 - top_overlap/2, 0]) 
+            _rounded_rect(width, h, corner_r);
+          // joining rect
+          square(size=[width - 2 * top_overlap - pipe_d, desktop_depth], center=true);
         }
+        // dif pipe slots
         for (x=[-1,1]) {
-          translate([x * (width - 2 * top_overlap - pipe_d) / 2, desktop_depth/2 - top_shelf_depth + top_overlap + pipe_d/2, 0]) 
+          translate([x * (width - 2 * top_overlap - pipe_d) / 2, desktop_depth/2 - top_shelf_depth + top_overlap + pipe_d/2, 0])
             circle(r=pipe_d/2+tee_metal_thickness);
-          translate([x * (width - 2 * top_overlap - pipe_d) / 2, desktop_depth/2 - top_overlap - pipe_d/2, 0]) 
+          translate([x * (width - 2 * top_overlap - pipe_d) / 2, desktop_depth/2 - top_overlap - pipe_d/2, 0])
             circle(r=pipe_d/2);
         }
       }
