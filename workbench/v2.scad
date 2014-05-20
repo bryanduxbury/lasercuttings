@@ -1,3 +1,18 @@
+// TODOs
+// - add pipe clamps to leg stabilizers for the bottom shelf
+// - add depth-wise pipe clamps for the desktop
+// - add mounting holes for all the pipe clamps on the desktop
+// - add mounting holes for all the pipe clamps on the top shelf
+// - add mounting holes for all the pipe clamps on the bottom shelf
+// - shallow shelves / tool holders in the space between vertical tubes above desktop? work best if there is pegboard on the outsides
+// - measure the outside tee depth reduction due to carriage bolt
+// - design adjustable feet
+// - purge dead code from pipe strap alternative
+// - add center desktop support
+// - add pipe clamps for pegboard connections
+// - add pipe cutouts for bottom shelf
+
+
 pipe_d = (1 + 3/8) * 25.4;
 
 tee_w = 50;
