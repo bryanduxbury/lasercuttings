@@ -13,10 +13,12 @@ elbow_flange_t = 15;
 
 lower_shelf_height = 150;
 lower_shelf_depth = 12 * 25;
-desktop_height = 3.5 * 12 * 25;
+desktop_height = 3 * 12 * 25;
 desktop_depth = 30 * 25;
-top_shelf_height = 6.5 * 12 * 25;
+top_shelf_height = 6 * 12 * 25;
 top_shelf_depth = 12 * 25;
+
+corner_r = 10;
 
 width = 7 * 12 * 25;
 
@@ -24,6 +26,20 @@ wood_t = 3/4 * 25.4;
 top_overlap = 25;
 
 pegboard_t = 12;
+
+pipe_clamp_w = 20;
+pipe_clamp_t = 2;
+pipe_clamp_l = 75;
+pipe_clamp_d = 1.5 * 25.4;
+pipe_clamp_hole_d = 6;
+pipe_clamp_hole_spacing = 50;
+
+
+desktop_to_pipe_spacing = 5;
+clamp_screw_d = 6;
+clamp_screw_margin = 5;
+clamp_w = pipe_d + 2 * (clamp_screw_margin * 2 + clamp_screw_d);
+clamp_min_t = 5;
 
 module _tee() {
   color("lime")
@@ -78,11 +94,34 @@ module _elbow() {
   
 }
 
-module pipe(l) {
-  color("silver")
+module _pipe_clamp() {
+  color("lime")
+  render()
+  assign(outer_d = pipe_clamp_d + pipe_clamp_t * 2)
+  translate([0, -(pipe_clamp_d - pipe_d)/2, 0]) 
   difference() {
-    cylinder(r=pipe_d/2, h=l, center=true, $fn=36);
-    cylinder(r=pipe_d/2 - 3, h=l+3, center=true, $fn=36);
+    union() {
+      cylinder(r=outer_d/2, h=pipe_clamp_w, center=true);
+      translate([0, pipe_clamp_d/2/2, 0]) 
+        cube(size=[outer_d, pipe_clamp_d/2, pipe_clamp_w], center=true);
+      translate([0, pipe_clamp_d/2 - pipe_clamp_t/2, 0]) 
+        cube(size=[pipe_clamp_l, pipe_clamp_t, pipe_clamp_w], center=true);
+    }
+    cylinder(r=pipe_clamp_d/2, h=pipe_clamp_w*2, center=true);
+    translate([0, outer_d/2/2, 0]) 
+      cube(size=[pipe_clamp_d, outer_d/2+0.1, pipe_clamp_w*2], center=true);
+    for (x=[-1,1]) {
+      translate([x * (pipe_clamp_hole_spacing/2), 0, 0]) 
+        rotate([90, 0, 0]) cylinder(r=pipe_clamp_hole_d/2, h=pipe_clamp_d*2, center=true);
+    }
+  }
+}
+
+module _foot_scale(n=10) {
+  translate([0, 0, 6 * 25.4]) 
+  for (i=[0:n-1]) {
+    translate([-1 * (i % 2) * 50 + 25, 0, 12 * 25.4 * i]) 
+      cube(size=[50, 1, 12 * 25.4], center=true);
   }
 }
 
@@ -99,6 +138,74 @@ module _pegboard(w, h) {
       translate([x * hole_spacing, y * hole_spacing, 0]) 
         cylinder(r=hole_d/2, h=pegboard_t*2, center=true);
     }
+  }
+}
+
+module clamp_spacer() {
+  color("tan")
+  render()
+  difference() {
+    union() {
+      translate([0, -(pipe_clamp_d-pipe_d)/2, 0]) {
+        cylinder(r=pipe_clamp_d/2, h=wood_t, center=true);
+        translate([0, pipe_clamp_d/2/2, 0]) cube(size=[pipe_clamp_d, pipe_clamp_d/2, wood_t], center=true);
+      }
+    }
+    cylinder(r=pipe_d/2, h=wood_t*2, center=true);
+    translate([0, pipe_d/2, 0]) cube(size=[pipe_d/2, pipe_d, wood_t*2], center=true);
+  }
+}
+
+module _clamp_assembly() {
+  clamp_top();
+  clamp_bottom();
+}
+
+module clamp_top() {
+  color("burlywood")
+  assign(h=pipe_d/2 + desktop_to_pipe_spacing)
+  difference() {
+    translate([0, h/2, 0]) 
+      cube(size=[clamp_w, h, wood_t], center=true);
+    cylinder(r=pipe_d/2, h=wood_t*2, center=true, $fn=72);
+    for (x=[-1,1]) {
+      translate([x * (pipe_d / 2 + clamp_screw_margin + clamp_screw_d / 2), 0, 0]) 
+        rotate([90, 0, 0]) 
+          cylinder(r=clamp_screw_d/2, h=h*2, center=true, $fn=20);
+    }
+  }
+}
+
+module clamp_bottom() {
+  color("tan")
+  assign(h=pipe_d/2 + clamp_min_t)
+  difference() {
+    intersection() {
+      translate([0, -h/2, 0]) 
+        cube(size=[clamp_w, h, wood_t], center=true);
+      translate([0, -clamp_min_t, 0]) {
+        scale([1, (h-clamp_min_t) / clamp_w * 2, 1]) render() union() {
+          cylinder(r=clamp_w/2, h=wood_t, center=true, $fn=72);
+          translate([0, clamp_w/2/2, 0]) 
+            cube(size=[clamp_w+0.1, clamp_w/2, wood_t], center=true);
+        }
+      }
+    }
+
+    cylinder(r=pipe_d/2, h=wood_t*2, center=true, $fn=72);
+    for (x=[-1,1]) {
+      translate([x * (pipe_d / 2 + clamp_screw_margin + clamp_screw_d / 2), 0, 0]) 
+        rotate([90, 0, 0]) 
+          cylinder(r=clamp_screw_d/2, h=h*2, center=true, $fn=20);
+    }
+  }
+}
+
+module pipe(l) {
+  color("silver")
+  difference() {
+    cylinder(r=pipe_d/2, h=l, center=true, $fn=36);
+    cylinder(r=pipe_d/2 - 3, h=l+3, center=true, $fn=36);
   }
 }
 
@@ -141,14 +248,18 @@ module pipe_frame() {
       translate([0, -lower_shelf_depth/2, 0]) {
         rotate([0, 90, 0]) pipe(long_support_w);
         for (x=[-1,1]) {
-          translate([x * (long_support_w/2)+pipe_d/2, 0, 0]) 
-          rotate([0, 90, x * -90]) _tee();
+          translate([x * (long_support_w/2+pipe_d/2), 0, 0]) 
+            rotate([0, 90, x * -90]) _tee();
+        }
+        for (x=[-1,-1/3,1/3,1]) {
+          translate([x * (long_support_w/2+pipe_d/2 - tee_d - pipe_clamp_w/2), 0, 0])
+            rotate([90, 0, 90]) _clamp_assembly();
         }
       }
     }
 
     // desktop level
-    translate([0, 0, desktop_height - wood_t - pipe_d/2]) {
+    translate([0, 0, desktop_height - wood_t - elbow_outer_d/2]) {
       translate([0, -desktop_depth + pipe_d/2 + top_overlap, 0]) {
         // front desktop support
         rotate([0, 90, 0]) pipe(long_support_w);
@@ -157,6 +268,11 @@ module pipe_frame() {
         for (tx=[[-1, 0],[1,180]]) {
           translate([tx[0] * (adjusted_w/2 - pipe_d/2), 0, 0]) 
           rotate([90, tx[1], 0]) _elbow();
+        }
+
+        for (x=[-1,-1/3,1/3,1]) {
+          translate([x * (long_support_w/2+pipe_d/2 - tee_d - pipe_clamp_w/2), 0, 0])
+            rotate([90, 0, 90]) _clamp_assembly();
         }
       }
 
@@ -176,6 +292,11 @@ module pipe_frame() {
             rotate([0, 90, tx[1]]) 
               _tee();
         }
+
+        for (x=[-1,-1/3,1/3,1]) {
+          translate([x * (long_support_w/2+pipe_d/2 - tee_d - pipe_clamp_w/2), 0, 0])
+            rotate([90, 0, 90]) _clamp_assembly();
+        }
       }
     }
 
@@ -192,17 +313,22 @@ module pipe_frame() {
               rotate([0, 0, tx[1]]) 
                 _elbow();
           }
+          for (x=[-1,-1/3,1/3,1]) {
+            translate([x * (long_support_w/2 +pipe_d/2 - elbow_width + wood_t/2), 0, 0])
+              rotate([90, 0, 90]) _clamp_assembly();
+          }
         }
       }
 
       // top shelf cross supports
       for (x=[-1,1]) {
-        translate([x * (adjusted_w / 2 - elbow_width - tee_w/2), -(rear_y - front_y) / 2 + rear_y, 0]) {
+        translate([x * (adjusted_w / 2 - elbow_width - tee_w/2 - wood_t), -(rear_y - front_y) / 2 + rear_y, 0]) {
           rotate([90, 0, 0]) pipe(rear_y - front_y - pipe_d);
           for (y=[-1,1]) {
             translate([0, y * (rear_y - front_y) / 2, 0]) 
               rotate([-90 + y * 90, 90, 0]) _tee();
           }
+          rotate([90, 0, 0]) _clamp_assembly();
         }
       }
     }
@@ -230,7 +356,25 @@ module top_shelf() {
 
 module desktop() {
   color("tan")
-  cube(size=[width, desktop_depth, wood_t], center=true);
+  difference() {
+    linear_extrude(height=wood_t, center=true) {
+      difference() {
+        hull() {
+          for (x=[-1,1], y=[-1,1]) {
+            translate([x * (width/2 - corner_r), y * (desktop_depth/2 - corner_r), 0]) {
+              circle(r=corner_r, $fn=144);
+            }
+          }
+        }
+        for (x=[-1,1]) {
+          translate([x * (width - 2 * top_overlap - pipe_d) / 2, desktop_depth/2 - top_shelf_depth + top_overlap + pipe_d/2, 0]) 
+            circle(r=pipe_d/2+tee_metal_thickness);
+          translate([x * (width - 2 * top_overlap - pipe_d) / 2, desktop_depth/2 - top_overlap - pipe_d/2, 0]) 
+            circle(r=pipe_d/2);
+        }
+      }
+    }
+  }
 }
 
 module assembled() {
@@ -252,7 +396,10 @@ module assembled() {
     rotate([90, 0, 90]) 
       _pegboard(side_pegboard_depth, side_pegboard_height);
   }
-    
 }
+
+translate([-width/2 - 500, 100, 0]) rotate([0, 0, 90]) _foot_scale(7);
+translate([-width/2, 100, -100]) rotate([0, 90, 0]) _foot_scale(10);
+translate([-width/2 - 500, 0, -100]) rotate([90, 90, 0]) _foot_scale(7);
 
 assembled();
