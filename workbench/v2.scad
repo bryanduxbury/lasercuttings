@@ -1,23 +1,27 @@
 // TODOs
 // - add pipe clamps to leg stabilizers for the bottom shelf
 // - add depth-wise pipe clamps for the desktop
+// - add depth-wise pipe clamps for the bottom shelf
 // - add mounting holes for all the pipe clamps on the desktop
 // - add mounting holes for all the pipe clamps on the top shelf
 // - add mounting holes for all the pipe clamps on the bottom shelf
-// - shallow shelves / tool holders in the space between vertical tubes above desktop? work best if there is pegboard on the outsides
-// - measure the outside tee depth reduction due to carriage bolt
 // - design adjustable feet
 // - purge dead code from pipe strap alternative
 // - add center desktop support
 // - add pipe clamps for pegboard connections
 // - add pipe cutouts for bottom shelf
+// - re-adjust all pipe lengths to match new tee depth measurement
+// - shallow shelves / tool holders in the space between vertical tubes above desktop? work best if there is pegboard on the outsides
 
 
-pipe_d = (1 + 3/8) * 25.4;
+// pipe_d = (1 + 3/8) * 25.4; // nom
+pipe_d = 33.6; // measured
 
 tee_w = 50;
 tee_d = 86;
 tee_metal_thickness = 2.6;
+tee_end_to_bolt_hole = 39.5;
+tee_bolt_hole_w = 8.9;
 
 elbow_width = 95;
 elbow_inner_d = 39;
@@ -56,13 +60,21 @@ clamp_screw_margin = 5;
 clamp_w = pipe_d + 2 * (clamp_screw_margin * 2 + clamp_screw_d);
 clamp_min_t = 5;
 
+carriage_bolt_head_d = 17.5;
+carriage_bolt_total_len = 54;
+carriage_bolt_thread_len = 45.7;
+carriage_bolt_thread_and_square_len = 49.4;
+carriage_bolt_head_t = carriage_bolt_total_len - carriage_bolt_thread_and_square_len;
+carriage_bolt_square_len = carriage_bolt_thread_and_square_len - carriage_bolt_thread_len;
+carriage_bolt_nut_t = 7;
+carriage_bolt_nut_d = 14.5;
+
 module _tee() {
   color("lime")
   render()
   assign(tee_rad = pipe_d/2 + tee_metal_thickness)
   assign(tee_leg_d = tee_d - tee_rad)
-  // guessed, not measured!
-  assign(tee_half_thickness = 3)
+  assign(tee_half_thickness = 18.2)
   difference() {
     union() {
       cylinder(r=tee_rad, h=tee_w, center=true);
@@ -77,8 +89,11 @@ module _tee() {
       rotate([90, 0, 0]) 
         cylinder(r=tee_rad-tee_metal_thickness, h=tee_leg_d+1, center=true);
 
+    translate([0, -tee_leg_d + tee_end_to_bolt_hole + tee_bolt_hole_w/2, 0]) 
+      cube(size=[2 * tee_rad+0.1, tee_bolt_hole_w, tee_bolt_hole_w], center=true);
+
     rotate([0, 90, 0]) 
-      cube(size=[tee_d*2, tee_d*2, tee_rad - 2 * tee_half_thickness], center=true);
+      cube(size=[tee_d*2, tee_d*2, 2*tee_rad - 2 * tee_half_thickness], center=true);
   }
 }
 
@@ -247,7 +262,7 @@ module pipe_frame() {
 
 
     // lower level
-    translate([0, 0, lower_shelf_height - wood_t - pipe_d/2]) {
+    translate([0, 0, lower_shelf_height - wood_t - desktop_to_pipe_spacing - pipe_d/2]) {
       // leg stabilizers
       assign(stabilizer_len = desktop_depth - elbow_width - tee_w / 2 - pipe_d - pipe_d/2 - 2 * top_overlap)
       for (x=[-1,1]) 
@@ -274,7 +289,7 @@ module pipe_frame() {
     }
 
     // desktop level
-    translate([0, 0, desktop_height - wood_t - elbow_outer_d/2]) {
+    translate([0, 0, desktop_height - wood_t - desktop_to_pipe_spacing - pipe_d/2]) {
       translate([0, -desktop_depth + pipe_d/2 + top_overlap, 0]) {
         // front desktop support
         rotate([0, 90, 0]) pipe(long_support_w);
@@ -318,7 +333,7 @@ module pipe_frame() {
     // top shelf level
     assign(rear_y = -pipe_d/2 - top_overlap)
     assign(front_y = -top_shelf_depth + pipe_d/2 + top_overlap)
-    translate([0, 0, top_shelf_height - wood_t - pipe_d/2]) {
+    translate([0, 0, top_shelf_height - wood_t - desktop_to_pipe_spacing - pipe_d/2]) {
       // front and rear top shelf support
       for (y = [rear_y, front_y]) {
         translate([0, y, 0]) {
@@ -366,7 +381,10 @@ module lower_shelf() {
 
 module top_shelf() {
   color("tan")
-  cube(size=[width, top_shelf_depth, wood_t], center=true);
+  linear_extrude(height=wood_t, center=true) {
+    _rounded_rect(width, top_shelf_depth, corner_r);
+  }
+  // cube(size=[width, top_shelf_depth, wood_t], center=true);
 }
 
 module _rounded_rect(w, h, r) {
@@ -417,7 +435,7 @@ module assembled() {
   translate([0, -desktop_depth/2, desktop_height - wood_t/2]) desktop();
   translate([0, -lower_shelf_depth/2, lower_shelf_height - wood_t/2]) lower_shelf();
   translate([0, -top_shelf_depth/2, top_shelf_height - wood_t/2]) top_shelf();
-  
+
   assign(rear_pegboard_height = top_shelf_height - desktop_height - wood_t)
   translate([0, -top_overlap + pegboard_t/2, desktop_height + rear_pegboard_height/2]) 
     rotate([90, 0, 0]) 
