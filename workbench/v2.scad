@@ -1,15 +1,11 @@
 // TODOs
-// - add pipe clamps to leg stabilizers for the bottom shelf
-// - add depth-wise pipe clamps for the desktop
-// - add depth-wise pipe clamps for the bottom shelf
 // - add mounting holes for all the pipe clamps on the desktop
 // - add mounting holes for all the pipe clamps on the top shelf
 // - add mounting holes for all the pipe clamps on the bottom shelf
 // - design adjustable feet
 // - add center desktop support
 // - add pipe clamps for pegboard connections
-// - add pipe cutouts for bottom shelf
-// - re-adjust all pipe lengths to match new tee depth measurement
+// - space out the side pegboards to make clearance for the desktop clamps
 // - shallow shelves / tool holders in the space between vertical tubes above desktop? work best if there is pegboard on the outsides
 
 
@@ -42,7 +38,7 @@ corner_r = 10;
 width = 7 * 12 * 25;
 
 wood_t = 3/4 * 25.4;
-top_overlap = 25;
+top_overlap = 35;
 
 pegboard_t = 12;
 
@@ -186,6 +182,7 @@ module clamp_bottom() {
 }
 
 module pipe(l) {
+  echo("Pipe of length ", l / 25.4);
   color("silver")
   difference() {
     cylinder(r=pipe_d/2, h=l, center=true, $fn=36);
@@ -196,7 +193,7 @@ module pipe(l) {
 module pipe_frame() {
   assign(adjusted_w = width - 2 * top_overlap)
   assign(adjusted_d = desktop_depth - 2 * top_overlap) 
-  !assign(long_support_w = adjusted_w - 2 * pipe_d) {
+  assign(long_support_w = adjusted_w - 2 * pipe_d) {
     // rear vertical tubes
     assign(vertical_tube_h = top_shelf_height - wood_t - pipe_d)
     for (x=[-1,1]) {
@@ -206,12 +203,18 @@ module pipe_frame() {
 
     // front legs + tees
     assign(front_leg_h = desktop_height - desktop_to_pipe_spacing - pipe_d/2 - wood_t - tee_pipe_len_adj)
-    translate([0, -desktop_depth + elbow_width + tee_w/2 + top_overlap, front_leg_h/2]) 
+    translate([0, -desktop_depth + elbow_width + tee_w/2 + top_overlap, 0])
     for (x=[-1,1]) 
     translate([x * (adjusted_w / 2 - pipe_d / 2), 0, 0]) {
-      pipe(front_leg_h);
-      translate([0, 0, (front_leg_h)/2 + tee_pipe_len_adj]) 
-        rotate([90, 0, 0]) _tee();
+      translate([0, 0, front_leg_h/2]) {
+        pipe(front_leg_h);
+        translate([0, 0, (front_leg_h)/2 + tee_pipe_len_adj]) 
+          rotate([90, 0, 0]) _tee();
+      }
+      for (z=[lower_shelf_height + wood_t/2, desktop_height - wood_t - desktop_to_pipe_spacing - tee_d - wood_t/2]) {
+        translate([0, 0, z]) 
+          rotate([0, 0, x * -90]) _clamp_assembly();
+      }
     }
 
 
@@ -220,12 +223,17 @@ module pipe_frame() {
       // leg stabilizers
       assign(stabilizer_len = desktop_depth - elbow_width - tee_w / 2 - pipe_d - pipe_d/2 - 2 * top_overlap)
       for (x=[-1,1]) 
-      translate([x * (adjusted_w / 2 - pipe_d / 2), -stabilizer_len/2 - pipe_d - top_overlap, 0]) {
-        rotate([90, 0, 0]) pipe(stabilizer_len - 2 * tee_pipe_len_adj);
-        for (y=[-1,1]) {
-          translate([0, y * (stabilizer_len/2 + pipe_d/2), 0]) 
-            rotate([0, 0, -90 + y * 90]) _tee();
+      translate([x * (adjusted_w / 2 - pipe_d / 2), 0, 0]) {
+        translate([0, -stabilizer_len/2 - pipe_d - top_overlap, 0]) {
+          rotate([90, 0, 0]) 
+            pipe(stabilizer_len - 2 * tee_pipe_len_adj);
+          for (y=[-1,1]) {
+            translate([0, y * (stabilizer_len/2 + pipe_d/2), 0]) 
+              rotate([0, 0, -90 + y * 90]) _tee();
+          }
         }
+        translate([0, -lower_shelf_depth + top_overlap - wood_t/2, 0]) 
+          rotate([90, 0, 0]) _clamp_assembly();
       }
 
       // lower shelf support
@@ -262,9 +270,22 @@ module pipe_frame() {
 
       // desktop sides
       for (x=[-1,1]) {
-        translate([x * (adjusted_w/2 - pipe_d / 2), -desktop_depth/2, 0]) {
-          rotate([90, 0, 0]) pipe(desktop_depth - pipe_d*2 - top_overlap * 2 - tee_pipe_len_adj);
-          translate([0, desktop_depth/2 - pipe_d/2 - top_overlap, 0]) _tee();
+        translate([x * (adjusted_w/2 - pipe_d / 2), 0, 0]) {
+          translate([0, -desktop_depth/2, 0]) {
+            rotate([90, 0, 0]) 
+              pipe(desktop_depth - pipe_d*2 - top_overlap * 2 - tee_pipe_len_adj);
+            translate([0, desktop_depth/2 - pipe_d/2 - top_overlap, 0]) 
+              _tee();
+          }
+
+          for (y=[-desktop_depth + top_overlap + elbow_width + tee_w + wood_t/2, 
+                  -top_overlap - tee_d - tee_w - wood_t/2,
+                  -top_shelf_depth + top_overlap + pipe_d/2 - tee_w/2 - wood_t/2])
+          {
+            translate([0, y, 0]) 
+              rotate([90, 0, 0]) 
+                _clamp_assembly();
+          }
         }
       }
 
@@ -318,20 +339,46 @@ module pipe_frame() {
     }
 
     // top shelf pillars
-    assign(pillar_height = top_shelf_height - desktop_height - wood_t + desktop_to_pipe_spacing)
+    assign(pillar_height = top_shelf_height - desktop_height - wood_t)
+    assign(yo = -top_shelf_depth + pipe_d/2 + top_overlap)
+    assign(ho = desktop_height + pillar_height/2 - desktop_to_pipe_spacing)
     for (x = [-1,1]) 
-    translate([x * (adjusted_w / 2 - pipe_d / 2), -top_shelf_depth + pipe_d/2 + top_overlap, desktop_height + pillar_height/2]){
+    translate([x * (adjusted_w / 2 - pipe_d / 2), yo, ho]) {
       translate([0, 0, -pipe_d/2]) 
         pipe(pillar_height - pipe_d - tee_pipe_len_adj);
-      translate([0, 0, -pillar_height/2 - pipe_d/2])
-      translate([0, 0, -pipe_d/2]) rotate([-90, 0, 0]) _tee();
+      translate([0, 0, -pillar_height/2 - pipe_d/2 - pipe_d/2])
+        rotate([-90, 0, 0]) 
+          _tee();
     }
   }
 }
 
 module lower_shelf() {
   color("tan")
-  cube(size=[width, lower_shelf_depth, wood_t], center=true);
+  assign(narrow_w = width - top_overlap * 2 - pipe_d * 2 - tee_metal_thickness * 2)
+  assign(narrow_d = top_overlap + tee_metal_thickness * 2 + pipe_d)
+  assign(r = pipe_d / 2 + tee_metal_thickness)
+  linear_extrude(height=wood_t, center=true) {
+    difference() {
+      union() {
+        translate([0, lower_shelf_depth/2 - narrow_d/2, 0]) 
+          _rounded_rect(narrow_w, narrow_d, corner_r);
+
+        assign(d = lower_shelf_depth - (top_overlap + tee_metal_thickness * 2 + pipe_d))
+        translate([0, -lower_shelf_depth/2 + d/2, 0]) 
+          _rounded_rect(width, d, corner_r);
+
+        translate([0, lower_shelf_depth / 2 - (top_overlap + tee_metal_thickness * 2 + pipe_d), 0]) 
+          square(size=[width - 2 * top_overlap - 2 * r, r*2], center=true);
+      }
+      for (x=[-1,1]) {
+        translate([x * (narrow_w/2 + r), lower_shelf_depth/2 - narrow_d + r, 0]) {
+          circle(r=r);
+        }
+      }
+      
+    }
+  }
 }
 
 module top_shelf() {
@@ -339,7 +386,6 @@ module top_shelf() {
   linear_extrude(height=wood_t, center=true) {
     _rounded_rect(width, top_shelf_depth, corner_r);
   }
-  // cube(size=[width, top_shelf_depth, wood_t], center=true);
 }
 
 module _rounded_rect(w, h, r) {
@@ -396,11 +442,11 @@ module assembled() {
     rotate([90, 0, 0]) 
       _pegboard(width, rear_pegboard_height);
 
-  assign(side_pegboard_height = desktop_height - lower_shelf_height - wood_t)
+  assign(side_pegboard_height = desktop_height - lower_shelf_height - wood_t - pipe_d - desktop_to_pipe_spacing)
   assign(side_pegboard_depth = desktop_depth - top_overlap - elbow_width)
   translate([0, -side_pegboard_depth/2, lower_shelf_height + side_pegboard_height/2]) 
   for(x=[-1,1]) {
-    translate([x * (width - 2 * wood_t + pegboard_t) / 2, 0, 0]) 
+    translate([x * (width + pegboard_t - top_overlap * 2 + desktop_to_pipe_spacing * 2) / 2, 0, 0]) 
     rotate([90, 0, 90]) 
       _pegboard(side_pegboard_depth, side_pegboard_height);
   }
