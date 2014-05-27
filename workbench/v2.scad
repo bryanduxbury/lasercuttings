@@ -5,9 +5,6 @@
 // - design adjustable feet
 // - add center desktop support
 // - add pipe clamps for pegboard connections
-// - space out the side pegboards to make clearance for the desktop clamps
-// - shallow shelves / tool holders in the space between vertical tubes above desktop? work best if there is pegboard on the outsides
-
 
 // pipe_d = (1 + 3/8) * 25.4; // nom.
 pipe_d = 33.6; // measured
