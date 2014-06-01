@@ -23,23 +23,24 @@ lower_shelf_height = 150;
 lower_shelf_depth = 12 * 25;
 desktop_height = 3 * 12 * 25;
 desktop_depth = 30 * 25;
-top_shelf_height = 6 * 12 * 25;
+top_shelf_height = (6 * 12 - 1) * 25;
 top_shelf_depth = 12 * 25;
 
 corner_r = 10;
 
-width = 7 * 12 * 25;
+width = (7 * 12 - 1) * 25;
 
 wood_t = 3/4 * 25.4;
 top_overlap = 35;
 
 pegboard_t = 12;
 
-desktop_to_pipe_spacing = 5;
-clamp_screw_d = 6;
+desktop_to_pipe_spacing = 10;
+clamp_screw_d = 1/8 * 25.4;
+clamp_screw_head_d = .385 * 25.4;
 clamp_screw_margin = 5;
 clamp_w = pipe_d + 2 * (clamp_screw_margin * 2 + clamp_screw_d);
-clamp_min_t = 5;
+clamp_min_t = 10;
 
 carriage_bolt_head_d = 17.5;
 carriage_bolt_total_len = 54;
@@ -52,7 +53,7 @@ carriage_bolt_nut_d = 14.5;
 
 module _tee() {
   echo("tee");
-  #color("lime")
+  color("lime")
   render()
   assign(tee_rad = pipe_d/2 + tee_metal_thickness)
   assign(tee_leg_d = tee_d - tee_rad)
@@ -80,7 +81,7 @@ module _tee() {
 }
 
 module _elbow() {
-  #color("lime")
+  color("lime")
   render()
   assign(ew = elbow_width)
   assign(id = elbow_inner_d)
@@ -137,6 +138,7 @@ module _clamp_assembly() {
 
 module clamp_top() {
   color("burlywood")
+  render()
   assign(h=pipe_d/2 + desktop_to_pipe_spacing)
   difference() {
     translate([0, h/2, 0]) 
@@ -145,13 +147,14 @@ module clamp_top() {
     for (x=[-1,1]) {
       translate([x * (pipe_d / 2 + clamp_screw_margin + clamp_screw_d / 2), 0, 0]) 
         rotate([90, 0, 0]) 
-          cylinder(r=clamp_screw_d/2, h=h*2, center=true, $fn=20);
+          cylinder(r=clamp_screw_d/2, h=h*2, center=true, $fn=72);
     }
   }
 }
 
 module clamp_bottom() {
   color("tan")
+  render()
   assign(h=pipe_d/2 + clamp_min_t)
   difference() {
     intersection() {
@@ -170,7 +173,7 @@ module clamp_bottom() {
     for (x=[-1,1]) {
       translate([x * (pipe_d / 2 + clamp_screw_margin + clamp_screw_d / 2), 0, 0]) 
         rotate([90, 0, 0]) 
-          cylinder(r=clamp_screw_d/2, h=h*2, center=true, $fn=20);
+          cylinder(r=clamp_screw_d/2, h=h*2, center=true, $fn=72);
     }
   }
 }
@@ -534,8 +537,124 @@ module assembled() {
   }
 }
 
-translate([-width/2 - 500, 100, 0]) rotate([0, 0, 90]) _foot_scale(7);
-translate([-width/2, 100, -100]) rotate([0, 90, 0]) _foot_scale(10);
-translate([-width/2 - 500, 0, -100]) rotate([90, 90, 0]) _foot_scale(7);
+module drilling_jig_outer_plate() {
+  assign(plate_h = desktop_to_pipe_spacing + pipe_d + clamp_min_t + wood_t)
+  assign(plate_w = pipe_d + 2 * (clamp_screw_d + 2 * clamp_screw_margin) + 2 * wood_t)
+  difference() {
+    union() {
+      square(size=[plate_w, plate_h], center=true);
+      for (x=[-1,1], y=[-1,1]) {
+        translate([x * (plate_w / 2 - 5), y * plate_h/2, 0]) {
+          square(size=[10, wood_t*2], center=true);
+        }
+      }
+    }
+    for (x=[-1,1], y=[-1,1]) {
+      translate([x * (plate_w / 2 - 10), y * (plate_h/2), 0]) {
+        circle(r=1/4 * 25.4 / 2);
+      }
+    }
+    for (x=[-1,1]) {
+      translate([x * (plate_w / 2 - 1 / 4 * 25.4), 0, 0]) {
+        circle(r=1/4 * 25.4 / 2);
+      }
+    }
+    
+  }
+}
 
-assembled();
+module drilling_jig_top_plate() {
+  assign(plate_w = pipe_d + 2 * (clamp_screw_d + 2 * clamp_screw_margin) + 2 * wood_t)
+  assign(hole_spacing = pipe_d + 2 * (clamp_screw_d / 2 + clamp_screw_margin))
+  difference() {
+    square(size=[plate_w, wood_t*2], center=true);
+    for (x=[-1,1]) {
+      translate([x * hole_spacing/2, 0, 0]) 
+        circle(r=clamp_screw_d/2, $fn=36);
+    }
+    for (x=[-1,1], y=[-1,1]) {
+      translate([x * (plate_w/2 - 10), y * (wood_t - wood_t/2), 0]) 
+        circle(r=1/4*25.4/2);
+      translate([x * (plate_w/2), y * (wood_t), 0]) 
+        square(size=[20, wood_t], center=true);
+    }
+  }
+}
+
+module drilling_jig_bottom_plate() {
+  assign(plate_w = pipe_d + 2 * (clamp_screw_d + 2 * clamp_screw_margin) + 2 * wood_t)
+  assign(hole_spacing = pipe_d + 2 * (clamp_screw_d / 2 + clamp_screw_margin))
+  difference() {
+    square(size=[plate_w, wood_t*2], center=true);
+    for (x=[-1,1]) {
+      translate([x * hole_spacing/2, 0, 0]) 
+        circle(r=clamp_screw_head_d/2);
+    }
+    for (x=[-1,1], y=[-1,1]) {
+      translate([x * (plate_w/2 - 10), y * (wood_t - wood_t/2), 0]) 
+        circle(r=1/4 * 25.4 / 2);
+      translate([x * (plate_w/2), y * (wood_t), 0]) 
+        square(size=[20, wood_t], center=true);
+    }
+  }
+}
+
+module drilling_jig_center_plate() {
+  assign(plate_w = pipe_d + 2 * (clamp_screw_d + 2 * clamp_screw_margin) + 2 * wood_t)
+  assign(plate_h = desktop_to_pipe_spacing + pipe_d + clamp_min_t + wood_t)
+  assign(hole_spacing = pipe_d + 2 * (clamp_screw_d / 2 + clamp_screw_margin))
+  difference() {
+    square(size=[pipe_d + 2 * (clamp_screw_d + 2 * clamp_screw_margin) + 2 * wood_t, plate_h], center=true);
+    translate([0, plate_h/2 - desktop_to_pipe_spacing - pipe_d/2, 0]) {
+      projection(cut=true) {
+        hull() {
+          clamp_top();
+          clamp_bottom();
+        }
+      }
+    }
+    for (x=[-1,1]) {
+      translate([x * (plate_w / 2 - 1 / 4 * 25.4), 0, 0]) {
+        circle(r=1/4 * 25.4 / 2);
+      }
+    }
+  }
+}
+
+module drilling_jig() {
+  assign(plate_h = desktop_to_pipe_spacing + pipe_d + clamp_min_t + wood_t) {
+    color("red")
+    linear_extrude(height=wood_t, center=true) 
+      drilling_jig_center_plate();
+    for (z=[-1,1]) {
+      translate([0, 0, z * wood_t]) 
+      linear_extrude(height=wood_t, center=true)
+        drilling_jig_outer_plate();
+    }
+
+    color("green")
+    translate([0, plate_h/2 + wood_t/2, 0]) 
+    rotate([90, 0, 0]) 
+    linear_extrude(height=wood_t, center=true) 
+      drilling_jig_top_plate();
+
+    color("green")
+    translate([0, -(plate_h/2 + wood_t/2), 0]) 
+    rotate([90, 0, 0]) 
+    linear_extrude(height=wood_t, center=true) 
+      drilling_jig_bottom_plate();
+
+    translate([0, plate_h/2 - desktop_to_pipe_spacing - pipe_d/2, 0]) {
+      pipe("test!", 100);
+      _clamp_assembly();
+    }
+  }
+}
+
+// translate([-width/2 - 500, 100, 0]) rotate([0, 0, 90]) _foot_scale(7);
+// translate([-width/2, 100, -100]) rotate([0, 90, 0]) _foot_scale(10);
+// translate([-width/2 - 500, 0, -100]) rotate([90, 90, 0]) _foot_scale(7);
+
+// assembled();
+
+drilling_jig();
