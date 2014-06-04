@@ -1,6 +1,8 @@
 // TODOs
 // - design adjustable feet
 // - add center desktop support
+// - clearance on the top/bottom plate cutouts
+// - measure actual screws!
 
 // pipe_d = (1 + 3/8) * 25.4; // nom.
 pipe_d = 33.6; // measured
@@ -50,6 +52,8 @@ carriage_bolt_head_t = carriage_bolt_total_len - carriage_bolt_thread_and_square
 carriage_bolt_square_len = carriage_bolt_thread_and_square_len - carriage_bolt_thread_len;
 carriage_bolt_nut_t = 7;
 carriage_bolt_nut_d = 14.5;
+
+cutting_tool_d = 1/4 * 25.4;
 
 module _tee() {
   echo("tee");
@@ -551,15 +555,17 @@ module drilling_jig_outer_plate() {
     }
     for (x=[-1,1], y=[-1,1]) {
       translate([x * (plate_w / 2 - 10), y * (plate_h/2), 0]) {
-        circle(r=1/4 * 25.4 / 2);
+        circle(r=cutting_tool_d / 2, $fn=36);
+        rotate([0, 0, x * y * 135]) 
+          translate([x * cutting_tool_d/2, 0, 0]) 
+            square(size=[cutting_tool_d, cutting_tool_d], center=true);
       }
     }
     for (x=[-1,1]) {
-      translate([x * (plate_w / 2 - 1 / 4 * 25.4), 0, 0]) {
-        circle(r=1/4 * 25.4 / 2);
+      translate([x * (plate_w / 2 - cutting_tool_d), 0, 0]) {
+        circle(r=cutting_tool_d / 2, $fn=36);
       }
     }
-    
   }
 }
 
@@ -573,10 +579,14 @@ module drilling_jig_top_plate() {
         circle(r=clamp_screw_d/2, $fn=36);
     }
     for (x=[-1,1], y=[-1,1]) {
-      translate([x * (plate_w/2 - 10), y * (wood_t - wood_t/2), 0]) 
-        circle(r=1/4*25.4/2);
+      translate([x * (plate_w/2 - 10), y * (wood_t - wood_t/2), 0]) {
+        circle(r=cutting_tool_d/2, $fn=36);
+        rotate([0, 0, y * x * 45]) 
+          translate([x * cutting_tool_d/2, 0, 0]) 
+            square(size=[cutting_tool_d, cutting_tool_d], center=true);
+      }
       translate([x * (plate_w/2), y * (wood_t), 0]) 
-        square(size=[20, wood_t], center=true);
+        square(size=[20+0.02*25.4, wood_t + 0.02 * 25.4], center=true);
     }
   }
 }
@@ -588,11 +598,15 @@ module drilling_jig_bottom_plate() {
     square(size=[plate_w, wood_t*2], center=true);
     for (x=[-1,1]) {
       translate([x * hole_spacing/2, 0, 0]) 
-        circle(r=clamp_screw_head_d/2);
+        circle(r=clamp_screw_head_d/2, $fn=36);
     }
     for (x=[-1,1], y=[-1,1]) {
-      translate([x * (plate_w/2 - 10), y * (wood_t - wood_t/2), 0]) 
-        circle(r=1/4 * 25.4 / 2);
+      translate([x * (plate_w/2 - 10), y * (wood_t - wood_t/2), 0]) {
+        circle(r=cutting_tool_d/2, $fn=36);
+        rotate([0, 0, y * x * 45]) 
+          translate([x * cutting_tool_d/2, 0, 0]) 
+            square(size=[cutting_tool_d, cutting_tool_d], center=true);
+      }
       translate([x * (plate_w/2), y * (wood_t), 0]) 
         square(size=[20, wood_t], center=true);
     }
@@ -606,16 +620,19 @@ module drilling_jig_center_plate() {
   difference() {
     square(size=[pipe_d + 2 * (clamp_screw_d + 2 * clamp_screw_margin) + 2 * wood_t, plate_h], center=true);
     translate([0, plate_h/2 - desktop_to_pipe_spacing - pipe_d/2, 0]) {
-      projection(cut=true) {
-        hull() {
-          clamp_top();
-          clamp_bottom();
+      minkowski() {
+        projection(cut=true) {
+          hull() {
+            clamp_top();
+            clamp_bottom();
+          }
         }
+        circle(r=0.01 * 25.4, $fn=36);
       }
     }
     for (x=[-1,1]) {
-      translate([x * (plate_w / 2 - 1 / 4 * 25.4), 0, 0]) {
-        circle(r=1/4 * 25.4 / 2);
+      translate([x * (plate_w / 2 - cutting_tool_d), 0, 0]) {
+        circle(r=cutting_tool_d / 2, $fn=36);
       }
     }
   }
@@ -658,3 +675,13 @@ module drilling_jig() {
 // assembled();
 
 drilling_jig();
+
+// drilling_jig_bottom_plate();
+// drilling_jig_top_plate();
+// drilling_jig_outer_plate();
+// drilling_jig_center_plate();
+
+// projection() {
+//   // clamp_top();
+//   clamp_bottom();
+// }
