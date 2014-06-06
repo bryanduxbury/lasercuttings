@@ -135,9 +135,28 @@ module _pegboard(w, h) {
   }
 }
 
+module _wood() {
+  linear_extrude(height=wood_t, center=true)
+    child(0);
+}
+
 module _clamp_assembly() {
   clamp_top();
   clamp_bottom();
+}
+
+module clamp_top2d() {
+  assign(h=pipe_d/2 + desktop_to_pipe_spacing)
+  difference() {
+    translate([0, h/2, 0]) 
+      square(size=[clamp_w, h], center=true);
+    circle(r=pipe_d/2, center=true, $fn=72);
+    // for (x=[-1,1]) {
+    //   translate([x * (pipe_d / 2 + clamp_screw_margin + clamp_screw_d / 2), 0, 0]) 
+    //     rotate([90, 0, 0]) 
+    //       circle(r=clamp_screw_d/2, h=h*2, center=true, $fn=72);
+    // }
+  }
 }
 
 module clamp_top() {
@@ -145,9 +164,7 @@ module clamp_top() {
   render()
   assign(h=pipe_d/2 + desktop_to_pipe_spacing)
   difference() {
-    translate([0, h/2, 0]) 
-      cube(size=[clamp_w, h, wood_t], center=true);
-    cylinder(r=pipe_d/2, h=wood_t*2, center=true, $fn=72);
+    _wood() clamp_top2d();
     for (x=[-1,1]) {
       translate([x * (pipe_d / 2 + clamp_screw_margin + clamp_screw_d / 2), 0, 0]) 
         rotate([90, 0, 0]) 
@@ -156,24 +173,30 @@ module clamp_top() {
   }
 }
 
+module clamp_bottom2d() {
+  assign(h=pipe_d/2 + clamp_min_t)
+  difference() {
+    intersection() {
+      translate([0, -h/2, 0]) 
+        square(size=[clamp_w, h], center=true);
+      translate([0, -clamp_min_t, 0]) {
+        scale([1, (h-clamp_min_t) / clamp_w * 2, 1]) render() union() {
+          circle(r=clamp_w/2, center=true, $fn=72);
+          translate([0, clamp_w/2/2, 0]) 
+            square(size=[clamp_w+0.1, clamp_w/2], center=true);
+        }
+      }
+    }
+    circle(r=pipe_d/2, $fn=72);
+  }
+}
+
 module clamp_bottom() {
   color("tan")
   render()
   assign(h=pipe_d/2 + clamp_min_t)
   difference() {
-    intersection() {
-      translate([0, -h/2, 0]) 
-        cube(size=[clamp_w, h, wood_t], center=true);
-      translate([0, -clamp_min_t, 0]) {
-        scale([1, (h-clamp_min_t) / clamp_w * 2, 1]) render() union() {
-          cylinder(r=clamp_w/2, h=wood_t, center=true, $fn=72);
-          translate([0, clamp_w/2/2, 0]) 
-            cube(size=[clamp_w+0.1, clamp_w/2, wood_t], center=true);
-        }
-      }
-    }
-
-    cylinder(r=pipe_d/2, h=wood_t*2, center=true, $fn=72);
+    _wood() clamp_bottom2d();
     for (x=[-1,1]) {
       translate([x * (pipe_d / 2 + clamp_screw_margin + clamp_screw_d / 2), 0, 0]) 
         rotate([90, 0, 0]) 
@@ -408,37 +431,39 @@ module lower_shelf() {
   }
 }
 
+module top_shelf2d() {
+  difference() {
+    _rounded_rect(width, top_shelf_depth, corner_r);
+    // screw pilot holes
+    // front and back
+    assign(rear_y = top_shelf_depth / 2 - top_overlap - pipe_d / 2)
+    assign(front_y = -(top_shelf_depth / 2 - top_overlap - pipe_d / 2))
+    assign(long_support_w = width - 2 * top_overlap - 2 * pipe_d)
+    for (yoff=[rear_y, front_y], xco=[-1,-1/3,1/3,1]) {
+      translate([xco * (long_support_w/2+pipe_d/2 - tee_d - wood_t/2), yoff, 0]) {
+        for (yprime=[-1,1]) {
+          translate([0, yprime * (pipe_d / 2 + clamp_screw_margin + clamp_screw_d / 2), 0]) {
+            circle(r=clamp_screw_d/2);
+          }
+        }
+      }
+    }
+    // sides
+    for (x=[-1,1]) {
+      translate([x * (width / 2 - top_overlap - pipe_d / 2 - (elbow_width - pipe_d/2) - wood_t - tee_w/2), 0, 0]) {
+        for (xprime=[-1,1]) {
+          translate([xprime * (pipe_d / 2 + clamp_screw_margin + clamp_screw_d / 2), 0, 0]) {
+            circle(r=clamp_screw_d/2);
+          }
+        }
+      }
+    }
+  }
+}
 module top_shelf() {
   color("tan")
   linear_extrude(height=wood_t, center=true) {
-    difference() {
-      _rounded_rect(width, top_shelf_depth, corner_r);
-      // screw pilot holes
-      // front and back
-      assign(rear_y = top_shelf_depth / 2 - top_overlap - pipe_d / 2)
-      assign(front_y = -(top_shelf_depth / 2 - top_overlap - pipe_d / 2))
-      assign(long_support_w = width - 2 * top_overlap - 2 * pipe_d)
-      for (yoff=[rear_y, front_y], xco=[-1,-1/3,1/3,1]) {
-        translate([xco * (long_support_w/2+pipe_d/2 - tee_d - wood_t/2), yoff, 0]) {
-          for (yprime=[-1,1]) {
-            translate([0, yprime * (pipe_d / 2 + clamp_screw_margin + clamp_screw_d / 2), 0]) {
-              circle(r=clamp_screw_d/2);
-            }
-          }
-        }
-      }
-      // sides
-      for (x=[-1,1]) {
-        translate([x * (width / 2 - top_overlap - pipe_d / 2 - (elbow_width - pipe_d/2) - wood_t - tee_w/2), 0, 0]) {
-          for (xprime=[-1,1]) {
-            translate([xprime * (pipe_d / 2 + clamp_screw_margin + clamp_screw_d / 2), 0, 0]) {
-              circle(r=clamp_screw_d/2);
-            }
-          }
-        }
-      }
-      
-    }
+    top_shelf2d();
   }
 }
 
@@ -452,68 +477,70 @@ module _rounded_rect(w, h, r) {
   }
 }
 
-module desktop() {
-  color("tan")
+module desktop2d() {
   difference() {
-    linear_extrude(height=wood_t, center=true) {
-      difference() {
-        union() {
-          // front rect
-          assign(h=(desktop_depth - top_shelf_depth + top_overlap - tee_metal_thickness))
-          translate([0, - desktop_depth/2 + h / 2, 0]) 
-            _rounded_rect(width, h, corner_r);
-          // mid rect
-          assign(h=top_shelf_depth - top_overlap * 2 - pipe_d*2 - tee_metal_thickness*2)
-          translate([0, desktop_depth/2 - top_shelf_depth/2, 0])
-            _rounded_rect(width, h, corner_r);
-          // back rect
-          assign(h=top_overlap*2)
-          translate([0, desktop_depth/2 - top_overlap, 0]) 
-            _rounded_rect(width - 2 * top_overlap - 2 * pipe_d - 2 * tee_metal_thickness, h, corner_r);
-          // joining rect
-          translate([0, -top_overlap/2 - pipe_d/4, 0]) 
-            square(size=[width - 2 * top_overlap - pipe_d, desktop_depth-top_overlap - pipe_d/2], center=true);
+    union() {
+      // front rect
+      assign(h=(desktop_depth - top_shelf_depth + top_overlap - tee_metal_thickness))
+      translate([0, - desktop_depth/2 + h / 2, 0]) 
+        _rounded_rect(width, h, corner_r);
+      // mid rect
+      assign(h=top_shelf_depth - top_overlap * 2 - pipe_d*2 - tee_metal_thickness*2)
+      translate([0, desktop_depth/2 - top_shelf_depth/2, 0])
+        _rounded_rect(width, h, corner_r);
+      // back rect
+      assign(h=top_overlap*2)
+      translate([0, desktop_depth/2 - top_overlap, 0]) 
+        _rounded_rect(width - 2 * top_overlap - 2 * pipe_d - 2 * tee_metal_thickness, h, corner_r);
+      // joining rect
+      translate([0, -top_overlap/2 - pipe_d/4, 0]) 
+        square(size=[width - 2 * top_overlap - pipe_d, desktop_depth-top_overlap - pipe_d/2], center=true);
+    }
+    // pipe cutouts
+    for (x=[-1,1]) {
+      translate([x * (width - 2 * top_overlap - pipe_d) / 2, 0, 0]) {
+        for (y=[desktop_depth/2 - top_shelf_depth + top_overlap + pipe_d/2, desktop_depth/2 - top_overlap - pipe_d/2]) {
+          translate([0, y, 0]) 
+          circle(r=pipe_d/2+tee_metal_thickness);
         }
-        // pipe cutouts
-        for (x=[-1,1]) {
-          translate([x * (width - 2 * top_overlap - pipe_d) / 2, 0, 0]) {
-            for (y=[desktop_depth/2 - top_shelf_depth + top_overlap + pipe_d/2, desktop_depth/2 - top_overlap - pipe_d/2]) {
-              translate([0, y, 0]) 
-              circle(r=pipe_d/2+tee_metal_thickness);
-            }
-          }
-        }
+      }
+    }
 
-        // screw pilot holes
-        // front and back
-        assign(rear_y = desktop_depth / 2 - top_overlap - pipe_d / 2 - (tee_d - pipe_d / 2) - tee_w / 2)
-        assign(front_y = -(desktop_depth / 2 - top_overlap - pipe_d / 2))
-        assign(long_support_w = width - 2 * top_overlap - 2 * pipe_d)
-        for (yoff=[rear_y, front_y], xco=[-1,-1/3,1/3,1]) {
-          translate([xco * (long_support_w/2+pipe_d/2 - tee_d - wood_t/2), yoff, 0]) {
-            for (yprime=[-1,1]) {
-              translate([0, yprime * (pipe_d / 2 + clamp_screw_margin + clamp_screw_d / 2), 0]) {
-                circle(r=clamp_screw_d/2);
-              }
-            }
-          }
-        }
-
-        // left and right
-        assign(y0 = -(desktop_depth / 2 - top_overlap - elbow_width - tee_w - wood_t/2))
-        assign(y1 = desktop_depth / 2 - top_shelf_depth + top_overlap + pipe_d/2 - tee_w/2 - wood_t/2)
-        assign(y2 = desktop_depth / 2 - top_overlap - pipe_d / 2 - (tee_w - pipe_d / 2) - tee_w - wood_t/2)
-        for (yoff=[y0, y1, y2], xoff=[-1,1]) {
-          translate([xoff * (width - 2 * top_overlap - pipe_d) / 2, yoff, 0]) {
-            for (x=[-1,1]) {
-              translate([x * (pipe_d / 2 + clamp_screw_margin + clamp_screw_d / 2), 0, 0]) {
-                circle(r=clamp_screw_d/2);
-              }
-            }
+    // screw pilot holes
+    // front and back
+    assign(rear_y = desktop_depth / 2 - top_overlap - pipe_d / 2 - (tee_d - pipe_d / 2) - tee_w / 2)
+    assign(front_y = -(desktop_depth / 2 - top_overlap - pipe_d / 2))
+    assign(long_support_w = width - 2 * top_overlap - 2 * pipe_d)
+    for (yoff=[rear_y, front_y], xco=[-1,-1/3,1/3,1]) {
+      translate([xco * (long_support_w/2+pipe_d/2 - tee_d - wood_t/2), yoff, 0]) {
+        for (yprime=[-1,1]) {
+          translate([0, yprime * (pipe_d / 2 + clamp_screw_margin + clamp_screw_d / 2), 0]) {
+            circle(r=clamp_screw_d/2);
           }
         }
       }
     }
+
+    // left and right
+    assign(y0 = -(desktop_depth / 2 - top_overlap - elbow_width - tee_w - wood_t/2))
+    assign(y1 = desktop_depth / 2 - top_shelf_depth + top_overlap + pipe_d/2 - tee_w/2 - wood_t/2)
+    assign(y2 = desktop_depth / 2 - top_overlap - pipe_d / 2 - (tee_w - pipe_d / 2) - tee_w - wood_t/2)
+    for (yoff=[y0, y1, y2], xoff=[-1,1]) {
+      translate([xoff * (width - 2 * top_overlap - pipe_d) / 2, yoff, 0]) {
+        for (x=[-1,1]) {
+          translate([x * (pipe_d / 2 + clamp_screw_margin + clamp_screw_d / 2), 0, 0]) {
+            circle(r=clamp_screw_d/2);
+          }
+        }
+      }
+    }
+  }
+}
+
+module desktop() {
+  color("tan")
+  linear_extrude(height=wood_t, center=true) {
+    desktop2d();
   }
 }
 
@@ -668,13 +695,53 @@ module drilling_jig() {
   }
 }
 
+module panel1() {
+  difference() {
+    square(size=[8 * 12 * 25.4, 4 * 12 * 25.4], center=true);
+    square(size=[(8 * 12 - 1) * 25.4, (4 * 12 - 1) * 25.4], center=true);
+  }
+
+  translate([-((4 * 12 - 1) * 25.4) + width/2, 0, 0]) {
+    translate([0, (-2 * 12 + 1) * 25.4 + desktop_depth / 2, 0]) 
+      desktop2d();
+
+    translate([0, (-2 * 12 + 1) * 25.4 + desktop_depth + cutting_tool_d*2 + top_shelf_depth / 2, 0]) 
+      top_shelf2d();
+  }
+
+  translate([(-4 * 12 + 1) * 25.4 + width + cutting_tool_d * 2 + clamp_w / 2, (-2 * 12 + 2) * 25.4, 0]) {
+    for (x=[0:3], y=[0:11]) {
+      translate([x * (clamp_w + 3 * cutting_tool_d), y * 4 * 25.4, 0]) {
+        translate([0, cutting_tool_d, 0]) clamp_top2d();
+        translate([0, -cutting_tool_d, 0]) clamp_bottom2d();
+      }
+    }
+  }
+
+  translate([(-4 * 12 + 3) * 25.4, (2 * 12 - 1.5) * 25.4, 0]) {
+    drilling_jig_bottom_plate();
+    translate([0, -50, 0]) drilling_jig_top_plate();
+
+    translate([125, -25, 0]) 
+      rotate([0, 0, 90]) 
+        drilling_jig_outer_plate();
+    translate([250, -25, 0]) 
+      rotate([0, 0, 90]) 
+        drilling_jig_outer_plate();
+    translate([375, -25, 0]) 
+      rotate([0, 0, 90]) 
+        drilling_jig_center_plate();
+  }
+}
+
+
 // translate([-width/2 - 500, 100, 0]) rotate([0, 0, 90]) _foot_scale(7);
 // translate([-width/2, 100, -100]) rotate([0, 90, 0]) _foot_scale(10);
 // translate([-width/2 - 500, 0, -100]) rotate([90, 90, 0]) _foot_scale(7);
 
 // assembled();
 
-drilling_jig();
+// drilling_jig();
 
 // drilling_jig_bottom_plate();
 // drilling_jig_top_plate();
@@ -685,3 +752,5 @@ drilling_jig();
 //   // clamp_top();
 //   clamp_bottom();
 // }
+
+panel1();
