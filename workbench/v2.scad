@@ -32,7 +32,8 @@ corner_r = 10;
 
 width = (7 * 12 - 1) * 25;
 
-wood_t = 3/4 * 25.4;
+// wood_t = 3/4 * 25.4; // nom.
+wood_t = 19.85; //measured
 top_overlap = 35;
 
 pegboard_t = 12;
@@ -712,8 +713,8 @@ module panel1() {
   translate([(-4 * 12 + 1) * 25.4 + width + cutting_tool_d * 2 + clamp_w / 2, (-2 * 12 + 2) * 25.4, 0]) {
     for (x=[0:3], y=[0:11]) {
       translate([x * (clamp_w + 3 * cutting_tool_d), y * 4 * 25.4, 0]) {
-        translate([0, cutting_tool_d, 0]) clamp_top2d();
-        translate([0, -cutting_tool_d, 0]) clamp_bottom2d();
+        translate([0, cutting_tool_d * 3 / 2, 0]) clamp_top2d();
+        translate([0, -cutting_tool_d * 3 / 2, 0]) clamp_bottom2d();
       }
     }
   }
