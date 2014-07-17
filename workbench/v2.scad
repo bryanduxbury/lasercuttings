@@ -740,7 +740,7 @@ module panel1() {
 // translate([-width/2, 100, -100]) rotate([0, 90, 0]) _foot_scale(10);
 // translate([-width/2 - 500, 0, -100]) rotate([90, 90, 0]) _foot_scale(7);
 
-// assembled();
+assembled();
 
 // drilling_jig();
 
@@ -754,4 +754,4 @@ module panel1() {
 //   clamp_bottom();
 // }
 
-panel1();
+// panel1();
